@@ -155,125 +155,7 @@ $State: Exp $
   <property name="dist"    value="dist"/>
   <property name="textdir" value="."/>
 
-  <!-- Sets a single property if a target is specified. -->
-  <target name="selectPlatform" if="BUILD_TARGET">
-    <condition property="isLinuxOnAMD64">
-        <equals arg1="${BUILD_TARGET}" arg2="linux-amd64" trim="true"/>
-    </condition>
-
-    <condition property="isLinuxOnX86">
-        <equals arg1="${BUILD_TARGET}" arg2="linux-i586" trim="true"/>
-    </condition>
-
-    <condition property="isSolarisOnAMD64">
-        <equals arg1="${BUILD_TARGET}" arg2="solaris-amd64" trim="true"/>
-    </condition>   
-
-    <condition property="isSolarisOnSparc">
-        <equals arg1="${BUILD_TARGET}" arg2="solaris-sparc" trim="true"/>
-    </condition>   
-
-    <condition property="isSolarisOnSparcV9">
-        <equals arg1="${BUILD_TARGET}" arg2="solaris-sparcv9" trim="true"/>
-    </condition>   
-
-    <condition property="isSolarisOnX86">
-        <equals arg1="${BUILD_TARGET}" arg2="solaris-i586" trim="true"/>
-    </condition>   
-
-    <condition property="isWindowsOnX86">
-        <equals arg1="${BUILD_TARGET}" arg2="windows-i586" trim="true"/>
-    </condition>
-  </target>
-
-  <!-- Sets a single property depending on the type of current platform. -->
-  <target name="determinePlatform" unless="BUILD_TARGET">
-    <condition property="isLinuxOnAMD64">
-      <os name="linux" arch="amd64"/>
-    </condition>
-
-    <condition property="isLinuxOnX86">
-      <os name="linux" arch="i386"/>
-    </condition>
-
-    <condition property="isSolarisOnAMD64">
-      <os name="SunOS" arch="amd64"/>
-    </condition>   
-
-    <condition property="isSolarisOnSparcV9">
-      <os name="SunOS" arch="sparcv9"/>
-    </condition>   
-
-    <condition property="isSolarisOnSparc">
-      <os name="SunOS" arch="sparc"/>
-    </condition>   
-
-    <condition property="isSolarisOnX86">
-        <os name="SunOS" arch="x86"/>
-    </condition>   
-
-    <condition property="isWindowsOnX86">
-	<os family="windows" arch="x86"/>
-    </condition>
-  </target>
-
   <!-- Set various properties as a function of platform type. -->
-
-  <target name="setupLinuxAMD64" if="isLinuxOnAMD64">
-    <property name="ostype" value="linux"/>
-    <property name="platform" value="linux-amd64"/>
-    <property name="arch" value="amd64"/>
-    <property name="clibarch" value="linux/amd64"/>
-    <property name="jrenativesubdir" value="lib/${arch}"/>
-  </target>
-
-  <target name="setupLinuxX86" if="isLinuxOnX86">
-    <property name="ostype" value="linux"/>
-    <property name="platform" value="linux-i586"/>
-    <property name="arch" value="i386"/>
-    <property name="clibarch" value="linux/i386"/>
-    <property name="jrenativesubdir" value="lib/${arch}"/>
-  </target>
-
-  <target name="setupSolarisAMD64" if="isSolarisOnAMD64">
-    <property name="ostype" value="solaris"/>
-    <property name="platform" value="solaris-amd64"/>
-    <property name="arch" value="amd64"/>
-    <property name="clibarch" value="solaris/amd64"/>
-    <property name="jrenativesubdir" value="lib/${arch}"/>
-  </target>
-
-  <target name="setupSolarisSparc" if="isSolarisOnSparc">	
-    <property name="ostype" value="solaris"/>
-    <property name="platform" value="solaris-sparc"/>
-    <property name="arch" value="sparc"/>
-    <property name="clibarch" value="solaris/sparc"/>
-    <property name="jrenativesubdir" value="lib/${arch}"/>
-  </target>
-
-  <target name="setupSolarisSparcV9" if="isSolarisOnSparcV9">	
-    <property name="ostype" value="solaris"/>
-    <property name="platform" value="solaris-sparcv9"/>
-    <property name="arch" value="sparcv9"/>
-    <property name="clibarch" value="solaris/sparcv9"/>
-    <property name="jrenativesubdir" value="lib/${arch}"/>
-  </target>
-
-  <target name="setupSolarisX86" if="isSolarisOnX86">
-    <property name="ostype" value="solaris"/>
-    <property name="platform" value="solaris-i586"/>
-    <property name="arch" value="i386"/>
-    <property name="clibarch" value="solaris/i386"/>
-    <property name="jrenativesubdir" value="lib/${arch}"/>
-  </target>
-
-  <target name="setupWindows" if="isWindowsOnX86">	
-    <property name="ostype" value="windows"/>
-    <property name="platform" value="windows-i586"/>
-    <property name="arch" value="i386"/>
-    <property name="clibarch" value="windows/i386"/>
-    <property name="jrenativesubdir" value="bin"/>
-  </target>
 
   <target name="setupBuildType" depends="initBuildType, setupBuildFcs, setupBuildBeta, setupBuildStable, setupBuildDaily, checkBuildType">
     <echo message="BUILD_TYPE = ${BUILD_TYPE}"/>
@@ -347,38 +229,10 @@ $State: Exp $
     <fail message="Unknown BUILD_TYPE = ${BUILD_TYPE}"/>
   </target>
 
-  <!-- Set properties as a function of the type of platform. -->
-  <target name="setupPlatform"
-	  depends="setupBuildType,
-		   determinePlatform,
-		   selectPlatform,
-		   setupLinuxAMD64,
-		   setupLinuxX86,
-		   setupSolarisAMD64,
-		   setupSolarisSparc,
-		   setupSolarisSparcV9,
-		   setupSolarisX86,
-		   setupWindows">
-    <fail message="Unable to determine the target platform!"
-	  unless="platform"/>
-  </target>
-
-  <!-- Sets "clib" property to "CLIB_DIR" property. -->
-  <target name="clib-env" if="CLIB_DIR">
-    <property name="clib" value="${CLIB_DIR}"/>
-  </target>
-
-  <!-- Sets "clib" property to default value. -->
-  <target name="clib-def" unless="CLIB_DIR">
-    <property name="clib" value="src/share/jclib4jai"/>
-  </target>
-
-  <!-- Sets "clib" property. -->
-  <target name="clib-property" depends="clib-env,clib-def"/>
 
   <!-- Sets the platform-dependent properties, the "clib" property,
        and the time stamps. -->
-  <target name="init" depends="setupPlatform,clib-property">
+  <target name="init">
     <!-- Create the time stamp -->
     <tstamp>
       <!-- Set time stamp properties -->
@@ -389,7 +243,7 @@ $State: Exp $
     </tstamp>
   </target>
 
-  <target name="echo" depends="setupPlatform,clib-property"
+  <target name="echo"
 	  description="Prints the values of pertinent properties.">
     <echo message="os.arch         = ${os.arch}"/>
     <echo message="os.name         = ${os.name}"/>	
