@@ -841,19 +841,6 @@ public class TIFFImageWriter extends ImageWriter {
 
         if (compressor == null) {
             if (compression == BaselineTIFFTagSet.COMPRESSION_CCITT_RLE) {
-                if(PackageUtil.isCodecLibAvailable()) {
-                    try {
-                        compressor = new TIFFCodecLibRLECompressor();
-                        if(DEBUG) {
-                            System.out.println
-                                ("Using codecLib RLE compressor");
-                        }
-                    } catch(RuntimeException e) {
-                        if(DEBUG) {
-                            System.out.println(e);
-                        }
-                    }
-                }
 
                 if(compressor == null) {
                     compressor = new TIFFRLECompressor();
@@ -868,19 +855,7 @@ public class TIFFImageWriter extends ImageWriter {
                 }
             } else if (compression ==
                        BaselineTIFFTagSet.COMPRESSION_CCITT_T_4) {
-                if(PackageUtil.isCodecLibAvailable()) {
-                    try {
-                        compressor = new TIFFCodecLibT4Compressor();
-                        if(DEBUG) {
-                            System.out.println
-                                ("Using codecLib T.4 compressor");
-                        }
-                    } catch(RuntimeException e) {
-                        if(DEBUG) {
-                            System.out.println(e);
-                        }
-                    }
-                }
+                
 
                 if(compressor == null) {
                     compressor = new TIFFT4Compressor();
@@ -895,19 +870,7 @@ public class TIFFImageWriter extends ImageWriter {
                 }
             } else if (compression ==
                        BaselineTIFFTagSet.COMPRESSION_CCITT_T_6) {
-                if(PackageUtil.isCodecLibAvailable()) {
-                    try {
-                        compressor = new TIFFCodecLibT6Compressor();
-                        if(DEBUG) {
-                            System.out.println
-                                ("Using codecLib T.6 compressor");
-                        }
-                    } catch(RuntimeException e) {
-                        if(DEBUG) {
-                            System.out.println(e);
-                        }
-                    }
-                }
+               
 
                 if(compressor == null) {
                     compressor = new TIFFT6Compressor();

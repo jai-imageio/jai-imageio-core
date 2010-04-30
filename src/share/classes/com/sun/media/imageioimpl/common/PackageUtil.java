@@ -46,7 +46,7 @@ package com.sun.media.imageioimpl.common;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import com.sun.medialib.codec.jiio.Util;
+//import com.sun.medialib.codec.jiio.Util;
 
 public class PackageUtil {
     /**
@@ -74,14 +74,14 @@ public class PackageUtil {
      */
     static {
         // Set codecLib flag.
-        try {
-            // Check for codecLib availability.
-            isCodecLibAvailable = Util.isCodecLibAvailable();
-        } catch(Throwable e) {
+//        try {
+//            // Check for codecLib availability.
+//            isCodecLibAvailable = Util.isCodecLibAvailable();
+//        } catch(Throwable e) {
             // A Throwable is equivalent to unavailable. Throwable is used
             // in case an Error rather than an Exception is thrown.
             isCodecLibAvailable = false;
-        }
+//        }
 
         // Set version and vendor strings.
         try {

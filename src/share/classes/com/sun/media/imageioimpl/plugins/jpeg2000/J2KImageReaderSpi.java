@@ -55,8 +55,6 @@ import javax.imageio.IIOException;
 
 import com.sun.media.imageioimpl.common.PackageUtil;
 
-import com.sun.medialib.codec.jiio.Util;
-
 public class J2KImageReaderSpi extends ImageReaderSpi {
 
     private static String [] writerSpiNames =

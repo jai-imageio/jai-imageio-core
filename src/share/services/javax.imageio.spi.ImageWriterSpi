@@ -44,10 +44,10 @@
 #
 # --- JAI-Image I/O ImageWriter plug-ins ---
 #
-com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageWriterSpi
-com.sun.media.imageioimpl.plugins.png.CLibPNGImageWriterSpi
+#com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageWriterSpi
+#com.sun.media.imageioimpl.plugins.png.CLibPNGImageWriterSpi
 com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriterSpi
-com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriterCodecLibSpi
+#com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriterCodecLibSpi
 com.sun.media.imageioimpl.plugins.wbmp.WBMPImageWriterSpi
 com.sun.media.imageioimpl.plugins.bmp.BMPImageWriterSpi
 com.sun.media.imageioimpl.plugins.gif.GIFImageWriterSpi
