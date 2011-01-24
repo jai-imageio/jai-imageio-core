@@ -20,12 +20,19 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
 	<url>https://jai-imageio.dev.java.net/</url>
 	<build>
 		<plugins>
+		
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
+                <version>2.3.2</version>
+                <configuration>
 					<source>1.5</source>
 					<target>1.5</target>
 				</configuration>
@@ -33,6 +40,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
 				<executions>
 					<execution>
 						<goals>
@@ -47,19 +55,21 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.2</version>
+				 <version>2.3.1</version>
 				<configuration>
 					<archive>
 						<manifestEntries>
 							<mode>development</mode>
-							<url>${pom.url}</url>
+							<url>${project.url}</url>
 						</manifestEntries>
 						 <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
 					</archive>
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.7.1</version>
 				<configuration>
 					<skip>false</skip>
 					<systemProperties>
@@ -105,9 +115,9 @@
 	<reporting>
 		<plugins>
 			<plugin>
-				<artifactId>
-					maven-project-info-reports-plugin
-				</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.3.1</version>
 				<reportSets>
 					<reportSet>
 						<reports>
