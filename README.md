@@ -54,8 +54,7 @@ and:
 This repository includes source JARs and javadoc, which should be picked
 up for instance by the Eclipse Maven support.
 
-Standalone [Javadoc for
-jai-imageio-core](https://github.com/stain/jai-imageio-core/javadoc/) is also
+Standalone [Javadoc for jai-imageio-core](http://stain.github.io/jai-imageio-core/javadoc/) is also
 provided.
 
 
@@ -92,6 +91,7 @@ More info
 ---------
 
 * http://github.com/stain/jai-imageio-core
+* http://stain.github.io/jai-imageio-core/javadoc/
 * https://java.net/projects/jai-imageio-core/
 * http://www.oracle.com/technetwork/java/current-142188.html
 * http://download.java.net/media/jai/builds/release/1_1_3/
