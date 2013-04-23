@@ -72,7 +72,7 @@ The copyright notice for this project is in
 The source code license for this project is BSD 3-clause, see
 [LICENSE.txt](LICENSE.txt)
 
-Standalone modifications (c) University of Manchester (Stian Soiland-Reyes) <stian@soiland-reyes.com> 2010-2013
+Build modifications (c) 2010-2013 University of Manchester (Stian Soiland-Reyes) <stian@soiland-reyes.com> 
 
 
 Changelog
@@ -90,8 +90,9 @@ Changelog
 
 More info
 ---------
-http://github.com/stain/jai-imageio-core
-https://java.net/projects/jai-imageio-core/
-http://www.oracle.com/technetwork/java/current-142188.html
-http://download.java.net/media/jai/builds/release/1_1_3/
+
+* http://github.com/stain/jai-imageio-core
+* https://java.net/projects/jai-imageio-core/
+* http://www.oracle.com/technetwork/java/current-142188.html
+* http://download.java.net/media/jai/builds/release/1_1_3/
 
