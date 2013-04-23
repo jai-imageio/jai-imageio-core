@@ -9,7 +9,7 @@ meaning that this version is platform independent and fully
 redistributable under the 3-clause BSD license in LICENSE.txt (and thus
 is GPL compatible).
 
-There is *NO DEVELOPMENT* in this repository; any commits here are
+There is **NO FURTHER DEVELOPMENT** in this repository; any commits here are
 just to keep the build working with recent versions of Maven/Java - the
 date in the version number indicates the time of such modifications
 and should not have any effect on functionality.
