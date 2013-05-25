@@ -34,7 +34,7 @@ To use jai-imageio-core-standalone from a Maven project, add:
     <dependency>
         <groupId>net.java.dev.jai-imageio</groupId> 
         <artifactId>jai-imageio-core-standalone</artifactId> 
-        <version>jai-imageio-1.2-pre-dr-b04-2013-04-23</version> 
+        <version>1.2-pre-dr-b04-2013-04-23</version> 
     </dependency>
 
 and:
