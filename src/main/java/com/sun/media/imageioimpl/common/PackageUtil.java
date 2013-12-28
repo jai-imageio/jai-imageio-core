@@ -84,15 +84,15 @@ public class PackageUtil {
 //        }
 
         // Set version and vendor strings.
-        try {
-            Class thisClass =
-                Class.forName("com.sun.media.imageioimpl.common.PackageUtil");
-            Package thisPackage = thisClass.getPackage();
-            version = thisPackage.getImplementationVersion();
-            vendor = thisPackage.getImplementationVendor();
-	    specTitle = thisPackage.getSpecificationTitle();
-        } catch(ClassNotFoundException e) {
-        }
+//        try {
+//            Class thisClass =
+//                Class.forName("com.sun.media.imageioimpl.common.PackageUtil");
+//            Package thisPackage = thisClass.getPackage();
+//            version = thisPackage.getImplementationVersion();
+//            vendor = thisPackage.getImplementationVendor();
+//	    specTitle = thisPackage.getSpecificationTitle();
+//        } catch(ClassNotFoundException e) {
+//        }
     }
 
     /**
