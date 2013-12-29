@@ -9,12 +9,14 @@ import java.awt.image.ComponentColorModel;
 import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferUShort;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
@@ -26,7 +28,11 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class JPEGLSImageReader extends ImageReader {
+    private static final Logger LOG = LoggerFactory.getLogger(JPEGLSImageReader.class);
 
     static double Log(double x) {
         return Math.log(x) / Math.log(2);
@@ -45,8 +51,11 @@ public class JPEGLSImageReader extends ImageReader {
     }
 
     private ImageInputStream iis;
+    private boolean gotHeader;
+    private boolean gotPixels;
     private int ROWS = 0;
     private int COLUMNS = 0;
+    private int ncomponents;
     private int P = 0;       // Sample precision
     private int NEAR = 0;
     private int MAXVAL;
@@ -65,6 +74,13 @@ public class JPEGLSImageReader extends ImageReader {
     private int readBitByte;
     private int readForwardByte;
     private boolean readHaveForwardByte;
+
+    private SampleModel sampleModel;
+    private DataBuffer dataBuffer;
+    private WritableRaster raster;
+    private ColorSpace colorSpace;
+    private ColorModel colorModel;
+    private BufferedImage outputImage;
     
     
     /**
@@ -83,28 +99,38 @@ public class JPEGLSImageReader extends ImageReader {
                          boolean seekForwardOnly,
                          boolean ignoreMetadata) {
         super.setInput(input, seekForwardOnly, ignoreMetadata);
-        iis = (ImageInputStream) input; // Always works
+        iis = (ImageInputStream) input;
         if (iis != null) {
             //iis.setByteOrder(ByteOrder.BIG_ENDIAN);
             iis.setByteOrder(ByteOrder.LITTLE_ENDIAN);
         }
     }
+
+    
+    @Override
+    public int getWidth(int imageIndex) throws IOException {
+        checkIndex(imageIndex);
+        readHeader();
+        return COLUMNS;
+    }
     
 
     @Override
-    public int getHeight(int arg0) throws IOException {
-        // TODO Auto-generated method stub
-        return 0;
+    public int getHeight(int imageIndex) throws IOException {
+        checkIndex(imageIndex);
+        readHeader();
+        return ROWS;
     }
+    
 
     @Override
-    public IIOMetadata getImageMetadata(int arg0) throws IOException {
+    public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Iterator<ImageTypeSpecifier> getImageTypes(int arg0)
+    public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex)
             throws IOException {
         // TODO Auto-generated method stub
         return null;
@@ -123,15 +149,47 @@ public class JPEGLSImageReader extends ImageReader {
     }
 
     @Override
-    public int getWidth(int arg0) throws IOException {
-        // TODO Auto-generated method stub
-        return 0;
+    public BufferedImage read(int imageIndex, ImageReadParam param)
+        throws IOException {
+
+        if (iis == null) {
+            throw new IllegalStateException(I18N.getString("JPEGLSImageReader5"));
+        }
+
+        checkIndex(imageIndex);
+        readHeader();
+        readPixels();
+        
+        return outputImage;
     }
 
+    
     @Override
-    public BufferedImage read(int arg0, ImageReadParam arg1) throws IOException {
-        // TODO Auto-generated method stub
-        return null;
+    public boolean canReadRaster() {
+        return true;
+    }
+    
+
+    @Override
+    public Raster readRaster(int imageIndex, ImageReadParam param)
+            throws IOException {
+
+        if (iis == null) {
+            throw new IllegalStateException(I18N.getString("JPEGLSImageReader5"));
+        }
+
+        checkIndex(imageIndex);
+        readHeader();
+        readPixels();
+        
+        return raster;
+    }
+    
+
+    private void checkIndex(int imageIndex) {
+        if (imageIndex != 0) {
+            throw new IndexOutOfBoundsException(I18N.getString("JPEGLSImageReader0"));
+        }
     }
 
     
@@ -142,7 +200,12 @@ public class JPEGLSImageReader extends ImageReader {
      * @throws IOException
      */
     private int read8() throws IOException {
-        return iis.readUnsignedByte() & 0xff;
+        int b = iis.readUnsignedByte();
+        if (b < 0 || b > 0xff) {
+            System.out.println("Bad byte!");
+            System.out.println("b = " + Integer.toHexString(b));
+        }
+        return b;
     }
     
 
@@ -197,6 +260,9 @@ public class JPEGLSImageReader extends ImageReader {
                         // unsigned(readBitByte) << dec << endl;
                         // cerr << "readForwardByte=" << hex <<
                         // unsigned(readForwardByte) << dec << endl;
+                        System.out.println("Bad forward byte!");
+                        System.out.println("readBitByte = " + Integer.toHexString(readBitByte));
+                        System.out.println("readForwardByte = " + Integer.toHexString(readForwardByte));
                         Assert(0); // for now
                     }
                 } else {
@@ -216,9 +282,10 @@ public class JPEGLSImageReader extends ImageReader {
     
     private boolean readSOF55(int marker) throws IOException {
         if (marker != JPEGLSConstants.JPEG_MARKER_SOF55) {
-            DEBUG("Invalid SOF55 marker");
             return false;
         }
+        
+        DEBUG("Reading SOF-55");
 
         int length = read16BE();
         if (length != 11) {
@@ -244,7 +311,7 @@ public class JPEGLSImageReader extends ImageReader {
             return false;
         }
 
-        int ncomponents = read8();
+        ncomponents = read8();
         if (ncomponents != 1) {
             DEBUG("Number of components must be 1 (got " + ncomponents + ")");
             return false;
@@ -265,9 +332,10 @@ public class JPEGLSImageReader extends ImageReader {
     
     private boolean readSOS(int marker) throws IOException {
         if (marker != JPEGLSConstants.JPEG_MARKER_SOS) {
-            DEBUG("Invalid SOS marker");
             return false;
         }
+        
+        DEBUG("Reading SOS");
 
         int length = read16BE();
         if (length != 8) {
@@ -302,9 +370,10 @@ public class JPEGLSImageReader extends ImageReader {
 
     private boolean readLSE1(int marker) throws IOException {
         if (marker != JPEGLSConstants.JPEG_MARKER_LSE) {
-            DEBUG("Invalid LSE marker");
             return false;
         }
+        
+        DEBUG("Reading LSE");
 
         int length = read16BE();
         if (length != 13) {
@@ -424,7 +493,6 @@ public class JPEGLSImageReader extends ImageReader {
             int MAXVAL, int RESET, int LIMIT, int qbpp, int rk, long[] A,
             int[] N, int[] Nn) throws IOException {
  DEBUG("\t\tcodecRunEndSample: " + "decoding");
- //if (!decompressing) DEBUG("\t\tcodecRunEndSample: value = " + Ix);
  
      int Ix = 0;
 
@@ -453,46 +521,48 @@ public class JPEGLSImageReader extends ImageReader {
 
      int  Errval = 0;
      int  updateErrval = 0;
-     int EMErrval = 0;
+     long EMErrval = 0;
 
      if (true) {
          EMErrval = decodeMappedErrvalWithGolomb(k,LIMIT-rk-1,qbpp);    // needs work :(
 
  DEBUG("\t\tcodecRunEndSample: EMErrval = " + EMErrval);
 
-         int tEMErrval = EMErrval + (RItype ? 1 : 0);     // use local copy to leave original for parameter update later
+            // use local copy to leave original for parameter update later
+            long tEMErrval = EMErrval + (RItype ? 1 : 0);
 
  DEBUG("\t\tcodecRunEndSample: tEMErrval = " + tEMErrval);
 
-         if (tEMErrval == 0) {
-             Errval = 0;
-         }
-         else if (k == 0) {
-             if (2*Nn[Q-365] < N[Q]) {
-                 if (tEMErrval%2 == 0) {
-                     Errval = -(int)(tEMErrval>>1);      // "map = 0"    2 becomes -1, 4 becomes -2, 6 becomes -3
-                 }
-                 else {
-                     Errval = (tEMErrval+1)>>1;      // "map = 1"    1 becomes 1, 3 becomes 2, 5 becomes 3
-                 }
-             }
-             else {  // 2*Nn[Q-365] >= N[Q]
-                 if (tEMErrval%2 == 0) {
-                     Errval = tEMErrval>>1;          // "map = 0"    2 becomes 1, 4 becomes 2, 6 becomes 3
-                 }
-                 else {
-                     Errval = -(int)((tEMErrval+1)>>1);  // "map = 1"    1 becomes -1, 3 becomes -2, 5 becomes -3
-                 }
-             }
-         }
-         else {
-             if (tEMErrval%2 == 0) {
-                 Errval = tEMErrval>>1;              // "map = 0"    2 becomes  1, 4 becomes  2, 6 becomes 3
-             }
-             else {
-                 Errval = -(int)((tEMErrval+1)>>1);      // "map = 1"    1 becomes -1, 3 becomes -2, 5 becomes -3
-             }
-         }
+            if (tEMErrval == 0) {
+                Errval = 0;
+            } else if (k == 0) {
+                if (2 * Nn[Q - 365] < N[Q]) {
+                    if (tEMErrval % 2 == 0) {
+                        // "map = 0" 2 becomes -1, 4 becomes -2, 6 becomes -3
+                        Errval = -(int) (tEMErrval >> 1);
+                    } else {
+                        // "map = 1" 1 becomes 1, 3 becomes 2, 5 becomes 3
+                        Errval = (int) ((tEMErrval + 1) >> 1);
+                    }
+                } else { 
+                    // 2*Nn[Q-365] >= N[Q]
+                    if (tEMErrval % 2 == 0) {
+                        // "map = 0" 2 becomes 1, 4 becomes 2, 6 becomes 3
+                        Errval = (int) (tEMErrval >> 1);
+                    } else {
+                        // "map = 1" 1 becomes -1, 3 becomes -2, 5 becomes -3
+                        Errval = -(int) ((tEMErrval + 1) >> 1); 
+                    }
+                }
+            } else {
+                if (tEMErrval % 2 == 0) {
+                    // "map = 0" 2 becomes 1, 4 becomes 2, 6 becomes 3
+                    Errval = (int) (tEMErrval >> 1);
+                } else {
+                    // "map = 1" 1 becomes -1, 3 becomes -2, 5 becomes -3
+                    Errval = -(int) ((tEMErrval + 1) >> 1);
+                }
+            }
 
 
  DEBUG("\t\tcodecRunEndSample: Errval after sign unmapping = " + Errval);
@@ -515,10 +585,11 @@ public class JPEGLSImageReader extends ImageReader {
 
          // (NB. Is this really the reverse of the encoding procedure ???)
 
-         if (Rx < -NEAR)
+         if (Rx < -NEAR) {
              Rx+=RANGE*(2*NEAR+1);
-         else if (Rx > MAXVAL+NEAR)
+         } else if (Rx > MAXVAL+NEAR) {
              Rx-=RANGE*(2*NEAR+1);
+         }
 
          Rx = clampPredictedValue(Rx);
 
@@ -536,7 +607,10 @@ public class JPEGLSImageReader extends ImageReader {
  DEBUG("\t\tcodecRunEndSample: N[" + Q + "]  before = " + N[Q] );
  DEBUG("\t\tcodecRunEndSample: Nn[" + (Q-365) + "] before = " + Nn[Q-365]);
 
-     if (updateErrval < 0) ++Nn[Q-365];
+     if (updateErrval < 0) {
+         ++Nn[Q-365];
+     }
+     
      A[Q]+=(EMErrval+1-(RItype ? 1 : 0))>>1;
      if (N[Q] == RESET) {
          A[Q]=A[Q]>>1;
@@ -554,21 +628,17 @@ public class JPEGLSImageReader extends ImageReader {
  return Ix;
  }
 
-
-    public void read() throws IOException {
-        readHeader();
-        readPixels();
-    }
-    
     
     private void readHeader() throws IOException {
+        if (gotHeader) {
+            return;
+        }
 
         boolean haveLSE1 = false;
 
         int marker = readJPEGMarker();
         if (marker != JPEGLSConstants.JPEG_MARKER_SOI) {
-            DEBUG("Expected JPEG SOI (got " + Integer.toHexString(marker) + ")");
-            return;
+            throw new IllegalStateException("Expected JPEG SOI (got " + Integer.toHexString(marker) + ")");
         }
 
         marker = readJPEGMarker();
@@ -576,14 +646,12 @@ public class JPEGLSImageReader extends ImageReader {
             haveLSE1 = readLSE1(marker);
             DEBUG("haveLSE1 = " + haveLSE1);
             if (!haveLSE1) {
-                DEBUG("Expected LSE1");
-                return;
+                throw new IllegalStateException("Expected LSE1 (marker=" + Integer.toHexString(marker) + ")");
             }
 
             marker = readJPEGMarker();
             if (!readSOF55(marker)) {
-                DEBUG("Expected SOF55");
-                return;
+                throw new IllegalStateException("Expected SOF55 (marker=" + Integer.toHexString(marker) + ")");
             }
         }
 
@@ -592,14 +660,12 @@ public class JPEGLSImageReader extends ImageReader {
             haveLSE1 = readLSE1(marker);
             DEBUG("haveLSE1 = " + haveLSE1);
             if (!haveLSE1) {
-                DEBUG("Expected LSE1");
-                return;
+                throw new IllegalStateException("Expected LSE1 (marker=" + Integer.toHexString(marker) + ")");
             }
 
             marker = readJPEGMarker();
             if (!readSOS(marker)) {
-                DEBUG("Invalid SOS");
-                return;
+                throw new IllegalStateException("Invalid SOS (marker=" + Integer.toHexString(marker) + ")");
             }
         }
 
@@ -692,10 +758,73 @@ public class JPEGLSImageReader extends ImageReader {
 
         Assert(bpp >= 2);
         Assert(LIMIT > qbpp); // Else LIMIT-qbpp-1 will fail (see A.5.3)
+        
+        gotHeader = true;
+    }
+    
+    
+    private void createImage() {
+        if (COLUMNS <= 0) {
+            throw new IllegalStateException("Unsupported COLUMNS (" + COLUMNS + ")");
+        }
+        
+        if (ROWS <= 0) {
+            throw new IllegalStateException("Unsupported ROWS (" + ROWS + ")");
+        }
+        
+        if (ncomponents != 1) {
+            throw new IllegalStateException("Unsupported ncomponents (" + ncomponents + ")");
+        }
+        
+        int dataType = 0;
+        
+        if (bpp <= 8) {
+            dataType = DataBuffer.TYPE_BYTE;
+            dataBuffer = new DataBufferByte(COLUMNS * ROWS * ncomponents);
+        } else if (bpp <= 16) {
+            dataType = DataBuffer.TYPE_USHORT;
+            dataBuffer = new DataBufferUShort(COLUMNS * ROWS * ncomponents);
+        } else {
+            throw new IllegalStateException("Unsupported BPP");
+        }
+
+        // Assumes nComponents = 1 (grayscale)
+        sampleModel = new ComponentSampleModel(
+                dataType,
+                COLUMNS,
+                ROWS,
+                ncomponents,
+                COLUMNS,
+                new int[] { 0 });
+        
+        raster = Raster.createWritableRaster(
+                sampleModel,
+                dataBuffer,
+                new Point(0, 0));
+
+        int[] bits = new int[ncomponents];
+        Arrays.fill(bits, bpp);
+        
+        colorSpace = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+        
+        colorModel = new ComponentColorModel(
+                colorSpace,
+                bits,
+                false,
+                false,
+                Transparency.OPAQUE,
+                dataType);
+        
+        outputImage = new BufferedImage(colorModel, raster, false, null);
     }
     
     
     private void readPixels() throws IOException {
+        if (gotPixels) {
+            return;
+        }
+
+        createImage();
 
         // Initialization of variables ...
 
@@ -736,37 +865,16 @@ public class JPEGLSImageReader extends ImageReader {
         Nn[1] = 0;
 
         // The run variables seem to need to live beyond a single run or row !!!
-
         int RUNIndex = 0;
-
-        int[] rowA = new int[COLUMNS];
-        int[] rowB = new int[COLUMNS];
-
-        int row = 0;
-        int[] thisRow = rowA;
-        int[] prevRow = rowB;
         int prevRa0 = 0;
 
-        // Assumes:
-        // nComponents = 1 (grayscale)
-        // data type = byte (bpp = 8)
-        final SampleModel sampleModel = new ComponentSampleModel(DataBuffer.TYPE_BYTE, COLUMNS, ROWS, 1, COLUMNS, new int[] { 0 });
-        final DataBuffer dataBuffer = new DataBufferByte(COLUMNS * ROWS);
-        final Point location = new Point(0, 0);
-        final WritableRaster raster = Raster.createWritableRaster(sampleModel, dataBuffer, location);
-        //final ColorModel colorModel = ColorModelFactory.createColorModel(attrs, raster);
-        final int dataType = DataBuffer.TYPE_BYTE;
-        //final int[] bits = new int[] { 8 };
-        final ColorSpace colorSpace = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-        final ColorModel colorModel = new ComponentColorModel(colorSpace, new int[] { 8 }, false, false, Transparency.OPAQUE, dataType);
-        final BufferedImage outputImage = new BufferedImage(colorModel, raster, false, null);
-
+        int[] thisRow = new int[COLUMNS];
+        int[] prevRow = new int[COLUMNS];
         
-        for (row = 0; row < ROWS; ++row) {
+        for (int row = 0; row < ROWS; ++row) {
             DEBUG("Row " + row);
-            int col = 0;
-            for (col = 0; col < COLUMNS; ++col) {
-
+            
+            for (int col = 0; col < COLUMNS; ++col) {
                 DEBUG("\tcol = " + col);
 
                 // c b d .
@@ -777,10 +885,10 @@ public class JPEGLSImageReader extends ImageReader {
                 long Rx = 0;
                 
                 // value at edges (first row and first col is zero) ...
-                int Ra;
-                int Rb;
-                int Rc;
-                int Rd;
+                int Ra = 0;
+                int Rb = 0;
+                int Rc = 0;
+                int Rd = 0;
 
                 if (row > 0) {
                     Rb = prevRow[col];
@@ -788,7 +896,6 @@ public class JPEGLSImageReader extends ImageReader {
                     Ra = (col > 0) ? thisRow[col - 1] : (prevRa0 = Rb);
                     Rd = (col + 1 < COLUMNS) ? prevRow[col + 1] : Rb;
                 } else {
-                    Rb = Rc = Rd = 0;
                     Ra = (col > 0) ? thisRow[col - 1] : (prevRa0 = 0);
                 }
 
@@ -804,9 +911,9 @@ public class JPEGLSImageReader extends ImageReader {
 
                 // Compute local gradient ...
 
-                int D1 = (int) Rd - Rb;
-                int D2 = (int) Rb - Rc;
-                int D3 = (int) Rc - Ra;
+                int D1 = Rd - Rb;
+                int D2 = Rb - Rc;
+                int D3 = Rc - Ra;
 
                 DEBUG("\t\tD1 = " + D1);
                 DEBUG("\t\tD2 = " + D2);
@@ -822,9 +929,8 @@ public class JPEGLSImageReader extends ImageReader {
                     if (true) {
                         // dumpReadBitPosition();
                         // Why is RUNIndex not reset to 0 here ?
-                        int R = 0;
                         while (true) {
-                            R = readBit();
+                            int R = readBit();
                             DEBUG("\tcol " + col);
                             DEBUG("\tR " + R);
                             if (R == 1) {
@@ -835,7 +941,7 @@ public class JPEGLSImageReader extends ImageReader {
                                 DEBUG("\tFilling with " + rm + " samples of Ra " + Ra);
                                 while (rm-- != 0 && col < COLUMNS) {
                                     thisRow[col] = Ra;
-                                    DEBUG("pixel[" + row + "," + col + "] = " + thisRow[col]);
+                                    PIXEL("pixel[" + row + "," + col + "] = " + thisRow[col]);
                                     ++col;
                                 }
                                 // This will match when exact count coincides
@@ -874,7 +980,7 @@ public class JPEGLSImageReader extends ImageReader {
                                     // }
                                     Assert(col < COLUMNS);
                                     thisRow[col] = Ra;
-                                    DEBUG("pixel[" + row + "," + col + "] = " + thisRow[col]);
+                                    PIXEL("pixel[" + row + "," + col + "] = " + thisRow[col]);
                                     ++col;
                                 }
                                 // Decode the run interruption sample ...
@@ -895,7 +1001,7 @@ public class JPEGLSImageReader extends ImageReader {
                                 DEBUG("\t\tRa = " + Ra);
                                 DEBUG("\t\tRb = " + Rb);
                                 thisRow[col] = codecRunEndSample(Ra, Rb, RANGE, NEAR, MAXVAL, RESET, LIMIT, qbpp, JPEGLSConstants.J[RUNIndex], A, N, Nn);
-                                DEBUG("pixel[" + row + "," + col + "] = " + thisRow[col]);
+                                PIXEL("pixel[" + row + "," + col + "] = " + thisRow[col]);
                                 DEBUG("\tValue that ends run " + thisRow[col]);
                                 // dumpReadBitPosition();
                                 if (RUNIndex > 0) {
@@ -1136,7 +1242,7 @@ public class JPEGLSImageReader extends ImageReader {
                         // implemented
 
                         thisRow[col] = (int) Rx;
-                        DEBUG("pixel[" + row + "," + col + "] = " + thisRow[col]);
+                        PIXEL("pixel[" + row + "," + col + "] = " + thisRow[col]);
 
                     }
 
@@ -1201,7 +1307,7 @@ public class JPEGLSImageReader extends ImageReader {
             
             int rowStart = row * COLUMNS;
             for (int i = 0; i < COLUMNS; i++) {
-                dataBuffer.setElem(rowStart + i, thisRow[i]);
+                dataBuffer.setElem(rowStart + i, (thisRow[i]));
             }
             
             int[] tmpRow = thisRow;
@@ -1209,7 +1315,7 @@ public class JPEGLSImageReader extends ImageReader {
             prevRow = tmpRow;
         }
         
-        ImageIO.write(outputImage, "png", new File("/home/cody/imagetest-" + System.currentTimeMillis() + ".png"));
+        gotPixels = true;
     }
 
     public static void Assert(boolean x) {
@@ -1229,6 +1335,13 @@ public class JPEGLSImageReader extends ImageReader {
     
     public static void DEBUG(String str) {
         //System.out.println(str);
+        LOG.info(str);
+    }
+    
+    
+    public static void PIXEL(String str) {
+        //System.out.println(str);
+        LOG.info(str);
     }
 
     public static void main(String[] args) throws IOException {
@@ -1238,12 +1351,19 @@ public class JPEGLSImageReader extends ImageReader {
         //File file = new File("/home/cody/Downloads/jpegls_0.06.20120206/data/hploco.near.jls");
         
         File file = new File("/home/cody/Downloads/jpegls_0.06.20120206/data/CT2.jls");
+        //File file = new File("/home/cody/Downloads/jpegls_0.06.20120206/data/CT2.noruns.jls");
         
         ImageInputStream input = new FileImageInputStream(file);
         
         JPEGLSImageReaderSpi spi = new JPEGLSImageReaderSpi();
         JPEGLSImageReader reader = new JPEGLSImageReader(spi);
         reader.setInput(input);
-        reader.read();
+        
+        BufferedImage outputImage = reader.read(0, null);
+
+        ImageIO.write(
+                outputImage,
+                "png",
+                new File("/home/cody/" + file.getName() + "-" + System.currentTimeMillis() + ".png"));
     }
 }
