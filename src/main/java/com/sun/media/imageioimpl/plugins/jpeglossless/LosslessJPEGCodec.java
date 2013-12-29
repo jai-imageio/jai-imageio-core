@@ -17,7 +17,6 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Vector;
 
 import javax.imageio.stream.ImageInputStream;
 
@@ -207,21 +206,18 @@ public class LosslessJPEGCodec {
           int s = in.read();
           byte destination = (byte) (s & 0xf);
           int[] nCodes = new int[16];
-          Vector table = new Vector();
+          ShortVector table = new ShortVector();
           for (int i=0; i<nCodes.length; i++) {
             nCodes[i] = in.read();
-            table.add(new Short((short) nCodes[i]));
+            table.add((short)nCodes[i]);
           }
 
           for (int i=0; i<nCodes.length; i++) {
             for (int j=0; j<nCodes[i]; j++) {
-              table.add(new Short((short) (in.read() & 0xff)));
+              table.add((short) (in.read() & 0xff));
             }
           }
-          huffmanTables[destination] = new short[table.size()];
-          for (int i=0; i<huffmanTables[destination].length; i++) {
-            huffmanTables[destination][i] = ((Short) table.get(i)).shortValue();
-          }
+          huffmanTables[destination] = table.toShortArray();
         }
         in.seek(fp + length);
       }

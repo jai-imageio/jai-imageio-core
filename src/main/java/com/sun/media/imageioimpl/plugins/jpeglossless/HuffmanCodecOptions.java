@@ -1,4 +1,3 @@
-
 package com.sun.media.imageioimpl.plugins.jpeglossless;
 
 /**
@@ -6,6 +5,6 @@ package com.sun.media.imageioimpl.plugins.jpeglossless;
  */
 public class HuffmanCodecOptions extends CodecOptions {
 
-  public short[] table;
+    public short[] table;
 
 }
