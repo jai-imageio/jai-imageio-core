@@ -28,11 +28,8 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class JPEGLSImageReader extends ImageReader {
-    private static final Logger LOG = LoggerFactory.getLogger(JPEGLSImageReader.class);
+    //private static final Logger LOG = LoggerFactory.getLogger(JPEGLSImageReader.class);
 
     static double Log(double x) {
         return Math.log(x) / Math.log(2);
@@ -1335,13 +1332,13 @@ public class JPEGLSImageReader extends ImageReader {
     
     public static void DEBUG(String str) {
         //System.out.println(str);
-        LOG.info(str);
+        //LOG.info(str);
     }
     
     
     public static void PIXEL(String str) {
         //System.out.println(str);
-        LOG.info(str);
+        //LOG.info(str);
     }
 
     public static void main(String[] args) throws IOException {
