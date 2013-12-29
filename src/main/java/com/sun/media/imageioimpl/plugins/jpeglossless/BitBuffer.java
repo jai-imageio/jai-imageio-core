@@ -1,59 +1,11 @@
-/*
- * #%L
- * OME SCIFIO package for reading and converting scientific file formats.
- * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
- *   - Board of Regents of the University of Wisconsin-Madison
- *   - Glencoe Software, Inc.
- *   - University of Dundee
- * %%
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
- * #L%
- */
 
 package com.sun.media.imageioimpl.plugins.jpeglossless;
 
-import java.util.Random;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A class for reading arbitrary numbers of bits from a byte array.
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/BitBuffer.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/BitBuffer.java;hb=HEAD">Gitweb</a></dd></dl>
- *
- * @author Eric Kjellman egkjellman at wisc.edu
  */
 public class BitBuffer {
-
-  // -- Constants --
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(BitBuffer.class);
 
   /** Various bitmasks for the 0000xxxx side of a byte. */
   private static final int[] BACK_MASK = {
@@ -91,34 +43,6 @@ public class BitBuffer {
     currentByte = 0;
     currentBit = 0;
     eofByte = byteBuffer.length;
-  }
-
-  /**
-   * Skips a number of bits in the BitBuffer.
-   *
-   * @param bits Number of bits to skip
-   */
-  public void skipBits(long bits) {
-    if (bits < 0) {
-      throw new IllegalArgumentException("Bits to skip may not be negative");
-    }
-
-    // handles skipping past eof
-    if ((long) eofByte * 8 < (long) currentByte * 8 + currentBit + bits) {
-      eofFlag = true;
-      currentByte = eofByte;
-      currentBit = 0;
-      return;
-    }
-
-    int skipBytes = (int) (bits / 8);
-    int skipBits = (int) (bits % 8);
-    currentByte += skipBytes;
-    currentBit += skipBits;
-    while (currentBit >= 8) {
-      currentByte++;
-      currentBit -= 8;
-    }
   }
 
   /**
@@ -188,65 +112,5 @@ public class BitBuffer {
       }
     }
     return toStore;
-  }
-
-  /**
-   * Testing method.
-   * @param args Ignored.
-   */
-  public static void main(String[] args) {
-    int trials = 50000;
-    int[] nums = new int[trials];
-    int[] len = new int[trials];
-    BitWriter bw = new BitWriter();
-    int totallen = 0;
-
-    Random r = new Random();
-    LOGGER.info("Generating {} trials.", trials);
-    LOGGER.info("Writing to byte array");
-    // we want the trials to be able to be all possible bit lengths.
-    // r.nextInt() by itself is not sufficient... in 50000 trials it would be
-    // extremely unlikely to produce bit strings of 1 bit.
-    // instead, we randomly choose from 0 to 2^(i % 32).
-    // Except, 1 << 31 is a negative number in two's complement, so we make it
-    // a random number in the entire range.
-    for (int i = 0; i < trials; i++) {
-      if (31 == i % 32) {
-        nums[i] = r.nextInt();
-      }
-      else {
-        nums[i] = r.nextInt(1 << (i % 32));
-      }
-      // How many bits are required to represent this number?
-      len[i] = (Integer.toBinaryString(nums[i])).length();
-      totallen += len[i];
-      bw.write(nums[i], len[i]);
-    }
-    BitBuffer bb = new BitBuffer(bw.toByteArray());
-    int readint;
-    LOGGER.info("Reading from BitBuffer");
-    // Randomly skip or read bytes
-    for (int i = 0; i < trials; i++) {
-      int c = r.nextInt(100);
-      if (c > 50) {
-        readint = bb.getBits(len[i]);
-        if (readint != nums[i]) {
-          LOGGER.info("Error at #{}: {} received, {} expected.",
-            new Object[] {i, readint, nums[i]});
-        }
-      }
-      else {
-        bb.skipBits(len[i]);
-      }
-    }
-    // Test reading past end of buffer.
-    LOGGER.info("Testing end of buffer");
-    bb = new BitBuffer(bw.toByteArray());
-    // The total length could be mid byte. Add one byte to test.
-    bb.skipBits(totallen + 8);
-    int read = bb.getBits(1);
-    if (-1 != read) {
-      LOGGER.info("-1 expected at end of buffer, {} received.", read);
-    }
   }
 }
