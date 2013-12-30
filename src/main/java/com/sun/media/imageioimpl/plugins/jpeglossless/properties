@@ -1,0 +1,18 @@
+
+JPEGLosslessImageReader0=Only one image exists in the stream.
+JPEGLosslessImageReader1=Invalid magic value for JPEGLossless file.
+JPEGLosslessImageReader2=Invalid compression specified in JPEGLossless stream.
+JPEGLosslessImageReader3=New JPEGLossless version not implemented yet.
+JPEGLosslessImageReader4=No ImageIO-style reader is found for
+JPEGLosslessImageReader5=Input has not been set.
+JPEGLosslessImageWriter0=Output is not an ImageOutputStream.
+JPEGLosslessImageWriter1=The image region to be encoded is empty.
+JPEGLosslessImageWriter2=Only 1 or 3 band image is encoded.
+JPEGLosslessImageWriter3=The maximum pixel size should be 32.
+JPEGLosslessImageWriter4=Only version 3 is supported.
+JPEGLosslessImageWriter5=No ImageIO-style writer is found for
+JPEGLosslessImageWriter6=Compression type BI_BITFIELDS should be used for 16 bpp or 32 bpp or 32 bpp images only.
+JPEGLosslessImageWriter7=Output has not been set.
+JPEGLosslessImageWriter8=Image is null!
+JPEGLosslessMetadata0=The provided metadata format isn't recognized.
+JPEGLosslessMetadata1=Metadata is read-only.
