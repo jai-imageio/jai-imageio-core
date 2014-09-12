@@ -35,6 +35,8 @@ To build this project, use Apache Maven 2.0.9 or newer and run:
 
     mvn clean install
 
+(If you are using JDK8, uncomment the `-Xdoclint:none` line in `pom.xml`)
+
 To use jai-imageio-core-standalone from a Maven project, add:
 
     <dependency>
