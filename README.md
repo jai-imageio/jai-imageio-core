@@ -40,7 +40,7 @@ To use jai-imageio-core-standalone from a Maven project, add:
     <dependency>
         <groupId>net.java.dev.jai-imageio</groupId>
         <artifactId>jai-imageio-core-standalone</artifactId>
-        <version>1.2-pre-dr-b04-2014-09-12</version>
+        <version>1.2-pre-dr-b04-2014-09-13</version>
     </dependency>
 
 and:
@@ -108,7 +108,7 @@ Changelog
       support from [jai-imageio-core](http://github.com/stain/jai-imageio-core)
       for [licensing reasons](https://github.com/stain/jai-imageio-core/issues/4).
       Re-enabled junit test (issue #5).
-
+* 2014-09-13 - Removed last jpeg2000 plugin. Javadoc now includes overview.      
 
 
 More info
