@@ -64,7 +64,10 @@
 					</execution>
 				</executions>
 				<configuration>
+          <!-- uncomment for JDK8 javadoc -->
+          <!-- 
           <additionalparam>-Xdoclint:none</additionalparam>
+          -->
 					<linksource>true</linksource>
 					<protected>true</protected>
           <links>
