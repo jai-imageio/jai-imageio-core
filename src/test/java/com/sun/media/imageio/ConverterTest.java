@@ -7,12 +7,10 @@ import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ConverterTest {
 
-	@Ignore
 	@Test
 	public void testname() throws Exception {
 		System.out.println(Arrays.asList(ImageIO.getReaderMIMETypes()));

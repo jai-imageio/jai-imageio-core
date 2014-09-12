@@ -88,9 +88,11 @@ public class PackageUtil {
             Class thisClass =
                 Class.forName("com.sun.media.imageioimpl.common.PackageUtil");
             Package thisPackage = thisClass.getPackage();
-            version = thisPackage.getImplementationVersion();
-            vendor = thisPackage.getImplementationVendor();
-	    specTitle = thisPackage.getSpecificationTitle();
+            if (thisPackage.getImplementationVersion()!= null && thisPackage.getImplementationVendor() != null) {
+            	version = thisPackage.getImplementationVersion();
+            	vendor = thisPackage.getImplementationVendor();
+            	specTitle = thisPackage.getSpecificationTitle();
+            }
         } catch(ClassNotFoundException e) {
         }
     }
