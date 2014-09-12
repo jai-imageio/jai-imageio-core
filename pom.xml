@@ -162,19 +162,5 @@
 		<developerConnection>scm:git:git@github.com:stain/jai-imageio-core.git</developerConnection>
 		<url>http://github.com/stain/jai-imageio-core</url>
 	</scm>
-	<distributionManagement>
-		<repository>
-			<id>mygrid-repository</id>
-			<name>myGrid Repository</name>
-			<!--  on rosalind.cs.man.ac.uk (www.mygrid.org.uk) -->
-			<url>file:///local/www/mygrid/maven/repository</url>
-		</repository>
-		<snapshotRepository>
-			<id>mygrid-snapshot-repository</id>
-			<name>myGrid Snapshot Repository</name>
-			<!--  on rosalind.cs.man.ac.uk (www.mygrid.org.uk) -->
-			<url>file:///local/www/mygrid/maven/snapshot-repository</url>
-		</snapshotRepository>
-	</distributionManagement>
 </project>
   
