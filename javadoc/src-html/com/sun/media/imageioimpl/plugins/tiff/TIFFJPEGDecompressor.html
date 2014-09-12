@@ -1,0 +1,303 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * $RCSfile: TIFFJPEGDecompressor.java,v $<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * <a name="line.4"></a>
+<span class="sourceLineNo">005</span> * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * <a name="line.6"></a>
+<span class="sourceLineNo">007</span> * Redistribution and use in source and binary forms, with or without<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * modification, are permitted provided that the following conditions<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * are met: <a name="line.9"></a>
+<span class="sourceLineNo">010</span> * <a name="line.10"></a>
+<span class="sourceLineNo">011</span> * - Redistribution of source code must retain the above copyright <a name="line.11"></a>
+<span class="sourceLineNo">012</span> *   notice, this  list of conditions and the following disclaimer.<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * <a name="line.13"></a>
+<span class="sourceLineNo">014</span> * - Redistribution in binary form must reproduce the above copyright<a name="line.14"></a>
+<span class="sourceLineNo">015</span> *   notice, this list of conditions and the following disclaimer in <a name="line.15"></a>
+<span class="sourceLineNo">016</span> *   the documentation and/or other materials provided with the<a name="line.16"></a>
+<span class="sourceLineNo">017</span> *   distribution.<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * <a name="line.18"></a>
+<span class="sourceLineNo">019</span> * Neither the name of Sun Microsystems, Inc. or the names of <a name="line.19"></a>
+<span class="sourceLineNo">020</span> * contributors may be used to endorse or promote products derived <a name="line.20"></a>
+<span class="sourceLineNo">021</span> * from this software without specific prior written permission.<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * <a name="line.22"></a>
+<span class="sourceLineNo">023</span> * This software is provided "AS IS," without a warranty of any <a name="line.23"></a>
+<span class="sourceLineNo">024</span> * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND <a name="line.24"></a>
+<span class="sourceLineNo">025</span> * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, <a name="line.25"></a>
+<span class="sourceLineNo">026</span> * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY<a name="line.26"></a>
+<span class="sourceLineNo">027</span> * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL <a name="line.27"></a>
+<span class="sourceLineNo">028</span> * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF <a name="line.28"></a>
+<span class="sourceLineNo">029</span> * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS<a name="line.29"></a>
+<span class="sourceLineNo">030</span> * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR <a name="line.30"></a>
+<span class="sourceLineNo">031</span> * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,<a name="line.31"></a>
+<span class="sourceLineNo">032</span> * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR<a name="line.33"></a>
+<span class="sourceLineNo">034</span> * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE<a name="line.34"></a>
+<span class="sourceLineNo">035</span> * POSSIBILITY OF SUCH DAMAGES. <a name="line.35"></a>
+<span class="sourceLineNo">036</span> * <a name="line.36"></a>
+<span class="sourceLineNo">037</span> * You acknowledge that this software is not designed or intended for <a name="line.37"></a>
+<span class="sourceLineNo">038</span> * use in the design, construction, operation or maintenance of any <a name="line.38"></a>
+<span class="sourceLineNo">039</span> * nuclear facility. <a name="line.39"></a>
+<span class="sourceLineNo">040</span> *<a name="line.40"></a>
+<span class="sourceLineNo">041</span> * $Revision: 1.2 $<a name="line.41"></a>
+<span class="sourceLineNo">042</span> * $Date: 2006/04/11 22:10:36 $<a name="line.42"></a>
+<span class="sourceLineNo">043</span> * $State: Exp $<a name="line.43"></a>
+<span class="sourceLineNo">044</span> */<a name="line.44"></a>
+<span class="sourceLineNo">045</span>package com.sun.media.imageioimpl.plugins.tiff;<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>import java.io.IOException;<a name="line.47"></a>
+<span class="sourceLineNo">048</span>import java.io.ByteArrayInputStream;<a name="line.48"></a>
+<span class="sourceLineNo">049</span>import java.util.Iterator;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>import javax.imageio.ImageIO;<a name="line.50"></a>
+<span class="sourceLineNo">051</span>import javax.imageio.ImageReader;<a name="line.51"></a>
+<span class="sourceLineNo">052</span>import javax.imageio.ImageReadParam;<a name="line.52"></a>
+<span class="sourceLineNo">053</span>import javax.imageio.stream.MemoryCacheImageInputStream;<a name="line.53"></a>
+<span class="sourceLineNo">054</span>import javax.imageio.stream.ImageInputStream;<a name="line.54"></a>
+<span class="sourceLineNo">055</span>import com.sun.media.imageio.plugins.tiff.BaselineTIFFTagSet;<a name="line.55"></a>
+<span class="sourceLineNo">056</span>import com.sun.media.imageio.plugins.tiff.TIFFDecompressor;<a name="line.56"></a>
+<span class="sourceLineNo">057</span>import com.sun.media.imageio.plugins.tiff.TIFFField;<a name="line.57"></a>
+<span class="sourceLineNo">058</span><a name="line.58"></a>
+<span class="sourceLineNo">059</span>public class TIFFJPEGDecompressor extends TIFFDecompressor {<a name="line.59"></a>
+<span class="sourceLineNo">060</span>    private static final boolean DEBUG = false; // XXX false for release.<a name="line.60"></a>
+<span class="sourceLineNo">061</span><a name="line.61"></a>
+<span class="sourceLineNo">062</span>    // Start of Image<a name="line.62"></a>
+<span class="sourceLineNo">063</span>    protected static final int SOI = 0xD8;<a name="line.63"></a>
+<span class="sourceLineNo">064</span><a name="line.64"></a>
+<span class="sourceLineNo">065</span>    // End of Image<a name="line.65"></a>
+<span class="sourceLineNo">066</span>    protected static final int EOI = 0xD9;<a name="line.66"></a>
+<span class="sourceLineNo">067</span><a name="line.67"></a>
+<span class="sourceLineNo">068</span>    //private static ImageReaderSpi jpegReaderSPI = null;//XXX<a name="line.68"></a>
+<span class="sourceLineNo">069</span><a name="line.69"></a>
+<span class="sourceLineNo">070</span>    protected ImageReader JPEGReader = null;<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    protected ImageReadParam JPEGParam;<a name="line.71"></a>
+<span class="sourceLineNo">072</span><a name="line.72"></a>
+<span class="sourceLineNo">073</span>    protected boolean hasJPEGTables = false;<a name="line.73"></a>
+<span class="sourceLineNo">074</span>    protected byte[] tables = null;<a name="line.74"></a>
+<span class="sourceLineNo">075</span><a name="line.75"></a>
+<span class="sourceLineNo">076</span>    private byte[] data = new byte[0];<a name="line.76"></a>
+<span class="sourceLineNo">077</span><a name="line.77"></a>
+<span class="sourceLineNo">078</span>    /* XXX<a name="line.78"></a>
+<span class="sourceLineNo">079</span>    static {<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        try {<a name="line.80"></a>
+<span class="sourceLineNo">081</span>            IIORegistry registry = IIORegistry.getDefaultInstance();<a name="line.81"></a>
+<span class="sourceLineNo">082</span>            Class imageReaderClass =<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                Class.forName("javax.imageio.spi.ImageReaderSpi");<a name="line.83"></a>
+<span class="sourceLineNo">084</span>            Iterator readerSPIs =<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                registry.getServiceProviders(imageReaderClass,<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                                             new JPEGSPIFilter(),<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                                             true);<a name="line.87"></a>
+<span class="sourceLineNo">088</span>            if(readerSPIs.hasNext()) {<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                jpegReaderSPI = (ImageReaderSpi)readerSPIs.next();<a name="line.89"></a>
+<span class="sourceLineNo">090</span>            }<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        } catch(Exception e) {<a name="line.91"></a>
+<span class="sourceLineNo">092</span>            // Ignore it ...<a name="line.92"></a>
+<span class="sourceLineNo">093</span>        }<a name="line.93"></a>
+<span class="sourceLineNo">094</span>    }<a name="line.94"></a>
+<span class="sourceLineNo">095</span>    */<a name="line.95"></a>
+<span class="sourceLineNo">096</span><a name="line.96"></a>
+<span class="sourceLineNo">097</span>    public TIFFJPEGDecompressor() {}<a name="line.97"></a>
+<span class="sourceLineNo">098</span><a name="line.98"></a>
+<span class="sourceLineNo">099</span>    /* XXX<a name="line.99"></a>
+<span class="sourceLineNo">100</span>    private static class JPEGSPIFilter implements ServiceRegistry.Filter {<a name="line.100"></a>
+<span class="sourceLineNo">101</span>        JPEGSPIFilter() {}<a name="line.101"></a>
+<span class="sourceLineNo">102</span><a name="line.102"></a>
+<span class="sourceLineNo">103</span>        public boolean filter(Object provider) {<a name="line.103"></a>
+<span class="sourceLineNo">104</span>            ImageReaderSpi readerSPI = (ImageReaderSpi)provider;<a name="line.104"></a>
+<span class="sourceLineNo">105</span><a name="line.105"></a>
+<span class="sourceLineNo">106</span>            if(readerSPI.getPluginClassName().startsWith("com.sun.imageio")) {<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                String streamMetadataName =<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                    readerSPI.getNativeStreamMetadataFormatName();<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                if(streamMetadataName != null) {<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                    return streamMetadataName.indexOf("jpeg_stream") != -1;<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                } else {<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                    return false;<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                }<a name="line.113"></a>
+<span class="sourceLineNo">114</span>            }<a name="line.114"></a>
+<span class="sourceLineNo">115</span><a name="line.115"></a>
+<span class="sourceLineNo">116</span>            return false;<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        }<a name="line.117"></a>
+<span class="sourceLineNo">118</span>    }<a name="line.118"></a>
+<span class="sourceLineNo">119</span>    */<a name="line.119"></a>
+<span class="sourceLineNo">120</span><a name="line.120"></a>
+<span class="sourceLineNo">121</span>    public void beginDecoding() {<a name="line.121"></a>
+<span class="sourceLineNo">122</span>        // Initialize the JPEG reader if needed.<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        if(this.JPEGReader == null) {<a name="line.123"></a>
+<span class="sourceLineNo">124</span>            if(DEBUG) System.out.println("Initializing JPEGReader");<a name="line.124"></a>
+<span class="sourceLineNo">125</span><a name="line.125"></a>
+<span class="sourceLineNo">126</span>            /* XXX<a name="line.126"></a>
+<span class="sourceLineNo">127</span>            if(this.jpegReaderSPI != null) {<a name="line.127"></a>
+<span class="sourceLineNo">128</span>                try {<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                    this.JPEGReader = jpegReaderSPI.createReaderInstance();<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                } catch(Exception e) {<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                }<a name="line.131"></a>
+<span class="sourceLineNo">132</span>            }<a name="line.132"></a>
+<span class="sourceLineNo">133</span><a name="line.133"></a>
+<span class="sourceLineNo">134</span>            if(this.JPEGReader == null) {<a name="line.134"></a>
+<span class="sourceLineNo">135</span>            */<a name="line.135"></a>
+<span class="sourceLineNo">136</span><a name="line.136"></a>
+<span class="sourceLineNo">137</span>            // Get all JPEG readers.<a name="line.137"></a>
+<span class="sourceLineNo">138</span>            Iterator iter = ImageIO.getImageReadersByFormatName("jpeg");<a name="line.138"></a>
+<span class="sourceLineNo">139</span><a name="line.139"></a>
+<span class="sourceLineNo">140</span>            if(!iter.hasNext()) {<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                // XXX The exception thrown should be an IIOException.<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                throw new IllegalStateException("No JPEG readers found!");<a name="line.142"></a>
+<span class="sourceLineNo">143</span>            }<a name="line.143"></a>
+<span class="sourceLineNo">144</span><a name="line.144"></a>
+<span class="sourceLineNo">145</span>            // Initialize reader to the first one.<a name="line.145"></a>
+<span class="sourceLineNo">146</span>            this.JPEGReader = (ImageReader)iter.next();<a name="line.146"></a>
+<span class="sourceLineNo">147</span><a name="line.147"></a>
+<span class="sourceLineNo">148</span>            if(DEBUG) System.out.println("Using "+<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                                         JPEGReader.getClass().getName());<a name="line.149"></a>
+<span class="sourceLineNo">150</span><a name="line.150"></a>
+<span class="sourceLineNo">151</span>            this.JPEGParam = JPEGReader.getDefaultReadParam();<a name="line.151"></a>
+<span class="sourceLineNo">152</span>        }<a name="line.152"></a>
+<span class="sourceLineNo">153</span><a name="line.153"></a>
+<span class="sourceLineNo">154</span>        // Get the JPEGTables field.<a name="line.154"></a>
+<span class="sourceLineNo">155</span>        TIFFImageMetadata tmetadata = (TIFFImageMetadata)metadata;<a name="line.155"></a>
+<span class="sourceLineNo">156</span>        TIFFField f =<a name="line.156"></a>
+<span class="sourceLineNo">157</span>            tmetadata.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_TABLES);<a name="line.157"></a>
+<span class="sourceLineNo">158</span><a name="line.158"></a>
+<span class="sourceLineNo">159</span>        if (f != null) {<a name="line.159"></a>
+<span class="sourceLineNo">160</span>            this.hasJPEGTables = true;<a name="line.160"></a>
+<span class="sourceLineNo">161</span>            this.tables = f.getAsBytes();<a name="line.161"></a>
+<span class="sourceLineNo">162</span>        } else {<a name="line.162"></a>
+<span class="sourceLineNo">163</span>            this.hasJPEGTables = false;<a name="line.163"></a>
+<span class="sourceLineNo">164</span>        }<a name="line.164"></a>
+<span class="sourceLineNo">165</span>    }<a name="line.165"></a>
+<span class="sourceLineNo">166</span><a name="line.166"></a>
+<span class="sourceLineNo">167</span>    public void decodeRaw(byte[] b,<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                          int dstOffset,<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                          int bitsPerPixel,<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                          int scanlineStride) throws IOException {<a name="line.170"></a>
+<span class="sourceLineNo">171</span>        // Seek to the data position for this segment.<a name="line.171"></a>
+<span class="sourceLineNo">172</span>        stream.seek(offset);<a name="line.172"></a>
+<span class="sourceLineNo">173</span><a name="line.173"></a>
+<span class="sourceLineNo">174</span>        // Set the stream variable depending on presence of JPEGTables.<a name="line.174"></a>
+<span class="sourceLineNo">175</span>        ImageInputStream is;<a name="line.175"></a>
+<span class="sourceLineNo">176</span>        if(this.hasJPEGTables) {<a name="line.176"></a>
+<span class="sourceLineNo">177</span>            if(DEBUG) System.out.println("Reading abbreviated stream.");<a name="line.177"></a>
+<span class="sourceLineNo">178</span>            // The current strip or tile is an abbreviated JPEG stream.<a name="line.178"></a>
+<span class="sourceLineNo">179</span><a name="line.179"></a>
+<span class="sourceLineNo">180</span>            // Reallocate memory if there is not enough already.<a name="line.180"></a>
+<span class="sourceLineNo">181</span>            int dataLength = tables.length + byteCount;<a name="line.181"></a>
+<span class="sourceLineNo">182</span>            if(data.length &lt; dataLength) {<a name="line.182"></a>
+<span class="sourceLineNo">183</span>                data = new byte[dataLength];<a name="line.183"></a>
+<span class="sourceLineNo">184</span>            }<a name="line.184"></a>
+<span class="sourceLineNo">185</span><a name="line.185"></a>
+<span class="sourceLineNo">186</span>            // Copy the tables ignoring any EOI and subsequent bytes.<a name="line.186"></a>
+<span class="sourceLineNo">187</span>            int dataOffset = tables.length;<a name="line.187"></a>
+<span class="sourceLineNo">188</span>            for(int i = tables.length - 2; i &gt; 0; i--) {<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                if((tables[i] &amp; 0xff) == 0xff &amp;&amp;<a name="line.189"></a>
+<span class="sourceLineNo">190</span>                   (tables[i+1] &amp; 0xff) == EOI) {<a name="line.190"></a>
+<span class="sourceLineNo">191</span>                    dataOffset = i;<a name="line.191"></a>
+<span class="sourceLineNo">192</span>                    break;<a name="line.192"></a>
+<span class="sourceLineNo">193</span>                }<a name="line.193"></a>
+<span class="sourceLineNo">194</span>            }<a name="line.194"></a>
+<span class="sourceLineNo">195</span>            System.arraycopy(tables, 0, data, 0, dataOffset);<a name="line.195"></a>
+<span class="sourceLineNo">196</span><a name="line.196"></a>
+<span class="sourceLineNo">197</span>            // Check for SOI and skip it if present.<a name="line.197"></a>
+<span class="sourceLineNo">198</span>            byte byte1 = (byte)stream.read();<a name="line.198"></a>
+<span class="sourceLineNo">199</span>            byte byte2 = (byte)stream.read();<a name="line.199"></a>
+<span class="sourceLineNo">200</span>            if(!((byte1 &amp; 0xff) == 0xff &amp;&amp; (byte2 &amp; 0xff) == SOI)) {<a name="line.200"></a>
+<span class="sourceLineNo">201</span>                data[dataOffset++] = (byte)byte1;<a name="line.201"></a>
+<span class="sourceLineNo">202</span>                data[dataOffset++] = (byte)byte2;<a name="line.202"></a>
+<span class="sourceLineNo">203</span>            }<a name="line.203"></a>
+<span class="sourceLineNo">204</span><a name="line.204"></a>
+<span class="sourceLineNo">205</span>            // Read remaining data.<a name="line.205"></a>
+<span class="sourceLineNo">206</span>            stream.readFully(data, dataOffset, byteCount - 2);<a name="line.206"></a>
+<span class="sourceLineNo">207</span><a name="line.207"></a>
+<span class="sourceLineNo">208</span>            // Create ImageInputStream.<a name="line.208"></a>
+<span class="sourceLineNo">209</span>            ByteArrayInputStream bais = new ByteArrayInputStream(data);<a name="line.209"></a>
+<span class="sourceLineNo">210</span>            is = new MemoryCacheImageInputStream(bais);<a name="line.210"></a>
+<span class="sourceLineNo">211</span>        } else {<a name="line.211"></a>
+<span class="sourceLineNo">212</span>            if(DEBUG) System.out.println("Reading complete stream.");<a name="line.212"></a>
+<span class="sourceLineNo">213</span>            // The current strip or tile is a complete JPEG stream.<a name="line.213"></a>
+<span class="sourceLineNo">214</span>            is = stream;<a name="line.214"></a>
+<span class="sourceLineNo">215</span>        }<a name="line.215"></a>
+<span class="sourceLineNo">216</span><a name="line.216"></a>
+<span class="sourceLineNo">217</span>        // Set the stream on the reader.<a name="line.217"></a>
+<span class="sourceLineNo">218</span>        JPEGReader.setInput(is, false, true);<a name="line.218"></a>
+<span class="sourceLineNo">219</span><a name="line.219"></a>
+<span class="sourceLineNo">220</span>        // Set the destination to the raw image ignoring the parameters.<a name="line.220"></a>
+<span class="sourceLineNo">221</span>        JPEGParam.setDestination(rawImage);<a name="line.221"></a>
+<span class="sourceLineNo">222</span><a name="line.222"></a>
+<span class="sourceLineNo">223</span>        // Read the strip or tile.<a name="line.223"></a>
+<span class="sourceLineNo">224</span>        JPEGReader.read(0, JPEGParam);<a name="line.224"></a>
+<span class="sourceLineNo">225</span>    }<a name="line.225"></a>
+<span class="sourceLineNo">226</span><a name="line.226"></a>
+<span class="sourceLineNo">227</span>    protected void finalize() throws Throwable {<a name="line.227"></a>
+<span class="sourceLineNo">228</span>        super.finalize();<a name="line.228"></a>
+<span class="sourceLineNo">229</span>        JPEGReader.dispose();<a name="line.229"></a>
+<span class="sourceLineNo">230</span>    }<a name="line.230"></a>
+<span class="sourceLineNo">231</span>}<a name="line.231"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

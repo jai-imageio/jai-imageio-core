@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * $RCSfile: StreamSegmentMapper.java,v $<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * <a name="line.4"></a>
+<span class="sourceLineNo">005</span> * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * <a name="line.6"></a>
+<span class="sourceLineNo">007</span> * Redistribution and use in source and binary forms, with or without<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * modification, are permitted provided that the following conditions<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * are met: <a name="line.9"></a>
+<span class="sourceLineNo">010</span> * <a name="line.10"></a>
+<span class="sourceLineNo">011</span> * - Redistribution of source code must retain the above copyright <a name="line.11"></a>
+<span class="sourceLineNo">012</span> *   notice, this  list of conditions and the following disclaimer.<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * <a name="line.13"></a>
+<span class="sourceLineNo">014</span> * - Redistribution in binary form must reproduce the above copyright<a name="line.14"></a>
+<span class="sourceLineNo">015</span> *   notice, this list of conditions and the following disclaimer in <a name="line.15"></a>
+<span class="sourceLineNo">016</span> *   the documentation and/or other materials provided with the<a name="line.16"></a>
+<span class="sourceLineNo">017</span> *   distribution.<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * <a name="line.18"></a>
+<span class="sourceLineNo">019</span> * Neither the name of Sun Microsystems, Inc. or the names of <a name="line.19"></a>
+<span class="sourceLineNo">020</span> * contributors may be used to endorse or promote products derived <a name="line.20"></a>
+<span class="sourceLineNo">021</span> * from this software without specific prior written permission.<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * <a name="line.22"></a>
+<span class="sourceLineNo">023</span> * This software is provided "AS IS," without a warranty of any <a name="line.23"></a>
+<span class="sourceLineNo">024</span> * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND <a name="line.24"></a>
+<span class="sourceLineNo">025</span> * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, <a name="line.25"></a>
+<span class="sourceLineNo">026</span> * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY<a name="line.26"></a>
+<span class="sourceLineNo">027</span> * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL <a name="line.27"></a>
+<span class="sourceLineNo">028</span> * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF <a name="line.28"></a>
+<span class="sourceLineNo">029</span> * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS<a name="line.29"></a>
+<span class="sourceLineNo">030</span> * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR <a name="line.30"></a>
+<span class="sourceLineNo">031</span> * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,<a name="line.31"></a>
+<span class="sourceLineNo">032</span> * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR<a name="line.33"></a>
+<span class="sourceLineNo">034</span> * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE<a name="line.34"></a>
+<span class="sourceLineNo">035</span> * POSSIBILITY OF SUCH DAMAGES. <a name="line.35"></a>
+<span class="sourceLineNo">036</span> * <a name="line.36"></a>
+<span class="sourceLineNo">037</span> * You acknowledge that this software is not designed or intended for <a name="line.37"></a>
+<span class="sourceLineNo">038</span> * use in the design, construction, operation or maintenance of any <a name="line.38"></a>
+<span class="sourceLineNo">039</span> * nuclear facility. <a name="line.39"></a>
+<span class="sourceLineNo">040</span> *<a name="line.40"></a>
+<span class="sourceLineNo">041</span> * $Revision: 1.1 $<a name="line.41"></a>
+<span class="sourceLineNo">042</span> * $Date: 2005/02/11 05:01:21 $<a name="line.42"></a>
+<span class="sourceLineNo">043</span> * $State: Exp $<a name="line.43"></a>
+<span class="sourceLineNo">044</span> */<a name="line.44"></a>
+<span class="sourceLineNo">045</span>package com.sun.media.imageio.stream;<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>/**<a name="line.47"></a>
+<span class="sourceLineNo">048</span> * An interface for use with the &lt;code&gt;SegmentedImageInputStream&lt;/code&gt;<a name="line.48"></a>
+<span class="sourceLineNo">049</span> * class.  An instance of the &lt;code&gt;StreamSegmentMapper&lt;/code&gt;<a name="line.49"></a>
+<span class="sourceLineNo">050</span> * interface provides the location and length of a segment of a source<a name="line.50"></a>
+<span class="sourceLineNo">051</span> * &lt;code&gt;ImageInputStream&lt;/code&gt; corresponding to the initial portion of<a name="line.51"></a>
+<span class="sourceLineNo">052</span> * a desired segment of the output stream.<a name="line.52"></a>
+<span class="sourceLineNo">053</span> *<a name="line.53"></a>
+<span class="sourceLineNo">054</span> * &lt;p&gt; As an example, consider a mapping between a source<a name="line.54"></a>
+<span class="sourceLineNo">055</span> * &lt;code&gt;ImageInputStream src&lt;/code&gt; and a &lt;code&gt;SegmentedImageInputStream<a name="line.55"></a>
+<span class="sourceLineNo">056</span> * dst&lt;/code&gt; comprising bytes 100-149 and 200-249 of the source<a name="line.56"></a>
+<span class="sourceLineNo">057</span> * stream.  The &lt;code&gt;dst&lt;/code&gt; stream has a reference to an instance<a name="line.57"></a>
+<span class="sourceLineNo">058</span> * &lt;code&gt;mapper&lt;/code&gt; of &lt;code&gt;StreamSegmentMapper&lt;/code&gt;.<a name="line.58"></a>
+<span class="sourceLineNo">059</span> *<a name="line.59"></a>
+<span class="sourceLineNo">060</span> * &lt;p&gt; A call to &lt;code&gt;dst.seek(0); dst.read(buf, 0, 10)&lt;/code&gt; will<a name="line.60"></a>
+<span class="sourceLineNo">061</span> * result in a call to &lt;code&gt;mapper.getStreamSegment(0, 10)&lt;/code&gt;,<a name="line.61"></a>
+<span class="sourceLineNo">062</span> * returning a new &lt;code&gt;StreamSegment&lt;/code&gt; with a starting<a name="line.62"></a>
+<span class="sourceLineNo">063</span> * position of 100 and a length of 10 (or less).  This indicates that<a name="line.63"></a>
+<span class="sourceLineNo">064</span> * in order to read bytes 0-9 of the segmented stream, bytes 100-109<a name="line.64"></a>
+<span class="sourceLineNo">065</span> * of the source stream should be read.<a name="line.65"></a>
+<span class="sourceLineNo">066</span> *<a name="line.66"></a>
+<span class="sourceLineNo">067</span> * &lt;p&gt; A call to &lt;code&gt;dst.seek(10); int nbytes = dst.read(buf, 0,<a name="line.67"></a>
+<span class="sourceLineNo">068</span> * 100)&lt;/code&gt; is somewhat more complex, since it will require data<a name="line.68"></a>
+<span class="sourceLineNo">069</span> * from both segments of &lt;code&gt;src&lt;/code&gt;.  The method &lt;code&gt;<a name="line.69"></a>
+<span class="sourceLineNo">070</span> * mapper.getStreamSegment(10, 100)&lt;/code&gt; will be called.  This<a name="line.70"></a>
+<span class="sourceLineNo">071</span> * method will return a new &lt;code&gt;StreamSegment&lt;/code&gt; with a starting<a name="line.71"></a>
+<span class="sourceLineNo">072</span> * position of 110 and a length of 40 (or less).  The length is<a name="line.72"></a>
+<span class="sourceLineNo">073</span> * limited to 40 since a longer value would result in a read past the<a name="line.73"></a>
+<span class="sourceLineNo">074</span> * end of the first segment.  The read will stop after the first 40<a name="line.74"></a>
+<span class="sourceLineNo">075</span> * bytes and an addition read or reads will be required to obtain the<a name="line.75"></a>
+<span class="sourceLineNo">076</span> * data contained in the second segment.<a name="line.76"></a>
+<span class="sourceLineNo">077</span> */<a name="line.77"></a>
+<span class="sourceLineNo">078</span>public interface StreamSegmentMapper {<a name="line.78"></a>
+<span class="sourceLineNo">079</span><a name="line.79"></a>
+<span class="sourceLineNo">080</span>    /**<a name="line.80"></a>
+<span class="sourceLineNo">081</span>     * Returns a &lt;code&gt;StreamSegment&lt;/code&gt; object indicating the<a name="line.81"></a>
+<span class="sourceLineNo">082</span>     * location of the initial portion of a desired segment in the<a name="line.82"></a>
+<span class="sourceLineNo">083</span>     * source stream.  The length of the returned<a name="line.83"></a>
+<span class="sourceLineNo">084</span>     * &lt;code&gt;StreamSegment&lt;/code&gt; may be smaller than the desired<a name="line.84"></a>
+<span class="sourceLineNo">085</span>     * length.<a name="line.85"></a>
+<span class="sourceLineNo">086</span>     *<a name="line.86"></a>
+<span class="sourceLineNo">087</span>     * @param pos The desired starting position in the<a name="line.87"></a>
+<span class="sourceLineNo">088</span>     * &lt;code&gt;SegmentedImageInputStream&lt;/code&gt;, as a &lt;code&gt;long&lt;/code&gt;.<a name="line.88"></a>
+<span class="sourceLineNo">089</span>     * @param length The desired segment length.<a name="line.89"></a>
+<span class="sourceLineNo">090</span>     * @return a StreamSegment object<a name="line.90"></a>
+<span class="sourceLineNo">091</span>     */<a name="line.91"></a>
+<span class="sourceLineNo">092</span>    StreamSegment getStreamSegment(long pos, int length);<a name="line.92"></a>
+<span class="sourceLineNo">093</span><a name="line.93"></a>
+<span class="sourceLineNo">094</span>    /**<a name="line.94"></a>
+<span class="sourceLineNo">095</span>     * Sets the values of a &lt;code&gt;StreamSegment&lt;/code&gt; object<a name="line.95"></a>
+<span class="sourceLineNo">096</span>     * indicating the location of the initial portion of a desired<a name="line.96"></a>
+<span class="sourceLineNo">097</span>     * segment in the source stream.  The length of the returned<a name="line.97"></a>
+<span class="sourceLineNo">098</span>     * &lt;code&gt;StreamSegment&lt;/code&gt; may be smaller than the desired<a name="line.98"></a>
+<span class="sourceLineNo">099</span>     * length.<a name="line.99"></a>
+<span class="sourceLineNo">100</span>     *<a name="line.100"></a>
+<span class="sourceLineNo">101</span>     * @param pos The desired starting position in the<a name="line.101"></a>
+<span class="sourceLineNo">102</span>     * &lt;code&gt;SegmentedImageInputStream&lt;/code&gt;, as a &lt;code&gt;long&lt;/code&gt;.<a name="line.102"></a>
+<span class="sourceLineNo">103</span>     * @param length The desired segment length.<a name="line.103"></a>
+<span class="sourceLineNo">104</span>     * @param seg A &lt;code&gt;StreamSegment&lt;/code&gt; object to be overwritten.<a name="line.104"></a>
+<span class="sourceLineNo">105</span>     */<a name="line.105"></a>
+<span class="sourceLineNo">106</span>    void getStreamSegment(long pos, int length, StreamSegment seg);<a name="line.106"></a>
+<span class="sourceLineNo">107</span>}<a name="line.107"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

@@ -1,0 +1,1654 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * $RCSfile: BMPImageWriter.java,v $<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * <a name="line.4"></a>
+<span class="sourceLineNo">005</span> * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * <a name="line.6"></a>
+<span class="sourceLineNo">007</span> * Redistribution and use in source and binary forms, with or without<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * modification, are permitted provided that the following conditions<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * are met: <a name="line.9"></a>
+<span class="sourceLineNo">010</span> * <a name="line.10"></a>
+<span class="sourceLineNo">011</span> * - Redistribution of source code must retain the above copyright <a name="line.11"></a>
+<span class="sourceLineNo">012</span> *   notice, this  list of conditions and the following disclaimer.<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * <a name="line.13"></a>
+<span class="sourceLineNo">014</span> * - Redistribution in binary form must reproduce the above copyright<a name="line.14"></a>
+<span class="sourceLineNo">015</span> *   notice, this list of conditions and the following disclaimer in <a name="line.15"></a>
+<span class="sourceLineNo">016</span> *   the documentation and/or other materials provided with the<a name="line.16"></a>
+<span class="sourceLineNo">017</span> *   distribution.<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * <a name="line.18"></a>
+<span class="sourceLineNo">019</span> * Neither the name of Sun Microsystems, Inc. or the names of <a name="line.19"></a>
+<span class="sourceLineNo">020</span> * contributors may be used to endorse or promote products derived <a name="line.20"></a>
+<span class="sourceLineNo">021</span> * from this software without specific prior written permission.<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * <a name="line.22"></a>
+<span class="sourceLineNo">023</span> * This software is provided "AS IS," without a warranty of any <a name="line.23"></a>
+<span class="sourceLineNo">024</span> * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND <a name="line.24"></a>
+<span class="sourceLineNo">025</span> * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, <a name="line.25"></a>
+<span class="sourceLineNo">026</span> * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY<a name="line.26"></a>
+<span class="sourceLineNo">027</span> * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL <a name="line.27"></a>
+<span class="sourceLineNo">028</span> * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF <a name="line.28"></a>
+<span class="sourceLineNo">029</span> * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS<a name="line.29"></a>
+<span class="sourceLineNo">030</span> * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR <a name="line.30"></a>
+<span class="sourceLineNo">031</span> * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,<a name="line.31"></a>
+<span class="sourceLineNo">032</span> * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR<a name="line.33"></a>
+<span class="sourceLineNo">034</span> * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE<a name="line.34"></a>
+<span class="sourceLineNo">035</span> * POSSIBILITY OF SUCH DAMAGES. <a name="line.35"></a>
+<span class="sourceLineNo">036</span> * <a name="line.36"></a>
+<span class="sourceLineNo">037</span> * You acknowledge that this software is not designed or intended for <a name="line.37"></a>
+<span class="sourceLineNo">038</span> * use in the design, construction, operation or maintenance of any <a name="line.38"></a>
+<span class="sourceLineNo">039</span> * nuclear facility. <a name="line.39"></a>
+<span class="sourceLineNo">040</span> *<a name="line.40"></a>
+<span class="sourceLineNo">041</span> * $Revision: 1.2 $<a name="line.41"></a>
+<span class="sourceLineNo">042</span> * $Date: 2006/04/14 21:29:14 $<a name="line.42"></a>
+<span class="sourceLineNo">043</span> * $State: Exp $<a name="line.43"></a>
+<span class="sourceLineNo">044</span> */<a name="line.44"></a>
+<span class="sourceLineNo">045</span>package com.sun.media.imageioimpl.plugins.bmp;<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>import java.awt.Point;<a name="line.47"></a>
+<span class="sourceLineNo">048</span>import java.awt.Rectangle;<a name="line.48"></a>
+<span class="sourceLineNo">049</span>import java.awt.image.ColorModel;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>import java.awt.image.ComponentSampleModel;<a name="line.50"></a>
+<span class="sourceLineNo">051</span>import java.awt.image.DataBuffer;<a name="line.51"></a>
+<span class="sourceLineNo">052</span>import java.awt.image.DataBufferByte;<a name="line.52"></a>
+<span class="sourceLineNo">053</span>import java.awt.image.DataBufferInt;<a name="line.53"></a>
+<span class="sourceLineNo">054</span>import java.awt.image.DataBufferShort;<a name="line.54"></a>
+<span class="sourceLineNo">055</span>import java.awt.image.DataBufferUShort;<a name="line.55"></a>
+<span class="sourceLineNo">056</span>import java.awt.image.DirectColorModel;<a name="line.56"></a>
+<span class="sourceLineNo">057</span>import java.awt.image.IndexColorModel;<a name="line.57"></a>
+<span class="sourceLineNo">058</span>import java.awt.image.MultiPixelPackedSampleModel;<a name="line.58"></a>
+<span class="sourceLineNo">059</span>import java.awt.image.BandedSampleModel;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>import java.awt.image.Raster;<a name="line.60"></a>
+<span class="sourceLineNo">061</span>import java.awt.image.RenderedImage;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>import java.awt.image.SampleModel;<a name="line.62"></a>
+<span class="sourceLineNo">063</span>import java.awt.image.SinglePixelPackedSampleModel;<a name="line.63"></a>
+<span class="sourceLineNo">064</span>import java.awt.image.WritableRaster;<a name="line.64"></a>
+<span class="sourceLineNo">065</span>import java.awt.image.BufferedImage;<a name="line.65"></a>
+<span class="sourceLineNo">066</span><a name="line.66"></a>
+<span class="sourceLineNo">067</span>import java.io.IOException;<a name="line.67"></a>
+<span class="sourceLineNo">068</span>import java.io.ByteArrayOutputStream;<a name="line.68"></a>
+<span class="sourceLineNo">069</span>import java.nio.ByteOrder;<a name="line.69"></a>
+<span class="sourceLineNo">070</span>import java.util.Iterator;<a name="line.70"></a>
+<span class="sourceLineNo">071</span><a name="line.71"></a>
+<span class="sourceLineNo">072</span>import javax.imageio.IIOImage;<a name="line.72"></a>
+<span class="sourceLineNo">073</span>import javax.imageio.IIOException;<a name="line.73"></a>
+<span class="sourceLineNo">074</span>import javax.imageio.ImageIO;<a name="line.74"></a>
+<span class="sourceLineNo">075</span>import javax.imageio.ImageTypeSpecifier;<a name="line.75"></a>
+<span class="sourceLineNo">076</span>import javax.imageio.ImageWriteParam;<a name="line.76"></a>
+<span class="sourceLineNo">077</span>import javax.imageio.ImageWriter;<a name="line.77"></a>
+<span class="sourceLineNo">078</span>import javax.imageio.metadata.IIOMetadata;<a name="line.78"></a>
+<span class="sourceLineNo">079</span>import javax.imageio.metadata.IIOMetadataNode;<a name="line.79"></a>
+<span class="sourceLineNo">080</span>import javax.imageio.metadata.IIOMetadataFormatImpl;<a name="line.80"></a>
+<span class="sourceLineNo">081</span>import javax.imageio.metadata.IIOInvalidTreeException;<a name="line.81"></a>
+<span class="sourceLineNo">082</span>import javax.imageio.spi.ImageWriterSpi;<a name="line.82"></a>
+<span class="sourceLineNo">083</span>import javax.imageio.stream.ImageOutputStream;<a name="line.83"></a>
+<span class="sourceLineNo">084</span>import javax.imageio.event.IIOWriteProgressListener;<a name="line.84"></a>
+<span class="sourceLineNo">085</span>import javax.imageio.event.IIOWriteWarningListener;<a name="line.85"></a>
+<span class="sourceLineNo">086</span><a name="line.86"></a>
+<span class="sourceLineNo">087</span>import org.w3c.dom.Node;<a name="line.87"></a>
+<span class="sourceLineNo">088</span>import org.w3c.dom.NodeList;<a name="line.88"></a>
+<span class="sourceLineNo">089</span><a name="line.89"></a>
+<span class="sourceLineNo">090</span>import com.sun.media.imageio.plugins.bmp.BMPImageWriteParam;<a name="line.90"></a>
+<span class="sourceLineNo">091</span>import com.sun.media.imageioimpl.common.ImageUtil;<a name="line.91"></a>
+<span class="sourceLineNo">092</span><a name="line.92"></a>
+<span class="sourceLineNo">093</span>/**<a name="line.93"></a>
+<span class="sourceLineNo">094</span> * The Java Image IO plugin writer for encoding a binary RenderedImage into<a name="line.94"></a>
+<span class="sourceLineNo">095</span> * a BMP format.<a name="line.95"></a>
+<span class="sourceLineNo">096</span> *<a name="line.96"></a>
+<span class="sourceLineNo">097</span> * The encoding process may clip, subsample using the parameters<a name="line.97"></a>
+<span class="sourceLineNo">098</span> * specified in the &lt;code&gt;ImageWriteParam&lt;/code&gt;.<a name="line.98"></a>
+<span class="sourceLineNo">099</span> *<a name="line.99"></a>
+<span class="sourceLineNo">100</span> * @see com.sun.media.imageio.plugins.bmp.BMPImageWriteParam<a name="line.100"></a>
+<span class="sourceLineNo">101</span> */<a name="line.101"></a>
+<span class="sourceLineNo">102</span>public class BMPImageWriter extends ImageWriter implements BMPConstants {<a name="line.102"></a>
+<span class="sourceLineNo">103</span>    /** The output stream to write into */<a name="line.103"></a>
+<span class="sourceLineNo">104</span>    private ImageOutputStream stream = null;<a name="line.104"></a>
+<span class="sourceLineNo">105</span>    private ByteArrayOutputStream embedded_stream = null;<a name="line.105"></a>
+<span class="sourceLineNo">106</span>    private int compressionType;<a name="line.106"></a>
+<span class="sourceLineNo">107</span>    private boolean isTopDown;<a name="line.107"></a>
+<span class="sourceLineNo">108</span>    private int w, h;<a name="line.108"></a>
+<span class="sourceLineNo">109</span>    private int compImageSize = 0;<a name="line.109"></a>
+<span class="sourceLineNo">110</span>    private int[] bitMasks;<a name="line.110"></a>
+<span class="sourceLineNo">111</span>    private int[] bitPos;<a name="line.111"></a>
+<span class="sourceLineNo">112</span>    private byte[] bpixels;<a name="line.112"></a>
+<span class="sourceLineNo">113</span>    private short[] spixels;<a name="line.113"></a>
+<span class="sourceLineNo">114</span>    private int[] ipixels;<a name="line.114"></a>
+<span class="sourceLineNo">115</span><a name="line.115"></a>
+<span class="sourceLineNo">116</span>    /** Constructs &lt;code&gt;BMPImageWriter&lt;/code&gt; based on the provided<a name="line.116"></a>
+<span class="sourceLineNo">117</span>     *  &lt;code&gt;ImageWriterSpi&lt;/code&gt;.<a name="line.117"></a>
+<span class="sourceLineNo">118</span>     */<a name="line.118"></a>
+<span class="sourceLineNo">119</span>    public BMPImageWriter(ImageWriterSpi originator) {<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        super(originator);<a name="line.120"></a>
+<span class="sourceLineNo">121</span>    }<a name="line.121"></a>
+<span class="sourceLineNo">122</span><a name="line.122"></a>
+<span class="sourceLineNo">123</span>    public void setOutput(Object output) {<a name="line.123"></a>
+<span class="sourceLineNo">124</span>        super.setOutput(output); // validates output<a name="line.124"></a>
+<span class="sourceLineNo">125</span>        if (output != null) {<a name="line.125"></a>
+<span class="sourceLineNo">126</span>            if (!(output instanceof ImageOutputStream))<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                throw new IllegalArgumentException(I18N.getString("BMPImageWriter0"));<a name="line.127"></a>
+<span class="sourceLineNo">128</span>            this.stream = (ImageOutputStream)output;<a name="line.128"></a>
+<span class="sourceLineNo">129</span>            stream.setByteOrder(ByteOrder.LITTLE_ENDIAN);<a name="line.129"></a>
+<span class="sourceLineNo">130</span>        } else<a name="line.130"></a>
+<span class="sourceLineNo">131</span>            this.stream = null;<a name="line.131"></a>
+<span class="sourceLineNo">132</span>    }<a name="line.132"></a>
+<span class="sourceLineNo">133</span><a name="line.133"></a>
+<span class="sourceLineNo">134</span>    public ImageWriteParam getDefaultWriteParam() {<a name="line.134"></a>
+<span class="sourceLineNo">135</span>        return new BMPImageWriteParam();<a name="line.135"></a>
+<span class="sourceLineNo">136</span>    }<a name="line.136"></a>
+<span class="sourceLineNo">137</span><a name="line.137"></a>
+<span class="sourceLineNo">138</span>    public IIOMetadata getDefaultStreamMetadata(ImageWriteParam param) {<a name="line.138"></a>
+<span class="sourceLineNo">139</span>        return null;<a name="line.139"></a>
+<span class="sourceLineNo">140</span>    }<a name="line.140"></a>
+<span class="sourceLineNo">141</span><a name="line.141"></a>
+<span class="sourceLineNo">142</span>    public IIOMetadata getDefaultImageMetadata(ImageTypeSpecifier imageType,<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                                               ImageWriteParam param) {<a name="line.143"></a>
+<span class="sourceLineNo">144</span>        BMPMetadata meta = new BMPMetadata();<a name="line.144"></a>
+<span class="sourceLineNo">145</span>        meta.initialize(imageType.getColorModel(),<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                        imageType.getSampleModel(),<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                        param);<a name="line.147"></a>
+<span class="sourceLineNo">148</span>        return meta;<a name="line.148"></a>
+<span class="sourceLineNo">149</span>    }<a name="line.149"></a>
+<span class="sourceLineNo">150</span><a name="line.150"></a>
+<span class="sourceLineNo">151</span>    public IIOMetadata convertStreamMetadata(IIOMetadata inData,<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                                             ImageWriteParam param) {<a name="line.152"></a>
+<span class="sourceLineNo">153</span>        return null;<a name="line.153"></a>
+<span class="sourceLineNo">154</span>    }<a name="line.154"></a>
+<span class="sourceLineNo">155</span><a name="line.155"></a>
+<span class="sourceLineNo">156</span>    public IIOMetadata convertImageMetadata(IIOMetadata inData,<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                                            ImageTypeSpecifier imageType,<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                                            ImageWriteParam param) {<a name="line.158"></a>
+<span class="sourceLineNo">159</span><a name="line.159"></a>
+<span class="sourceLineNo">160</span>        // Check arguments.<a name="line.160"></a>
+<span class="sourceLineNo">161</span>        if(inData == null) {<a name="line.161"></a>
+<span class="sourceLineNo">162</span>            throw new IllegalArgumentException("inData == null!");<a name="line.162"></a>
+<span class="sourceLineNo">163</span>        }<a name="line.163"></a>
+<span class="sourceLineNo">164</span>        if(imageType == null) {<a name="line.164"></a>
+<span class="sourceLineNo">165</span>            throw new IllegalArgumentException("imageType == null!");<a name="line.165"></a>
+<span class="sourceLineNo">166</span>        }<a name="line.166"></a>
+<span class="sourceLineNo">167</span><a name="line.167"></a>
+<span class="sourceLineNo">168</span>        BMPMetadata outData = null;<a name="line.168"></a>
+<span class="sourceLineNo">169</span><a name="line.169"></a>
+<span class="sourceLineNo">170</span>        // Obtain a BMPMetadata object.<a name="line.170"></a>
+<span class="sourceLineNo">171</span>        if(inData instanceof BMPMetadata) {<a name="line.171"></a>
+<span class="sourceLineNo">172</span>            // Clone the input metadata.<a name="line.172"></a>
+<span class="sourceLineNo">173</span>            outData = (BMPMetadata)((BMPMetadata)inData).clone();<a name="line.173"></a>
+<span class="sourceLineNo">174</span>        } else {<a name="line.174"></a>
+<span class="sourceLineNo">175</span>            try {<a name="line.175"></a>
+<span class="sourceLineNo">176</span>                outData = new BMPMetadata(inData);<a name="line.176"></a>
+<span class="sourceLineNo">177</span>            } catch(IIOInvalidTreeException e) {<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                // XXX Warning<a name="line.178"></a>
+<span class="sourceLineNo">179</span>                outData = new BMPMetadata();<a name="line.179"></a>
+<span class="sourceLineNo">180</span>            }<a name="line.180"></a>
+<span class="sourceLineNo">181</span>        }<a name="line.181"></a>
+<span class="sourceLineNo">182</span><a name="line.182"></a>
+<span class="sourceLineNo">183</span>        // Update the metadata per the image type and param.<a name="line.183"></a>
+<span class="sourceLineNo">184</span>        outData.initialize(imageType.getColorModel(),<a name="line.184"></a>
+<span class="sourceLineNo">185</span>                           imageType.getSampleModel(),<a name="line.185"></a>
+<span class="sourceLineNo">186</span>                           param);<a name="line.186"></a>
+<span class="sourceLineNo">187</span><a name="line.187"></a>
+<span class="sourceLineNo">188</span>        return outData;<a name="line.188"></a>
+<span class="sourceLineNo">189</span>    }<a name="line.189"></a>
+<span class="sourceLineNo">190</span><a name="line.190"></a>
+<span class="sourceLineNo">191</span>    public boolean canWriteRasters() {<a name="line.191"></a>
+<span class="sourceLineNo">192</span>        return true;<a name="line.192"></a>
+<span class="sourceLineNo">193</span>    }<a name="line.193"></a>
+<span class="sourceLineNo">194</span><a name="line.194"></a>
+<span class="sourceLineNo">195</span>    public void write(IIOMetadata streamMetadata,<a name="line.195"></a>
+<span class="sourceLineNo">196</span>                      IIOImage image,<a name="line.196"></a>
+<span class="sourceLineNo">197</span>                      ImageWriteParam param) throws IOException {<a name="line.197"></a>
+<span class="sourceLineNo">198</span><a name="line.198"></a>
+<span class="sourceLineNo">199</span>        if (stream == null) {<a name="line.199"></a>
+<span class="sourceLineNo">200</span>            throw new IllegalStateException(I18N.getString("BMPImageWriter7"));<a name="line.200"></a>
+<span class="sourceLineNo">201</span>        }<a name="line.201"></a>
+<span class="sourceLineNo">202</span><a name="line.202"></a>
+<span class="sourceLineNo">203</span>        if (image == null) {<a name="line.203"></a>
+<span class="sourceLineNo">204</span>            throw new IllegalArgumentException(I18N.getString("BMPImageWriter8"));<a name="line.204"></a>
+<span class="sourceLineNo">205</span>        }<a name="line.205"></a>
+<span class="sourceLineNo">206</span><a name="line.206"></a>
+<span class="sourceLineNo">207</span>        clearAbortRequest();<a name="line.207"></a>
+<span class="sourceLineNo">208</span>        processImageStarted(0);<a name="line.208"></a>
+<span class="sourceLineNo">209</span>        if (param == null)<a name="line.209"></a>
+<span class="sourceLineNo">210</span>            param = getDefaultWriteParam();<a name="line.210"></a>
+<span class="sourceLineNo">211</span><a name="line.211"></a>
+<span class="sourceLineNo">212</span>        BMPImageWriteParam bmpParam = (BMPImageWriteParam)param;<a name="line.212"></a>
+<span class="sourceLineNo">213</span><a name="line.213"></a>
+<span class="sourceLineNo">214</span>        // Default is using 24 bits per pixel.<a name="line.214"></a>
+<span class="sourceLineNo">215</span>        int bitsPerPixel = 24;<a name="line.215"></a>
+<span class="sourceLineNo">216</span>        boolean isPalette = false;<a name="line.216"></a>
+<span class="sourceLineNo">217</span>        int paletteEntries = 0;<a name="line.217"></a>
+<span class="sourceLineNo">218</span>        IndexColorModel icm = null;<a name="line.218"></a>
+<span class="sourceLineNo">219</span><a name="line.219"></a>
+<span class="sourceLineNo">220</span>        RenderedImage input = null;<a name="line.220"></a>
+<span class="sourceLineNo">221</span>        Raster inputRaster = null;<a name="line.221"></a>
+<span class="sourceLineNo">222</span>        boolean writeRaster = image.hasRaster();<a name="line.222"></a>
+<span class="sourceLineNo">223</span>        Rectangle sourceRegion = param.getSourceRegion();<a name="line.223"></a>
+<span class="sourceLineNo">224</span>        SampleModel sampleModel = null;<a name="line.224"></a>
+<span class="sourceLineNo">225</span>        ColorModel colorModel = null;<a name="line.225"></a>
+<span class="sourceLineNo">226</span><a name="line.226"></a>
+<span class="sourceLineNo">227</span>        compImageSize = 0;<a name="line.227"></a>
+<span class="sourceLineNo">228</span><a name="line.228"></a>
+<span class="sourceLineNo">229</span>        if (writeRaster) {<a name="line.229"></a>
+<span class="sourceLineNo">230</span>            inputRaster = image.getRaster();<a name="line.230"></a>
+<span class="sourceLineNo">231</span>            sampleModel = inputRaster.getSampleModel();<a name="line.231"></a>
+<span class="sourceLineNo">232</span>            colorModel = ImageUtil.createColorModel(null, sampleModel);<a name="line.232"></a>
+<span class="sourceLineNo">233</span>            if (sourceRegion == null)<a name="line.233"></a>
+<span class="sourceLineNo">234</span>                sourceRegion = inputRaster.getBounds();<a name="line.234"></a>
+<span class="sourceLineNo">235</span>            else<a name="line.235"></a>
+<span class="sourceLineNo">236</span>                sourceRegion = sourceRegion.intersection(inputRaster.getBounds());<a name="line.236"></a>
+<span class="sourceLineNo">237</span>        } else {<a name="line.237"></a>
+<span class="sourceLineNo">238</span>            input = image.getRenderedImage();<a name="line.238"></a>
+<span class="sourceLineNo">239</span>            sampleModel = input.getSampleModel();<a name="line.239"></a>
+<span class="sourceLineNo">240</span>            colorModel = input.getColorModel();<a name="line.240"></a>
+<span class="sourceLineNo">241</span>            Rectangle rect = new Rectangle(input.getMinX(), input.getMinY(),<a name="line.241"></a>
+<span class="sourceLineNo">242</span>                                           input.getWidth(), input.getHeight());<a name="line.242"></a>
+<span class="sourceLineNo">243</span>            if (sourceRegion == null)<a name="line.243"></a>
+<span class="sourceLineNo">244</span>                sourceRegion = rect;<a name="line.244"></a>
+<span class="sourceLineNo">245</span>            else<a name="line.245"></a>
+<span class="sourceLineNo">246</span>                sourceRegion = sourceRegion.intersection(rect);<a name="line.246"></a>
+<span class="sourceLineNo">247</span>        }<a name="line.247"></a>
+<span class="sourceLineNo">248</span><a name="line.248"></a>
+<span class="sourceLineNo">249</span>        IIOMetadata imageMetadata = image.getMetadata();<a name="line.249"></a>
+<span class="sourceLineNo">250</span>        BMPMetadata bmpImageMetadata = null;<a name="line.250"></a>
+<span class="sourceLineNo">251</span>        ImageTypeSpecifier imageType =<a name="line.251"></a>
+<span class="sourceLineNo">252</span>            new ImageTypeSpecifier(colorModel, sampleModel);<a name="line.252"></a>
+<span class="sourceLineNo">253</span>        if(imageMetadata != null) {<a name="line.253"></a>
+<span class="sourceLineNo">254</span>            // Convert metadata.<a name="line.254"></a>
+<span class="sourceLineNo">255</span>            bmpImageMetadata =<a name="line.255"></a>
+<span class="sourceLineNo">256</span>                (BMPMetadata)convertImageMetadata(imageMetadata,<a name="line.256"></a>
+<span class="sourceLineNo">257</span>                                                  imageType, param);<a name="line.257"></a>
+<span class="sourceLineNo">258</span>        } else {<a name="line.258"></a>
+<span class="sourceLineNo">259</span>            // Use default.<a name="line.259"></a>
+<span class="sourceLineNo">260</span>            bmpImageMetadata =<a name="line.260"></a>
+<span class="sourceLineNo">261</span>                (BMPMetadata)getDefaultImageMetadata(imageType, param);<a name="line.261"></a>
+<span class="sourceLineNo">262</span>        }<a name="line.262"></a>
+<span class="sourceLineNo">263</span><a name="line.263"></a>
+<span class="sourceLineNo">264</span>        if (sourceRegion.isEmpty())<a name="line.264"></a>
+<span class="sourceLineNo">265</span>            throw new RuntimeException(I18N.getString("BMPImageWrite0"));<a name="line.265"></a>
+<span class="sourceLineNo">266</span><a name="line.266"></a>
+<span class="sourceLineNo">267</span>        int scaleX = param.getSourceXSubsampling();<a name="line.267"></a>
+<span class="sourceLineNo">268</span>        int scaleY = param.getSourceYSubsampling();<a name="line.268"></a>
+<span class="sourceLineNo">269</span>        int xOffset = param.getSubsamplingXOffset();<a name="line.269"></a>
+<span class="sourceLineNo">270</span>        int yOffset = param.getSubsamplingYOffset();<a name="line.270"></a>
+<span class="sourceLineNo">271</span><a name="line.271"></a>
+<span class="sourceLineNo">272</span>        // cache the data type;<a name="line.272"></a>
+<span class="sourceLineNo">273</span>        int dataType = sampleModel.getDataType();<a name="line.273"></a>
+<span class="sourceLineNo">274</span><a name="line.274"></a>
+<span class="sourceLineNo">275</span>        sourceRegion.translate(xOffset, yOffset);<a name="line.275"></a>
+<span class="sourceLineNo">276</span>        sourceRegion.width -= xOffset;<a name="line.276"></a>
+<span class="sourceLineNo">277</span>        sourceRegion.height -= yOffset;<a name="line.277"></a>
+<span class="sourceLineNo">278</span><a name="line.278"></a>
+<span class="sourceLineNo">279</span>        int minX = sourceRegion.x / scaleX;<a name="line.279"></a>
+<span class="sourceLineNo">280</span>        int minY = sourceRegion.y / scaleY;<a name="line.280"></a>
+<span class="sourceLineNo">281</span>        w = (sourceRegion.width + scaleX - 1) / scaleX;<a name="line.281"></a>
+<span class="sourceLineNo">282</span>        h = (sourceRegion.height + scaleY - 1) / scaleY;<a name="line.282"></a>
+<span class="sourceLineNo">283</span>        xOffset = sourceRegion.x % scaleX;<a name="line.283"></a>
+<span class="sourceLineNo">284</span>        yOffset = sourceRegion.y % scaleY;<a name="line.284"></a>
+<span class="sourceLineNo">285</span><a name="line.285"></a>
+<span class="sourceLineNo">286</span>        Rectangle destinationRegion = new Rectangle(minX, minY, w, h);<a name="line.286"></a>
+<span class="sourceLineNo">287</span>        boolean noTransform = destinationRegion.equals(sourceRegion);<a name="line.287"></a>
+<span class="sourceLineNo">288</span><a name="line.288"></a>
+<span class="sourceLineNo">289</span>        // Raw data can only handle bytes, everything greater must be ASCII.<a name="line.289"></a>
+<span class="sourceLineNo">290</span>        int[] sourceBands = param.getSourceBands();<a name="line.290"></a>
+<span class="sourceLineNo">291</span>        boolean noSubband = true;<a name="line.291"></a>
+<span class="sourceLineNo">292</span>        int numBands = sampleModel.getNumBands();<a name="line.292"></a>
+<span class="sourceLineNo">293</span><a name="line.293"></a>
+<span class="sourceLineNo">294</span>        if (sourceBands != null) {<a name="line.294"></a>
+<span class="sourceLineNo">295</span>            sampleModel = sampleModel.createSubsetSampleModel(sourceBands);<a name="line.295"></a>
+<span class="sourceLineNo">296</span>            colorModel = null;<a name="line.296"></a>
+<span class="sourceLineNo">297</span>            noSubband = false;<a name="line.297"></a>
+<span class="sourceLineNo">298</span>            numBands = sampleModel.getNumBands();<a name="line.298"></a>
+<span class="sourceLineNo">299</span>        } else {<a name="line.299"></a>
+<span class="sourceLineNo">300</span>            sourceBands = new int[numBands];<a name="line.300"></a>
+<span class="sourceLineNo">301</span>            for (int i = 0; i &lt; numBands; i++)<a name="line.301"></a>
+<span class="sourceLineNo">302</span>                sourceBands[i] = i;<a name="line.302"></a>
+<span class="sourceLineNo">303</span>        }<a name="line.303"></a>
+<span class="sourceLineNo">304</span><a name="line.304"></a>
+<span class="sourceLineNo">305</span>        int[] bandOffsets = null;<a name="line.305"></a>
+<span class="sourceLineNo">306</span>        boolean bgrOrder = true;<a name="line.306"></a>
+<span class="sourceLineNo">307</span><a name="line.307"></a>
+<span class="sourceLineNo">308</span>        if (sampleModel instanceof ComponentSampleModel) {<a name="line.308"></a>
+<span class="sourceLineNo">309</span>            bandOffsets = ((ComponentSampleModel)sampleModel).getBandOffsets();<a name="line.309"></a>
+<span class="sourceLineNo">310</span>            if (sampleModel instanceof BandedSampleModel) {<a name="line.310"></a>
+<span class="sourceLineNo">311</span>                // for images with BandedSampleModel we can not work <a name="line.311"></a>
+<span class="sourceLineNo">312</span>                //  with raster directly and must use writePixels()<a name="line.312"></a>
+<span class="sourceLineNo">313</span>                bgrOrder = false;<a name="line.313"></a>
+<span class="sourceLineNo">314</span>            } else {<a name="line.314"></a>
+<span class="sourceLineNo">315</span>                // we can work with raster directly only in case of <a name="line.315"></a>
+<span class="sourceLineNo">316</span>                // BGR component order.<a name="line.316"></a>
+<span class="sourceLineNo">317</span>                // In any other case we must use writePixels() <a name="line.317"></a>
+<span class="sourceLineNo">318</span>                for (int i = 0; i &lt; bandOffsets.length; i++) {<a name="line.318"></a>
+<span class="sourceLineNo">319</span>                    bgrOrder &amp;= (bandOffsets[i] == (bandOffsets.length - i - 1));<a name="line.319"></a>
+<span class="sourceLineNo">320</span>                }<a name="line.320"></a>
+<span class="sourceLineNo">321</span>            }<a name="line.321"></a>
+<span class="sourceLineNo">322</span>        } else {           <a name="line.322"></a>
+<span class="sourceLineNo">323</span>            if (sampleModel instanceof SinglePixelPackedSampleModel) {<a name="line.323"></a>
+<span class="sourceLineNo">324</span><a name="line.324"></a>
+<span class="sourceLineNo">325</span>                // BugId 4892214: we can not work with raster directly<a name="line.325"></a>
+<span class="sourceLineNo">326</span>                // if image have different color order than RGB.<a name="line.326"></a>
+<span class="sourceLineNo">327</span>                // We should use writePixels() for such images.<a name="line.327"></a>
+<span class="sourceLineNo">328</span>                int[] bitOffsets = ((SinglePixelPackedSampleModel)sampleModel).getBitOffsets();<a name="line.328"></a>
+<span class="sourceLineNo">329</span>                for (int i=0; i&lt;bitOffsets.length-1; i++) {<a name="line.329"></a>
+<span class="sourceLineNo">330</span>                    bgrOrder &amp;= bitOffsets[i] &gt; bitOffsets[i+1];<a name="line.330"></a>
+<span class="sourceLineNo">331</span>                }<a name="line.331"></a>
+<span class="sourceLineNo">332</span>            }<a name="line.332"></a>
+<span class="sourceLineNo">333</span>        }<a name="line.333"></a>
+<span class="sourceLineNo">334</span><a name="line.334"></a>
+<span class="sourceLineNo">335</span>        if (bandOffsets == null) {<a name="line.335"></a>
+<span class="sourceLineNo">336</span>            // we will use getPixels() to extract pixel data for writePixels()<a name="line.336"></a>
+<span class="sourceLineNo">337</span>            // Please note that getPixels() provides rgb bands order.<a name="line.337"></a>
+<span class="sourceLineNo">338</span>            bandOffsets = new int[numBands];<a name="line.338"></a>
+<span class="sourceLineNo">339</span>            for (int i = 0; i &lt; numBands; i++)<a name="line.339"></a>
+<span class="sourceLineNo">340</span>                bandOffsets[i] = i;<a name="line.340"></a>
+<span class="sourceLineNo">341</span>        }<a name="line.341"></a>
+<span class="sourceLineNo">342</span><a name="line.342"></a>
+<span class="sourceLineNo">343</span>        noTransform &amp;= bgrOrder;<a name="line.343"></a>
+<span class="sourceLineNo">344</span><a name="line.344"></a>
+<span class="sourceLineNo">345</span>        int sampleSize[] = sampleModel.getSampleSize();<a name="line.345"></a>
+<span class="sourceLineNo">346</span><a name="line.346"></a>
+<span class="sourceLineNo">347</span>        //XXX: check more<a name="line.347"></a>
+<span class="sourceLineNo">348</span><a name="line.348"></a>
+<span class="sourceLineNo">349</span>        // Number of bytes that a scanline for the image written out will have.<a name="line.349"></a>
+<span class="sourceLineNo">350</span>        int destScanlineBytes = w * numBands;<a name="line.350"></a>
+<span class="sourceLineNo">351</span><a name="line.351"></a>
+<span class="sourceLineNo">352</span>        switch(bmpParam.getCompressionMode()) {<a name="line.352"></a>
+<span class="sourceLineNo">353</span>        case ImageWriteParam.MODE_EXPLICIT:<a name="line.353"></a>
+<span class="sourceLineNo">354</span>            compressionType = getCompressionType(bmpParam.getCompressionType());<a name="line.354"></a>
+<span class="sourceLineNo">355</span>            break;<a name="line.355"></a>
+<span class="sourceLineNo">356</span>        case ImageWriteParam.MODE_COPY_FROM_METADATA:<a name="line.356"></a>
+<span class="sourceLineNo">357</span>            compressionType = bmpImageMetadata.compression;<a name="line.357"></a>
+<span class="sourceLineNo">358</span>            break;<a name="line.358"></a>
+<span class="sourceLineNo">359</span>        case ImageWriteParam.MODE_DEFAULT:<a name="line.359"></a>
+<span class="sourceLineNo">360</span>            compressionType = getPreferredCompressionType(colorModel, sampleModel);<a name="line.360"></a>
+<span class="sourceLineNo">361</span>            break;<a name="line.361"></a>
+<span class="sourceLineNo">362</span>        default:<a name="line.362"></a>
+<span class="sourceLineNo">363</span>            // ImageWriteParam.MODE_DISABLED:<a name="line.363"></a>
+<span class="sourceLineNo">364</span>            compressionType = BI_RGB;<a name="line.364"></a>
+<span class="sourceLineNo">365</span>        }<a name="line.365"></a>
+<span class="sourceLineNo">366</span><a name="line.366"></a>
+<span class="sourceLineNo">367</span>        if (!canEncodeImage(compressionType, colorModel, sampleModel)) {<a name="line.367"></a>
+<span class="sourceLineNo">368</span>            if (param.getCompressionMode() == ImageWriteParam.MODE_EXPLICIT) {<a name="line.368"></a>
+<span class="sourceLineNo">369</span>                throw new IIOException("Image can not be encoded with " +<a name="line.369"></a>
+<span class="sourceLineNo">370</span>                                       "compression type " + <a name="line.370"></a>
+<span class="sourceLineNo">371</span>                                       compressionTypeNames[compressionType]);<a name="line.371"></a>
+<span class="sourceLineNo">372</span>            } else {<a name="line.372"></a>
+<span class="sourceLineNo">373</span>                // Set to something appropriate<a name="line.373"></a>
+<span class="sourceLineNo">374</span>                compressionType = getPreferredCompressionType(colorModel, <a name="line.374"></a>
+<span class="sourceLineNo">375</span>                                                              sampleModel);<a name="line.375"></a>
+<span class="sourceLineNo">376</span>            }<a name="line.376"></a>
+<span class="sourceLineNo">377</span>        }<a name="line.377"></a>
+<span class="sourceLineNo">378</span><a name="line.378"></a>
+<span class="sourceLineNo">379</span>        byte r[] = null, g[] = null, b[] = null, a[] = null;<a name="line.379"></a>
+<span class="sourceLineNo">380</span><a name="line.380"></a>
+<span class="sourceLineNo">381</span>        if (compressionType == BMPConstants.BI_BITFIELDS) {<a name="line.381"></a>
+<span class="sourceLineNo">382</span>            bitsPerPixel =<a name="line.382"></a>
+<span class="sourceLineNo">383</span>                DataBuffer.getDataTypeSize(sampleModel.getDataType());<a name="line.383"></a>
+<span class="sourceLineNo">384</span><a name="line.384"></a>
+<span class="sourceLineNo">385</span>            if (bitsPerPixel != 16 &amp;&amp; bitsPerPixel != 32) {<a name="line.385"></a>
+<span class="sourceLineNo">386</span>                // we should use 32bpp images in case of BI_BITFIELD<a name="line.386"></a>
+<span class="sourceLineNo">387</span>                // compression to avoid color conversion artefacts<a name="line.387"></a>
+<span class="sourceLineNo">388</span>                bitsPerPixel = 32;<a name="line.388"></a>
+<span class="sourceLineNo">389</span><a name="line.389"></a>
+<span class="sourceLineNo">390</span>                // Setting this flag to false ensures that generic<a name="line.390"></a>
+<span class="sourceLineNo">391</span>                // writePixels() will be used to store image data<a name="line.391"></a>
+<span class="sourceLineNo">392</span>                noTransform = false;<a name="line.392"></a>
+<span class="sourceLineNo">393</span>            }<a name="line.393"></a>
+<span class="sourceLineNo">394</span><a name="line.394"></a>
+<span class="sourceLineNo">395</span>            destScanlineBytes = w * bitsPerPixel + 7 &gt;&gt; 3;<a name="line.395"></a>
+<span class="sourceLineNo">396</span><a name="line.396"></a>
+<span class="sourceLineNo">397</span>            isPalette = true;<a name="line.397"></a>
+<span class="sourceLineNo">398</span>            paletteEntries = 3;<a name="line.398"></a>
+<span class="sourceLineNo">399</span>            r = new byte[paletteEntries];<a name="line.399"></a>
+<span class="sourceLineNo">400</span>            g = new byte[paletteEntries];<a name="line.400"></a>
+<span class="sourceLineNo">401</span>            b = new byte[paletteEntries];<a name="line.401"></a>
+<span class="sourceLineNo">402</span>            a = new byte[paletteEntries];<a name="line.402"></a>
+<span class="sourceLineNo">403</span><a name="line.403"></a>
+<span class="sourceLineNo">404</span>            int rmask = 0x00ff0000;<a name="line.404"></a>
+<span class="sourceLineNo">405</span>            int gmask = 0x0000ff00;<a name="line.405"></a>
+<span class="sourceLineNo">406</span>            int bmask = 0x000000ff;<a name="line.406"></a>
+<span class="sourceLineNo">407</span><a name="line.407"></a>
+<span class="sourceLineNo">408</span>            if (bitsPerPixel == 16) {<a name="line.408"></a>
+<span class="sourceLineNo">409</span>                /* NB: canEncodeImage() ensures we have image of<a name="line.409"></a>
+<span class="sourceLineNo">410</span>                 * either USHORT_565_RGB or USHORT_555_RGB type here.<a name="line.410"></a>
+<span class="sourceLineNo">411</span>                 * Technically, it should work for other direct color<a name="line.411"></a>
+<span class="sourceLineNo">412</span>                 * model types but it might be non compatible with win98<a name="line.412"></a>
+<span class="sourceLineNo">413</span>                 * and friends.<a name="line.413"></a>
+<span class="sourceLineNo">414</span>                 */<a name="line.414"></a>
+<span class="sourceLineNo">415</span>                if (colorModel instanceof DirectColorModel) {<a name="line.415"></a>
+<span class="sourceLineNo">416</span>                    DirectColorModel dcm = (DirectColorModel)colorModel;<a name="line.416"></a>
+<span class="sourceLineNo">417</span>                    rmask = dcm.getRedMask();<a name="line.417"></a>
+<span class="sourceLineNo">418</span>                    gmask = dcm.getGreenMask();<a name="line.418"></a>
+<span class="sourceLineNo">419</span>                    bmask = dcm.getBlueMask();<a name="line.419"></a>
+<span class="sourceLineNo">420</span>                } else {<a name="line.420"></a>
+<span class="sourceLineNo">421</span>                    // it is unlikely, but if it happens, we should throw<a name="line.421"></a>
+<span class="sourceLineNo">422</span>                    // an exception related to unsupported image format<a name="line.422"></a>
+<span class="sourceLineNo">423</span>                    throw new IOException("Image can not be encoded with " +<a name="line.423"></a>
+<span class="sourceLineNo">424</span>                                          "compression type " +<a name="line.424"></a>
+<span class="sourceLineNo">425</span>                                          compressionTypeNames[compressionType]);<a name="line.425"></a>
+<span class="sourceLineNo">426</span>                }<a name="line.426"></a>
+<span class="sourceLineNo">427</span>            }<a name="line.427"></a>
+<span class="sourceLineNo">428</span>            writeMaskToPalette(rmask, 0, r, g, b, a);<a name="line.428"></a>
+<span class="sourceLineNo">429</span>            writeMaskToPalette(gmask, 1, r, g, b, a);<a name="line.429"></a>
+<span class="sourceLineNo">430</span>            writeMaskToPalette(bmask, 2, r, g, b, a);<a name="line.430"></a>
+<span class="sourceLineNo">431</span><a name="line.431"></a>
+<span class="sourceLineNo">432</span>            if (!noTransform) {<a name="line.432"></a>
+<span class="sourceLineNo">433</span>                // prepare info for writePixels procedure<a name="line.433"></a>
+<span class="sourceLineNo">434</span>                bitMasks = new int[3];<a name="line.434"></a>
+<span class="sourceLineNo">435</span>                bitMasks[0] = rmask;<a name="line.435"></a>
+<span class="sourceLineNo">436</span>                bitMasks[1] = gmask;<a name="line.436"></a>
+<span class="sourceLineNo">437</span>                bitMasks[2] = bmask;<a name="line.437"></a>
+<span class="sourceLineNo">438</span><a name="line.438"></a>
+<span class="sourceLineNo">439</span>                bitPos = new int[3];<a name="line.439"></a>
+<span class="sourceLineNo">440</span>                bitPos[0] = firstLowBit(rmask);<a name="line.440"></a>
+<span class="sourceLineNo">441</span>                bitPos[1] = firstLowBit(gmask);<a name="line.441"></a>
+<span class="sourceLineNo">442</span>                bitPos[2] = firstLowBit(bmask);<a name="line.442"></a>
+<span class="sourceLineNo">443</span>            }<a name="line.443"></a>
+<span class="sourceLineNo">444</span><a name="line.444"></a>
+<span class="sourceLineNo">445</span>            if (colorModel instanceof IndexColorModel) {<a name="line.445"></a>
+<span class="sourceLineNo">446</span>                icm = (IndexColorModel)colorModel;<a name="line.446"></a>
+<span class="sourceLineNo">447</span>            }<a name="line.447"></a>
+<span class="sourceLineNo">448</span>        } else { // handle BI_RGB compression<a name="line.448"></a>
+<span class="sourceLineNo">449</span>            if (colorModel instanceof IndexColorModel) {<a name="line.449"></a>
+<span class="sourceLineNo">450</span>                isPalette = true;<a name="line.450"></a>
+<span class="sourceLineNo">451</span>                icm = (IndexColorModel)colorModel;<a name="line.451"></a>
+<span class="sourceLineNo">452</span>                paletteEntries = icm.getMapSize();<a name="line.452"></a>
+<span class="sourceLineNo">453</span>                <a name="line.453"></a>
+<span class="sourceLineNo">454</span>                if (paletteEntries &lt;= 2) {<a name="line.454"></a>
+<span class="sourceLineNo">455</span>                    bitsPerPixel = 1;<a name="line.455"></a>
+<span class="sourceLineNo">456</span>                    destScanlineBytes = w + 7 &gt;&gt; 3;<a name="line.456"></a>
+<span class="sourceLineNo">457</span>                } else if (paletteEntries &lt;= 16) {<a name="line.457"></a>
+<span class="sourceLineNo">458</span>                    bitsPerPixel = 4;<a name="line.458"></a>
+<span class="sourceLineNo">459</span>                    destScanlineBytes = w + 1 &gt;&gt; 1;<a name="line.459"></a>
+<span class="sourceLineNo">460</span>                } else if (paletteEntries &lt;= 256) {<a name="line.460"></a>
+<span class="sourceLineNo">461</span>                    bitsPerPixel = 8;<a name="line.461"></a>
+<span class="sourceLineNo">462</span>                } else {<a name="line.462"></a>
+<span class="sourceLineNo">463</span>                    // Cannot be written as a Palette image. So write out as<a name="line.463"></a>
+<span class="sourceLineNo">464</span>                    // 24 bit image.<a name="line.464"></a>
+<span class="sourceLineNo">465</span>                    bitsPerPixel = 24;<a name="line.465"></a>
+<span class="sourceLineNo">466</span>                    isPalette = false;<a name="line.466"></a>
+<span class="sourceLineNo">467</span>                    paletteEntries = 0;<a name="line.467"></a>
+<span class="sourceLineNo">468</span>                    destScanlineBytes = w * 3;<a name="line.468"></a>
+<span class="sourceLineNo">469</span>                }<a name="line.469"></a>
+<span class="sourceLineNo">470</span>                <a name="line.470"></a>
+<span class="sourceLineNo">471</span>                if (isPalette == true) {<a name="line.471"></a>
+<span class="sourceLineNo">472</span>                    r = new byte[paletteEntries];<a name="line.472"></a>
+<span class="sourceLineNo">473</span>                    g = new byte[paletteEntries];<a name="line.473"></a>
+<span class="sourceLineNo">474</span>                    b = new byte[paletteEntries];<a name="line.474"></a>
+<span class="sourceLineNo">475</span>                    <a name="line.475"></a>
+<span class="sourceLineNo">476</span>                    icm.getReds(r);<a name="line.476"></a>
+<span class="sourceLineNo">477</span>                    icm.getGreens(g);<a name="line.477"></a>
+<span class="sourceLineNo">478</span>                    icm.getBlues(b);<a name="line.478"></a>
+<span class="sourceLineNo">479</span>                }<a name="line.479"></a>
+<span class="sourceLineNo">480</span><a name="line.480"></a>
+<span class="sourceLineNo">481</span>            } else {<a name="line.481"></a>
+<span class="sourceLineNo">482</span>                // Grey scale images<a name="line.482"></a>
+<span class="sourceLineNo">483</span>                if (numBands == 1) {<a name="line.483"></a>
+<span class="sourceLineNo">484</span>                    <a name="line.484"></a>
+<span class="sourceLineNo">485</span>                    isPalette = true;<a name="line.485"></a>
+<span class="sourceLineNo">486</span>                    paletteEntries = 256;<a name="line.486"></a>
+<span class="sourceLineNo">487</span>                    bitsPerPixel = sampleSize[0];<a name="line.487"></a>
+<span class="sourceLineNo">488</span>                    <a name="line.488"></a>
+<span class="sourceLineNo">489</span>                    destScanlineBytes = (w * bitsPerPixel + 7 &gt;&gt; 3);<a name="line.489"></a>
+<span class="sourceLineNo">490</span>                    <a name="line.490"></a>
+<span class="sourceLineNo">491</span>                    r = new byte[256];<a name="line.491"></a>
+<span class="sourceLineNo">492</span>                    g = new byte[256];<a name="line.492"></a>
+<span class="sourceLineNo">493</span>                    b = new byte[256];<a name="line.493"></a>
+<span class="sourceLineNo">494</span>                    <a name="line.494"></a>
+<span class="sourceLineNo">495</span>                    for (int i = 0; i &lt; 256; i++) {<a name="line.495"></a>
+<span class="sourceLineNo">496</span>                        r[i] = (byte)i;<a name="line.496"></a>
+<span class="sourceLineNo">497</span>                        g[i] = (byte)i;<a name="line.497"></a>
+<span class="sourceLineNo">498</span>                        b[i] = (byte)i;<a name="line.498"></a>
+<span class="sourceLineNo">499</span>                    }<a name="line.499"></a>
+<span class="sourceLineNo">500</span><a name="line.500"></a>
+<span class="sourceLineNo">501</span>                } else {<a name="line.501"></a>
+<span class="sourceLineNo">502</span>                    if (sampleModel instanceof SinglePixelPackedSampleModel &amp;&amp;<a name="line.502"></a>
+<span class="sourceLineNo">503</span>                        noSubband) <a name="line.503"></a>
+<span class="sourceLineNo">504</span>                        {<a name="line.504"></a>
+<span class="sourceLineNo">505</span>                            /* NB: the actual pixel size can be smaller than<a name="line.505"></a>
+<span class="sourceLineNo">506</span>                             * size of used DataBuffer element.<a name="line.506"></a>
+<span class="sourceLineNo">507</span>                             * For example: in case of TYPE_INT_RGB actual pixel<a name="line.507"></a>
+<span class="sourceLineNo">508</span>                             * size is 24 bits, but size of DataBuffere element<a name="line.508"></a>
+<span class="sourceLineNo">509</span>                             * is 32 bits<a name="line.509"></a>
+<span class="sourceLineNo">510</span>                             */<a name="line.510"></a>
+<span class="sourceLineNo">511</span>                            int[] sample_sizes = sampleModel.getSampleSize();<a name="line.511"></a>
+<span class="sourceLineNo">512</span>                            bitsPerPixel = 0;<a name="line.512"></a>
+<span class="sourceLineNo">513</span>                            for (int i=0; i &lt; sample_sizes.length; i++) {<a name="line.513"></a>
+<span class="sourceLineNo">514</span>                                bitsPerPixel += sample_sizes[i];<a name="line.514"></a>
+<span class="sourceLineNo">515</span>                            }<a name="line.515"></a>
+<span class="sourceLineNo">516</span>                            bitsPerPixel = roundBpp(bitsPerPixel);<a name="line.516"></a>
+<span class="sourceLineNo">517</span>                            if (bitsPerPixel != DataBuffer.getDataTypeSize(sampleModel.getDataType())) {<a name="line.517"></a>
+<span class="sourceLineNo">518</span>                                noTransform = false;<a name="line.518"></a>
+<span class="sourceLineNo">519</span>                            }<a name="line.519"></a>
+<span class="sourceLineNo">520</span>                            destScanlineBytes = w * bitsPerPixel + 7 &gt;&gt; 3;<a name="line.520"></a>
+<span class="sourceLineNo">521</span>                        }<a name="line.521"></a>
+<span class="sourceLineNo">522</span>                }<a name="line.522"></a>
+<span class="sourceLineNo">523</span>            }<a name="line.523"></a>
+<span class="sourceLineNo">524</span>        }<a name="line.524"></a>
+<span class="sourceLineNo">525</span><a name="line.525"></a>
+<span class="sourceLineNo">526</span>        // actual writing of image data<a name="line.526"></a>
+<span class="sourceLineNo">527</span>        int fileSize = 0;<a name="line.527"></a>
+<span class="sourceLineNo">528</span>        int offset = 0;<a name="line.528"></a>
+<span class="sourceLineNo">529</span>        int headerSize = 0;<a name="line.529"></a>
+<span class="sourceLineNo">530</span>        int imageSize = 0;<a name="line.530"></a>
+<span class="sourceLineNo">531</span>        int xPelsPerMeter = bmpImageMetadata.xPixelsPerMeter;<a name="line.531"></a>
+<span class="sourceLineNo">532</span>        int yPelsPerMeter = bmpImageMetadata.yPixelsPerMeter;<a name="line.532"></a>
+<span class="sourceLineNo">533</span>        int colorsUsed = bmpImageMetadata.colorsUsed &gt; 0 ?<a name="line.533"></a>
+<span class="sourceLineNo">534</span>            bmpImageMetadata.colorsUsed : paletteEntries;<a name="line.534"></a>
+<span class="sourceLineNo">535</span>        int colorsImportant = paletteEntries;<a name="line.535"></a>
+<span class="sourceLineNo">536</span><a name="line.536"></a>
+<span class="sourceLineNo">537</span>        // Calculate padding for each scanline<a name="line.537"></a>
+<span class="sourceLineNo">538</span>        int padding = destScanlineBytes % 4;<a name="line.538"></a>
+<span class="sourceLineNo">539</span>        if (padding != 0) {<a name="line.539"></a>
+<span class="sourceLineNo">540</span>            padding = 4 - padding;<a name="line.540"></a>
+<span class="sourceLineNo">541</span>        }<a name="line.541"></a>
+<span class="sourceLineNo">542</span><a name="line.542"></a>
+<span class="sourceLineNo">543</span><a name="line.543"></a>
+<span class="sourceLineNo">544</span>        // FileHeader is 14 bytes, BitmapHeader is 40 bytes,<a name="line.544"></a>
+<span class="sourceLineNo">545</span>        // add palette size and that is where the data will begin<a name="line.545"></a>
+<span class="sourceLineNo">546</span>        offset = 54 + paletteEntries * 4;<a name="line.546"></a>
+<span class="sourceLineNo">547</span>        <a name="line.547"></a>
+<span class="sourceLineNo">548</span>        imageSize = (destScanlineBytes + padding) * h;<a name="line.548"></a>
+<span class="sourceLineNo">549</span>        fileSize = imageSize + offset;<a name="line.549"></a>
+<span class="sourceLineNo">550</span>        headerSize = 40;<a name="line.550"></a>
+<span class="sourceLineNo">551</span><a name="line.551"></a>
+<span class="sourceLineNo">552</span>        long headPos = stream.getStreamPosition();<a name="line.552"></a>
+<span class="sourceLineNo">553</span><a name="line.553"></a>
+<span class="sourceLineNo">554</span>        if(param instanceof BMPImageWriteParam) {<a name="line.554"></a>
+<span class="sourceLineNo">555</span>            isTopDown = ((BMPImageWriteParam)param).isTopDown();<a name="line.555"></a>
+<span class="sourceLineNo">556</span>            // topDown = true is only allowed for RGB and BITFIELDS compression<a name="line.556"></a>
+<span class="sourceLineNo">557</span>            // types by the BMP specification<a name="line.557"></a>
+<span class="sourceLineNo">558</span>            if (compressionType != BI_RGB &amp;&amp; compressionType != BI_BITFIELDS)<a name="line.558"></a>
+<span class="sourceLineNo">559</span>                isTopDown = false;<a name="line.559"></a>
+<span class="sourceLineNo">560</span>        } else {<a name="line.560"></a>
+<span class="sourceLineNo">561</span>            isTopDown = false;<a name="line.561"></a>
+<span class="sourceLineNo">562</span>        }<a name="line.562"></a>
+<span class="sourceLineNo">563</span><a name="line.563"></a>
+<span class="sourceLineNo">564</span>        writeFileHeader(fileSize, offset);<a name="line.564"></a>
+<span class="sourceLineNo">565</span><a name="line.565"></a>
+<span class="sourceLineNo">566</span>        writeInfoHeader(headerSize, bitsPerPixel);<a name="line.566"></a>
+<span class="sourceLineNo">567</span><a name="line.567"></a>
+<span class="sourceLineNo">568</span>        // compression<a name="line.568"></a>
+<span class="sourceLineNo">569</span>        stream.writeInt(compressionType);<a name="line.569"></a>
+<span class="sourceLineNo">570</span><a name="line.570"></a>
+<span class="sourceLineNo">571</span>        // imageSize<a name="line.571"></a>
+<span class="sourceLineNo">572</span>        stream.writeInt(imageSize);<a name="line.572"></a>
+<span class="sourceLineNo">573</span><a name="line.573"></a>
+<span class="sourceLineNo">574</span>        // xPelsPerMeter<a name="line.574"></a>
+<span class="sourceLineNo">575</span>        stream.writeInt(xPelsPerMeter);<a name="line.575"></a>
+<span class="sourceLineNo">576</span><a name="line.576"></a>
+<span class="sourceLineNo">577</span>        // yPelsPerMeter<a name="line.577"></a>
+<span class="sourceLineNo">578</span>        stream.writeInt(yPelsPerMeter);<a name="line.578"></a>
+<span class="sourceLineNo">579</span><a name="line.579"></a>
+<span class="sourceLineNo">580</span>        // Colors Used<a name="line.580"></a>
+<span class="sourceLineNo">581</span>        stream.writeInt(colorsUsed);<a name="line.581"></a>
+<span class="sourceLineNo">582</span><a name="line.582"></a>
+<span class="sourceLineNo">583</span>        // Colors Important<a name="line.583"></a>
+<span class="sourceLineNo">584</span>        stream.writeInt(colorsImportant);<a name="line.584"></a>
+<span class="sourceLineNo">585</span><a name="line.585"></a>
+<span class="sourceLineNo">586</span>        // palette<a name="line.586"></a>
+<span class="sourceLineNo">587</span>        if (isPalette == true) {<a name="line.587"></a>
+<span class="sourceLineNo">588</span><a name="line.588"></a>
+<span class="sourceLineNo">589</span>            // write palette<a name="line.589"></a>
+<span class="sourceLineNo">590</span>            if (compressionType == BMPConstants.BI_BITFIELDS) {<a name="line.590"></a>
+<span class="sourceLineNo">591</span>                // write masks for red, green and blue components.<a name="line.591"></a>
+<span class="sourceLineNo">592</span>                for (int i=0; i&lt;3; i++) {<a name="line.592"></a>
+<span class="sourceLineNo">593</span>                    int mask = (a[i]&amp;0xFF) + ((r[i]&amp;0xFF)*0x100) + ((g[i]&amp;0xFF)* 0x10000) + ((b[i]&amp;0xFF)*0x1000000);<a name="line.593"></a>
+<span class="sourceLineNo">594</span>                    stream.writeInt(mask);<a name="line.594"></a>
+<span class="sourceLineNo">595</span>                }<a name="line.595"></a>
+<span class="sourceLineNo">596</span>            } else {<a name="line.596"></a>
+<span class="sourceLineNo">597</span>                for (int i=0; i&lt;paletteEntries; i++) {<a name="line.597"></a>
+<span class="sourceLineNo">598</span>                    stream.writeByte(b[i]);<a name="line.598"></a>
+<span class="sourceLineNo">599</span>                    stream.writeByte(g[i]);<a name="line.599"></a>
+<span class="sourceLineNo">600</span>                    stream.writeByte(r[i]);<a name="line.600"></a>
+<span class="sourceLineNo">601</span>                    stream.writeByte((byte)0);// rgbReserved RGBQUAD entry<a name="line.601"></a>
+<span class="sourceLineNo">602</span>                }<a name="line.602"></a>
+<span class="sourceLineNo">603</span>            }<a name="line.603"></a>
+<span class="sourceLineNo">604</span>        } <a name="line.604"></a>
+<span class="sourceLineNo">605</span><a name="line.605"></a>
+<span class="sourceLineNo">606</span>        // Writing of actual image data<a name="line.606"></a>
+<span class="sourceLineNo">607</span>        int scanlineBytes = w * numBands;<a name="line.607"></a>
+<span class="sourceLineNo">608</span><a name="line.608"></a>
+<span class="sourceLineNo">609</span>        // Buffer for up to 8 rows of pixels<a name="line.609"></a>
+<span class="sourceLineNo">610</span>        int[] pixels = new int[scanlineBytes * scaleX];<a name="line.610"></a>
+<span class="sourceLineNo">611</span><a name="line.611"></a>
+<span class="sourceLineNo">612</span>        // Also create a buffer to hold one line of the data<a name="line.612"></a>
+<span class="sourceLineNo">613</span>        // to be written to the file, so we can use array writes.<a name="line.613"></a>
+<span class="sourceLineNo">614</span>        bpixels = new byte[destScanlineBytes];<a name="line.614"></a>
+<span class="sourceLineNo">615</span><a name="line.615"></a>
+<span class="sourceLineNo">616</span>        int l;<a name="line.616"></a>
+<span class="sourceLineNo">617</span><a name="line.617"></a>
+<span class="sourceLineNo">618</span>        if (compressionType == BMPConstants.BI_JPEG ||<a name="line.618"></a>
+<span class="sourceLineNo">619</span>            compressionType == BMPConstants.BI_PNG) {<a name="line.619"></a>
+<span class="sourceLineNo">620</span>            // prepare embedded buffer<a name="line.620"></a>
+<span class="sourceLineNo">621</span>            embedded_stream = new ByteArrayOutputStream();<a name="line.621"></a>
+<span class="sourceLineNo">622</span>            writeEmbedded(image, bmpParam);<a name="line.622"></a>
+<span class="sourceLineNo">623</span>            // update the file/image Size<a name="line.623"></a>
+<span class="sourceLineNo">624</span>            embedded_stream.flush();<a name="line.624"></a>
+<span class="sourceLineNo">625</span>            imageSize = embedded_stream.size();<a name="line.625"></a>
+<span class="sourceLineNo">626</span><a name="line.626"></a>
+<span class="sourceLineNo">627</span>            long endPos = stream.getStreamPosition();<a name="line.627"></a>
+<span class="sourceLineNo">628</span>            fileSize = (int)(offset + imageSize);<a name="line.628"></a>
+<span class="sourceLineNo">629</span>            stream.seek(headPos);<a name="line.629"></a>
+<span class="sourceLineNo">630</span>            writeSize(fileSize, 2);<a name="line.630"></a>
+<span class="sourceLineNo">631</span>            stream.seek(headPos);<a name="line.631"></a>
+<span class="sourceLineNo">632</span>            writeSize(imageSize, 34);<a name="line.632"></a>
+<span class="sourceLineNo">633</span>            stream.seek(endPos);<a name="line.633"></a>
+<span class="sourceLineNo">634</span>            stream.write(embedded_stream.toByteArray());<a name="line.634"></a>
+<span class="sourceLineNo">635</span>            embedded_stream = null;<a name="line.635"></a>
+<span class="sourceLineNo">636</span><a name="line.636"></a>
+<span class="sourceLineNo">637</span>            if (abortRequested()) {<a name="line.637"></a>
+<span class="sourceLineNo">638</span>                processWriteAborted();<a name="line.638"></a>
+<span class="sourceLineNo">639</span>            } else {<a name="line.639"></a>
+<span class="sourceLineNo">640</span>                processImageComplete();<a name="line.640"></a>
+<span class="sourceLineNo">641</span>                stream.flushBefore(stream.getStreamPosition());<a name="line.641"></a>
+<span class="sourceLineNo">642</span>            }<a name="line.642"></a>
+<span class="sourceLineNo">643</span><a name="line.643"></a>
+<span class="sourceLineNo">644</span>            return;<a name="line.644"></a>
+<span class="sourceLineNo">645</span>        }<a name="line.645"></a>
+<span class="sourceLineNo">646</span><a name="line.646"></a>
+<span class="sourceLineNo">647</span>        int maxBandOffset = bandOffsets[0];<a name="line.647"></a>
+<span class="sourceLineNo">648</span>        for (int i = 1; i &lt; bandOffsets.length; i++)<a name="line.648"></a>
+<span class="sourceLineNo">649</span>            if (bandOffsets[i] &gt; maxBandOffset)<a name="line.649"></a>
+<span class="sourceLineNo">650</span>                maxBandOffset = bandOffsets[i];<a name="line.650"></a>
+<span class="sourceLineNo">651</span><a name="line.651"></a>
+<span class="sourceLineNo">652</span>        int[] pixel = new int[maxBandOffset + 1];<a name="line.652"></a>
+<span class="sourceLineNo">653</span><a name="line.653"></a>
+<span class="sourceLineNo">654</span>        int destScanlineLength = destScanlineBytes;<a name="line.654"></a>
+<span class="sourceLineNo">655</span><a name="line.655"></a>
+<span class="sourceLineNo">656</span>        if (noTransform &amp;&amp; noSubband) {<a name="line.656"></a>
+<span class="sourceLineNo">657</span>            destScanlineLength = destScanlineBytes / (DataBuffer.getDataTypeSize(dataType)&gt;&gt;3);<a name="line.657"></a>
+<span class="sourceLineNo">658</span>        }<a name="line.658"></a>
+<span class="sourceLineNo">659</span>        for (int i = 0; i &lt; h; i++) {<a name="line.659"></a>
+<span class="sourceLineNo">660</span>            if (abortRequested()) {<a name="line.660"></a>
+<span class="sourceLineNo">661</span>                break;<a name="line.661"></a>
+<span class="sourceLineNo">662</span>            }<a name="line.662"></a>
+<span class="sourceLineNo">663</span><a name="line.663"></a>
+<span class="sourceLineNo">664</span>            int row = minY + i;<a name="line.664"></a>
+<span class="sourceLineNo">665</span><a name="line.665"></a>
+<span class="sourceLineNo">666</span>            if (!isTopDown)<a name="line.666"></a>
+<span class="sourceLineNo">667</span>                row = minY + h - i -1;<a name="line.667"></a>
+<span class="sourceLineNo">668</span><a name="line.668"></a>
+<span class="sourceLineNo">669</span>            // Get the pixels<a name="line.669"></a>
+<span class="sourceLineNo">670</span>            Raster src = inputRaster;<a name="line.670"></a>
+<span class="sourceLineNo">671</span><a name="line.671"></a>
+<span class="sourceLineNo">672</span>            Rectangle srcRect =<a name="line.672"></a>
+<span class="sourceLineNo">673</span>                new Rectangle(minX * scaleX + xOffset,<a name="line.673"></a>
+<span class="sourceLineNo">674</span>                              row * scaleY + yOffset,<a name="line.674"></a>
+<span class="sourceLineNo">675</span>                              (w - 1)* scaleX + 1,<a name="line.675"></a>
+<span class="sourceLineNo">676</span>                              1);<a name="line.676"></a>
+<span class="sourceLineNo">677</span>            if (!writeRaster)<a name="line.677"></a>
+<span class="sourceLineNo">678</span>                src = input.getData(srcRect);<a name="line.678"></a>
+<span class="sourceLineNo">679</span><a name="line.679"></a>
+<span class="sourceLineNo">680</span>            if (noTransform &amp;&amp; noSubband) {<a name="line.680"></a>
+<span class="sourceLineNo">681</span>                SampleModel sm = src.getSampleModel();<a name="line.681"></a>
+<span class="sourceLineNo">682</span>                int pos = 0;<a name="line.682"></a>
+<span class="sourceLineNo">683</span>                int startX = srcRect.x - src.getSampleModelTranslateX();<a name="line.683"></a>
+<span class="sourceLineNo">684</span>                int startY = srcRect.y - src.getSampleModelTranslateY();<a name="line.684"></a>
+<span class="sourceLineNo">685</span>                if (sm instanceof ComponentSampleModel) {<a name="line.685"></a>
+<span class="sourceLineNo">686</span>                    ComponentSampleModel csm = (ComponentSampleModel)sm;<a name="line.686"></a>
+<span class="sourceLineNo">687</span>                    pos = csm.getOffset(startX, startY, 0);<a name="line.687"></a>
+<span class="sourceLineNo">688</span>                    for(int nb=1; nb &lt; csm.getNumBands(); nb++) {<a name="line.688"></a>
+<span class="sourceLineNo">689</span>                        if (pos &gt; csm.getOffset(startX, startY, nb)) {<a name="line.689"></a>
+<span class="sourceLineNo">690</span>                            pos = csm.getOffset(startX, startY, nb);<a name="line.690"></a>
+<span class="sourceLineNo">691</span>                        }<a name="line.691"></a>
+<span class="sourceLineNo">692</span>                    }<a name="line.692"></a>
+<span class="sourceLineNo">693</span>                } else if (sm instanceof MultiPixelPackedSampleModel) {<a name="line.693"></a>
+<span class="sourceLineNo">694</span>                    MultiPixelPackedSampleModel mppsm =<a name="line.694"></a>
+<span class="sourceLineNo">695</span>                        (MultiPixelPackedSampleModel)sm;<a name="line.695"></a>
+<span class="sourceLineNo">696</span>                    pos = mppsm.getOffset(startX, startY);<a name="line.696"></a>
+<span class="sourceLineNo">697</span>                } else if (sm instanceof SinglePixelPackedSampleModel) {<a name="line.697"></a>
+<span class="sourceLineNo">698</span>                    SinglePixelPackedSampleModel sppsm =<a name="line.698"></a>
+<span class="sourceLineNo">699</span>                        (SinglePixelPackedSampleModel)sm;<a name="line.699"></a>
+<span class="sourceLineNo">700</span>                    pos = sppsm.getOffset(startX, startY);<a name="line.700"></a>
+<span class="sourceLineNo">701</span>                }<a name="line.701"></a>
+<span class="sourceLineNo">702</span><a name="line.702"></a>
+<span class="sourceLineNo">703</span>                if (compressionType == BMPConstants.BI_RGB || compressionType == BMPConstants.BI_BITFIELDS){<a name="line.703"></a>
+<span class="sourceLineNo">704</span>                    switch(dataType) {<a name="line.704"></a>
+<span class="sourceLineNo">705</span>                        case DataBuffer.TYPE_BYTE:<a name="line.705"></a>
+<span class="sourceLineNo">706</span>                        byte[] bdata =<a name="line.706"></a>
+<span class="sourceLineNo">707</span>                            ((DataBufferByte)src.getDataBuffer()).getData();<a name="line.707"></a>
+<span class="sourceLineNo">708</span>                        stream.write(bdata, pos, destScanlineLength);<a name="line.708"></a>
+<span class="sourceLineNo">709</span>                        break;<a name="line.709"></a>
+<span class="sourceLineNo">710</span><a name="line.710"></a>
+<span class="sourceLineNo">711</span>                        case DataBuffer.TYPE_SHORT:<a name="line.711"></a>
+<span class="sourceLineNo">712</span>                        short[] sdata =<a name="line.712"></a>
+<span class="sourceLineNo">713</span>                            ((DataBufferShort)src.getDataBuffer()).getData();<a name="line.713"></a>
+<span class="sourceLineNo">714</span>                        stream.writeShorts(sdata, pos, destScanlineLength);<a name="line.714"></a>
+<span class="sourceLineNo">715</span>                        break;<a name="line.715"></a>
+<span class="sourceLineNo">716</span><a name="line.716"></a>
+<span class="sourceLineNo">717</span>                        case DataBuffer.TYPE_USHORT:<a name="line.717"></a>
+<span class="sourceLineNo">718</span>                        short[] usdata =<a name="line.718"></a>
+<span class="sourceLineNo">719</span>                            ((DataBufferUShort)src.getDataBuffer()).getData();<a name="line.719"></a>
+<span class="sourceLineNo">720</span>                        stream.writeShorts(usdata, pos, destScanlineLength);<a name="line.720"></a>
+<span class="sourceLineNo">721</span>                        break;<a name="line.721"></a>
+<span class="sourceLineNo">722</span><a name="line.722"></a>
+<span class="sourceLineNo">723</span>                        case DataBuffer.TYPE_INT:<a name="line.723"></a>
+<span class="sourceLineNo">724</span>                        int[] idata =<a name="line.724"></a>
+<span class="sourceLineNo">725</span>                            ((DataBufferInt)src.getDataBuffer()).getData();<a name="line.725"></a>
+<span class="sourceLineNo">726</span>                        stream.writeInts(idata, pos, destScanlineLength);<a name="line.726"></a>
+<span class="sourceLineNo">727</span>                        break;<a name="line.727"></a>
+<span class="sourceLineNo">728</span>                    }<a name="line.728"></a>
+<span class="sourceLineNo">729</span><a name="line.729"></a>
+<span class="sourceLineNo">730</span>                    for(int k=0; k&lt;padding; k++) {<a name="line.730"></a>
+<span class="sourceLineNo">731</span>                        stream.writeByte(0);<a name="line.731"></a>
+<span class="sourceLineNo">732</span>                    }<a name="line.732"></a>
+<span class="sourceLineNo">733</span>                } else if (compressionType == BMPConstants.BI_RLE4) {<a name="line.733"></a>
+<span class="sourceLineNo">734</span>                    if (bpixels == null || bpixels.length &lt; scanlineBytes)<a name="line.734"></a>
+<span class="sourceLineNo">735</span>                        bpixels = new byte[scanlineBytes];<a name="line.735"></a>
+<span class="sourceLineNo">736</span>                    src.getPixels(srcRect.x, srcRect.y,<a name="line.736"></a>
+<span class="sourceLineNo">737</span>                                  srcRect.width, srcRect.height, pixels);<a name="line.737"></a>
+<span class="sourceLineNo">738</span>                    for (int h=0; h&lt;scanlineBytes; h++) {<a name="line.738"></a>
+<span class="sourceLineNo">739</span>                        bpixels[h] = (byte)pixels[h];<a name="line.739"></a>
+<span class="sourceLineNo">740</span>                    }<a name="line.740"></a>
+<span class="sourceLineNo">741</span>                    encodeRLE4(bpixels, scanlineBytes);<a name="line.741"></a>
+<span class="sourceLineNo">742</span>                } else if (compressionType == BMPConstants.BI_RLE8) {<a name="line.742"></a>
+<span class="sourceLineNo">743</span>                    //byte[] bdata =<a name="line.743"></a>
+<span class="sourceLineNo">744</span>                    //((DataBufferByte)src.getDataBuffer()).getData();<a name="line.744"></a>
+<span class="sourceLineNo">745</span>                    //System.out.println("bdata.length="+bdata.length);<a name="line.745"></a>
+<span class="sourceLineNo">746</span>                    //System.arraycopy(bdata, pos, bpixels, 0, scanlineBytes);<a name="line.746"></a>
+<span class="sourceLineNo">747</span>                    if (bpixels == null || bpixels.length &lt; scanlineBytes)<a name="line.747"></a>
+<span class="sourceLineNo">748</span>                        bpixels = new byte[scanlineBytes];<a name="line.748"></a>
+<span class="sourceLineNo">749</span>                    src.getPixels(srcRect.x, srcRect.y,<a name="line.749"></a>
+<span class="sourceLineNo">750</span>                                  srcRect.width, srcRect.height, pixels);<a name="line.750"></a>
+<span class="sourceLineNo">751</span>                    for (int h=0; h&lt;scanlineBytes; h++) {<a name="line.751"></a>
+<span class="sourceLineNo">752</span>                        bpixels[h] = (byte)pixels[h];<a name="line.752"></a>
+<span class="sourceLineNo">753</span>                    }<a name="line.753"></a>
+<span class="sourceLineNo">754</span><a name="line.754"></a>
+<span class="sourceLineNo">755</span>                    encodeRLE8(bpixels, scanlineBytes);<a name="line.755"></a>
+<span class="sourceLineNo">756</span>                }<a name="line.756"></a>
+<span class="sourceLineNo">757</span>            } else {<a name="line.757"></a>
+<span class="sourceLineNo">758</span>                src.getPixels(srcRect.x, srcRect.y,<a name="line.758"></a>
+<span class="sourceLineNo">759</span>                              srcRect.width, srcRect.height, pixels);<a name="line.759"></a>
+<span class="sourceLineNo">760</span><a name="line.760"></a>
+<span class="sourceLineNo">761</span>                if (scaleX != 1 || maxBandOffset != numBands - 1) {<a name="line.761"></a>
+<span class="sourceLineNo">762</span>                    for (int j = 0, k = 0, n=0; j &lt; w;<a name="line.762"></a>
+<span class="sourceLineNo">763</span>                        j++, k += scaleX * numBands, n += numBands) <a name="line.763"></a>
+<span class="sourceLineNo">764</span>                    {<a name="line.764"></a>
+<span class="sourceLineNo">765</span>                        System.arraycopy(pixels, k, pixel, 0, pixel.length);<a name="line.765"></a>
+<span class="sourceLineNo">766</span><a name="line.766"></a>
+<span class="sourceLineNo">767</span>                        for (int m = 0; m &lt; numBands; m++) {<a name="line.767"></a>
+<span class="sourceLineNo">768</span>                            // pixel data is provided here in RGB order<a name="line.768"></a>
+<span class="sourceLineNo">769</span>                            pixels[n + m] = pixel[sourceBands[m]];<a name="line.769"></a>
+<span class="sourceLineNo">770</span>                        }<a name="line.770"></a>
+<span class="sourceLineNo">771</span>                    }<a name="line.771"></a>
+<span class="sourceLineNo">772</span>                }<a name="line.772"></a>
+<span class="sourceLineNo">773</span>                writePixels(0, scanlineBytes, bitsPerPixel, pixels,<a name="line.773"></a>
+<span class="sourceLineNo">774</span>                            padding, numBands, icm);<a name="line.774"></a>
+<span class="sourceLineNo">775</span>            }<a name="line.775"></a>
+<span class="sourceLineNo">776</span><a name="line.776"></a>
+<span class="sourceLineNo">777</span>            processImageProgress(100.0f * (((float)i) / ((float)h)));<a name="line.777"></a>
+<span class="sourceLineNo">778</span>        }<a name="line.778"></a>
+<span class="sourceLineNo">779</span><a name="line.779"></a>
+<span class="sourceLineNo">780</span>        if (compressionType == BMPConstants.BI_RLE4 ||<a name="line.780"></a>
+<span class="sourceLineNo">781</span>            compressionType == BMPConstants.BI_RLE8) {<a name="line.781"></a>
+<span class="sourceLineNo">782</span>            // Write the RLE EOF marker and<a name="line.782"></a>
+<span class="sourceLineNo">783</span>            stream.writeByte(0);<a name="line.783"></a>
+<span class="sourceLineNo">784</span>            stream.writeByte(1);<a name="line.784"></a>
+<span class="sourceLineNo">785</span>            incCompImageSize(2);<a name="line.785"></a>
+<span class="sourceLineNo">786</span>            // update the file/image Size<a name="line.786"></a>
+<span class="sourceLineNo">787</span>            imageSize = compImageSize;<a name="line.787"></a>
+<span class="sourceLineNo">788</span>            fileSize = compImageSize + offset;<a name="line.788"></a>
+<span class="sourceLineNo">789</span>            long endPos = stream.getStreamPosition();<a name="line.789"></a>
+<span class="sourceLineNo">790</span>            stream.seek(headPos);<a name="line.790"></a>
+<span class="sourceLineNo">791</span>            writeSize(fileSize, 2);<a name="line.791"></a>
+<span class="sourceLineNo">792</span>            stream.seek(headPos);<a name="line.792"></a>
+<span class="sourceLineNo">793</span>            writeSize(imageSize, 34);<a name="line.793"></a>
+<span class="sourceLineNo">794</span>            stream.seek(endPos);<a name="line.794"></a>
+<span class="sourceLineNo">795</span>        }<a name="line.795"></a>
+<span class="sourceLineNo">796</span><a name="line.796"></a>
+<span class="sourceLineNo">797</span>        if (abortRequested()) {<a name="line.797"></a>
+<span class="sourceLineNo">798</span>            processWriteAborted();<a name="line.798"></a>
+<span class="sourceLineNo">799</span>        } else {<a name="line.799"></a>
+<span class="sourceLineNo">800</span>            processImageComplete();<a name="line.800"></a>
+<span class="sourceLineNo">801</span>            stream.flushBefore(stream.getStreamPosition());<a name="line.801"></a>
+<span class="sourceLineNo">802</span>        }<a name="line.802"></a>
+<span class="sourceLineNo">803</span>    }<a name="line.803"></a>
+<span class="sourceLineNo">804</span><a name="line.804"></a>
+<span class="sourceLineNo">805</span>    private void writePixels(int l, int scanlineBytes, int bitsPerPixel,<a name="line.805"></a>
+<span class="sourceLineNo">806</span>                             int pixels[],<a name="line.806"></a>
+<span class="sourceLineNo">807</span>                             int padding, int numBands,<a name="line.807"></a>
+<span class="sourceLineNo">808</span>                             IndexColorModel icm) throws IOException {<a name="line.808"></a>
+<span class="sourceLineNo">809</span>        int pixel = 0;<a name="line.809"></a>
+<span class="sourceLineNo">810</span>        int k = 0;<a name="line.810"></a>
+<span class="sourceLineNo">811</span>        switch (bitsPerPixel) {<a name="line.811"></a>
+<span class="sourceLineNo">812</span><a name="line.812"></a>
+<span class="sourceLineNo">813</span>        case 1:<a name="line.813"></a>
+<span class="sourceLineNo">814</span><a name="line.814"></a>
+<span class="sourceLineNo">815</span>            for (int j=0; j&lt;scanlineBytes/8; j++) {<a name="line.815"></a>
+<span class="sourceLineNo">816</span>                bpixels[k++] = (byte)((pixels[l++]  &lt;&lt; 7) |<a name="line.816"></a>
+<span class="sourceLineNo">817</span>                                      (pixels[l++]  &lt;&lt; 6) |<a name="line.817"></a>
+<span class="sourceLineNo">818</span>                                      (pixels[l++]  &lt;&lt; 5) |<a name="line.818"></a>
+<span class="sourceLineNo">819</span>                                      (pixels[l++]  &lt;&lt; 4) |<a name="line.819"></a>
+<span class="sourceLineNo">820</span>                                      (pixels[l++]  &lt;&lt; 3) |<a name="line.820"></a>
+<span class="sourceLineNo">821</span>                                      (pixels[l++]  &lt;&lt; 2) |<a name="line.821"></a>
+<span class="sourceLineNo">822</span>                                      (pixels[l++]  &lt;&lt; 1) |<a name="line.822"></a>
+<span class="sourceLineNo">823</span>                                       pixels[l++]);<a name="line.823"></a>
+<span class="sourceLineNo">824</span>            }<a name="line.824"></a>
+<span class="sourceLineNo">825</span><a name="line.825"></a>
+<span class="sourceLineNo">826</span>            // Partially filled last byte, if any<a name="line.826"></a>
+<span class="sourceLineNo">827</span>            if (scanlineBytes%8 &gt; 0) {<a name="line.827"></a>
+<span class="sourceLineNo">828</span>                pixel = 0;<a name="line.828"></a>
+<span class="sourceLineNo">829</span>                for (int j=0; j&lt;scanlineBytes%8; j++) {<a name="line.829"></a>
+<span class="sourceLineNo">830</span>                    pixel |= (pixels[l++] &lt;&lt; (7 - j));<a name="line.830"></a>
+<span class="sourceLineNo">831</span>                }<a name="line.831"></a>
+<span class="sourceLineNo">832</span>                bpixels[k++] = (byte)pixel;<a name="line.832"></a>
+<span class="sourceLineNo">833</span>            }<a name="line.833"></a>
+<span class="sourceLineNo">834</span>            stream.write(bpixels, 0, (scanlineBytes+7)/8);<a name="line.834"></a>
+<span class="sourceLineNo">835</span><a name="line.835"></a>
+<span class="sourceLineNo">836</span>            break;<a name="line.836"></a>
+<span class="sourceLineNo">837</span><a name="line.837"></a>
+<span class="sourceLineNo">838</span>        case 4:<a name="line.838"></a>
+<span class="sourceLineNo">839</span>            if (compressionType == BMPConstants.BI_RLE4){<a name="line.839"></a>
+<span class="sourceLineNo">840</span>                byte[] bipixels = new byte[scanlineBytes];<a name="line.840"></a>
+<span class="sourceLineNo">841</span>                for (int h=0; h&lt;scanlineBytes; h++) {<a name="line.841"></a>
+<span class="sourceLineNo">842</span>                    bipixels[h] = (byte)pixels[l++];<a name="line.842"></a>
+<span class="sourceLineNo">843</span>                }<a name="line.843"></a>
+<span class="sourceLineNo">844</span>                encodeRLE4(bipixels, scanlineBytes);<a name="line.844"></a>
+<span class="sourceLineNo">845</span>            }else {<a name="line.845"></a>
+<span class="sourceLineNo">846</span>                for (int j=0; j&lt;scanlineBytes/2; j++) {<a name="line.846"></a>
+<span class="sourceLineNo">847</span>                    pixel = (pixels[l++] &lt;&lt; 4) | pixels[l++];<a name="line.847"></a>
+<span class="sourceLineNo">848</span>                    bpixels[k++] = (byte)pixel;<a name="line.848"></a>
+<span class="sourceLineNo">849</span>                }<a name="line.849"></a>
+<span class="sourceLineNo">850</span>                // Put the last pixel of odd-length lines in the 4 MSBs<a name="line.850"></a>
+<span class="sourceLineNo">851</span>                if ((scanlineBytes%2) == 1) {<a name="line.851"></a>
+<span class="sourceLineNo">852</span>                    pixel = pixels[l] &lt;&lt; 4;<a name="line.852"></a>
+<span class="sourceLineNo">853</span>                    bpixels[k++] = (byte)pixel;<a name="line.853"></a>
+<span class="sourceLineNo">854</span>                }<a name="line.854"></a>
+<span class="sourceLineNo">855</span>                stream.write(bpixels, 0, (scanlineBytes+1)/2);<a name="line.855"></a>
+<span class="sourceLineNo">856</span>            }<a name="line.856"></a>
+<span class="sourceLineNo">857</span>            break;<a name="line.857"></a>
+<span class="sourceLineNo">858</span><a name="line.858"></a>
+<span class="sourceLineNo">859</span>        case 8:<a name="line.859"></a>
+<span class="sourceLineNo">860</span>            if(compressionType == BMPConstants.BI_RLE8) {<a name="line.860"></a>
+<span class="sourceLineNo">861</span>                for (int h=0; h&lt;scanlineBytes; h++) {<a name="line.861"></a>
+<span class="sourceLineNo">862</span>                    bpixels[h] = (byte)pixels[l++];<a name="line.862"></a>
+<span class="sourceLineNo">863</span>                }<a name="line.863"></a>
+<span class="sourceLineNo">864</span>                encodeRLE8(bpixels, scanlineBytes);<a name="line.864"></a>
+<span class="sourceLineNo">865</span>            }else {<a name="line.865"></a>
+<span class="sourceLineNo">866</span>                for (int j=0; j&lt;scanlineBytes; j++) {<a name="line.866"></a>
+<span class="sourceLineNo">867</span>                    bpixels[j] = (byte)pixels[l++];<a name="line.867"></a>
+<span class="sourceLineNo">868</span>                }<a name="line.868"></a>
+<span class="sourceLineNo">869</span>                stream.write(bpixels, 0, scanlineBytes);<a name="line.869"></a>
+<span class="sourceLineNo">870</span>            }<a name="line.870"></a>
+<span class="sourceLineNo">871</span>            break;<a name="line.871"></a>
+<span class="sourceLineNo">872</span><a name="line.872"></a>
+<span class="sourceLineNo">873</span>        case 16:<a name="line.873"></a>
+<span class="sourceLineNo">874</span>            if (spixels == null)<a name="line.874"></a>
+<span class="sourceLineNo">875</span>                spixels = new short[scanlineBytes / numBands];<a name="line.875"></a>
+<span class="sourceLineNo">876</span>            /*<a name="line.876"></a>
+<span class="sourceLineNo">877</span>             * We expect that pixel data comes in RGB order.<a name="line.877"></a>
+<span class="sourceLineNo">878</span>             * We will assemble short pixel taking into account<a name="line.878"></a>
+<span class="sourceLineNo">879</span>             * the compression type:<a name="line.879"></a>
+<span class="sourceLineNo">880</span>             *<a name="line.880"></a>
+<span class="sourceLineNo">881</span>             * BI_RGB        - the RGB order should be maintained.<a name="line.881"></a>
+<span class="sourceLineNo">882</span>             * BI_BITFIELDS  - use bitPos array that was built<a name="line.882"></a>
+<span class="sourceLineNo">883</span>             *                 according to bitfields masks.<a name="line.883"></a>
+<span class="sourceLineNo">884</span>             */<a name="line.884"></a>
+<span class="sourceLineNo">885</span>            for (int j = 0, m = 0; j &lt; scanlineBytes; m++) {<a name="line.885"></a>
+<span class="sourceLineNo">886</span>                spixels[m] = 0;<a name="line.886"></a>
+<span class="sourceLineNo">887</span>                if (compressionType == BMPConstants.BI_RGB) {<a name="line.887"></a>
+<span class="sourceLineNo">888</span>                    /*<a name="line.888"></a>
+<span class="sourceLineNo">889</span>                     * please note that despite other cases,<a name="line.889"></a>
+<span class="sourceLineNo">890</span>                     * the 16bpp BI_RGB requires the RGB data order<a name="line.890"></a>
+<span class="sourceLineNo">891</span>                     */<a name="line.891"></a>
+<span class="sourceLineNo">892</span>                    spixels[m] = (short)<a name="line.892"></a>
+<span class="sourceLineNo">893</span>                        (((0x1f &amp; pixels[j    ]) &lt;&lt; 10) |<a name="line.893"></a>
+<span class="sourceLineNo">894</span>                         ((0x1f &amp; pixels[j + 1]) &lt;&lt;  5) |<a name="line.894"></a>
+<span class="sourceLineNo">895</span>                         ((0x1f &amp; pixels[j + 2])      ));<a name="line.895"></a>
+<span class="sourceLineNo">896</span>                     j += 3;<a name="line.896"></a>
+<span class="sourceLineNo">897</span>                } else {<a name="line.897"></a>
+<span class="sourceLineNo">898</span>                    for(int i = 0 ; i &lt; numBands; i++, j++) {<a name="line.898"></a>
+<span class="sourceLineNo">899</span>                        spixels[m] |=<a name="line.899"></a>
+<span class="sourceLineNo">900</span>                            (((pixels[j]) &lt;&lt; bitPos[i]) &amp; bitMasks[i]);<a name="line.900"></a>
+<span class="sourceLineNo">901</span>                    }<a name="line.901"></a>
+<span class="sourceLineNo">902</span>                }<a name="line.902"></a>
+<span class="sourceLineNo">903</span>            }<a name="line.903"></a>
+<span class="sourceLineNo">904</span>            stream.writeShorts(spixels, 0, spixels.length);<a name="line.904"></a>
+<span class="sourceLineNo">905</span>            break;<a name="line.905"></a>
+<span class="sourceLineNo">906</span><a name="line.906"></a>
+<span class="sourceLineNo">907</span>        case 24:<a name="line.907"></a>
+<span class="sourceLineNo">908</span>            if (numBands == 3) {<a name="line.908"></a>
+<span class="sourceLineNo">909</span>                for (int j=0; j&lt;scanlineBytes; j+=3) {<a name="line.909"></a>
+<span class="sourceLineNo">910</span>                    // Since BMP needs BGR format<a name="line.910"></a>
+<span class="sourceLineNo">911</span>                    bpixels[k++] = (byte)(pixels[l+2]);<a name="line.911"></a>
+<span class="sourceLineNo">912</span>                    bpixels[k++] = (byte)(pixels[l+1]);<a name="line.912"></a>
+<span class="sourceLineNo">913</span>                    bpixels[k++] = (byte)(pixels[l]);<a name="line.913"></a>
+<span class="sourceLineNo">914</span>                    l+=3;<a name="line.914"></a>
+<span class="sourceLineNo">915</span>                }<a name="line.915"></a>
+<span class="sourceLineNo">916</span>                stream.write(bpixels, 0, scanlineBytes);<a name="line.916"></a>
+<span class="sourceLineNo">917</span>            } else {<a name="line.917"></a>
+<span class="sourceLineNo">918</span>                // Case where IndexColorModel had &gt; 256 colors.<a name="line.918"></a>
+<span class="sourceLineNo">919</span>                int entries = icm.getMapSize();<a name="line.919"></a>
+<span class="sourceLineNo">920</span><a name="line.920"></a>
+<span class="sourceLineNo">921</span>                byte r[] = new byte[entries];<a name="line.921"></a>
+<span class="sourceLineNo">922</span>                byte g[] = new byte[entries];<a name="line.922"></a>
+<span class="sourceLineNo">923</span>                byte b[] = new byte[entries];<a name="line.923"></a>
+<span class="sourceLineNo">924</span><a name="line.924"></a>
+<span class="sourceLineNo">925</span>                icm.getReds(r);<a name="line.925"></a>
+<span class="sourceLineNo">926</span>                icm.getGreens(g);<a name="line.926"></a>
+<span class="sourceLineNo">927</span>                icm.getBlues(b);<a name="line.927"></a>
+<span class="sourceLineNo">928</span>                int index;<a name="line.928"></a>
+<span class="sourceLineNo">929</span><a name="line.929"></a>
+<span class="sourceLineNo">930</span>                for (int j=0; j&lt;scanlineBytes; j++) {<a name="line.930"></a>
+<span class="sourceLineNo">931</span>                    index = pixels[l];<a name="line.931"></a>
+<span class="sourceLineNo">932</span>                    bpixels[k++] = b[index];<a name="line.932"></a>
+<span class="sourceLineNo">933</span>                    bpixels[k++] = g[index];<a name="line.933"></a>
+<span class="sourceLineNo">934</span>                    bpixels[k++] = b[index];<a name="line.934"></a>
+<span class="sourceLineNo">935</span>                    l++;<a name="line.935"></a>
+<span class="sourceLineNo">936</span>                }<a name="line.936"></a>
+<span class="sourceLineNo">937</span>                stream.write(bpixels, 0, scanlineBytes*3);<a name="line.937"></a>
+<span class="sourceLineNo">938</span>            }<a name="line.938"></a>
+<span class="sourceLineNo">939</span>            break;<a name="line.939"></a>
+<span class="sourceLineNo">940</span><a name="line.940"></a>
+<span class="sourceLineNo">941</span>        case 32:<a name="line.941"></a>
+<span class="sourceLineNo">942</span>            if (ipixels == null)<a name="line.942"></a>
+<span class="sourceLineNo">943</span>                ipixels = new int[scanlineBytes / numBands];<a name="line.943"></a>
+<span class="sourceLineNo">944</span>            if (numBands == 3) {<a name="line.944"></a>
+<span class="sourceLineNo">945</span>                /*<a name="line.945"></a>
+<span class="sourceLineNo">946</span>                 * We expect that pixel data comes in RGB order.<a name="line.946"></a>
+<span class="sourceLineNo">947</span>                 * We will assemble int pixel taking into account<a name="line.947"></a>
+<span class="sourceLineNo">948</span>                 * the compression type.<a name="line.948"></a>
+<span class="sourceLineNo">949</span>                 *<a name="line.949"></a>
+<span class="sourceLineNo">950</span>                 * BI_RGB        - the BGR order should be used.<a name="line.950"></a>
+<span class="sourceLineNo">951</span>                 * BI_BITFIELDS  - use bitPos array that was built<a name="line.951"></a>
+<span class="sourceLineNo">952</span>                 *                 according to bitfields masks.<a name="line.952"></a>
+<span class="sourceLineNo">953</span>                 */<a name="line.953"></a>
+<span class="sourceLineNo">954</span>                for (int j = 0, m = 0; j &lt; scanlineBytes; m++) {<a name="line.954"></a>
+<span class="sourceLineNo">955</span>                    ipixels[m] = 0;<a name="line.955"></a>
+<span class="sourceLineNo">956</span>                    if (compressionType == BMPConstants.BI_RGB) {<a name="line.956"></a>
+<span class="sourceLineNo">957</span>                        ipixels[m] =<a name="line.957"></a>
+<span class="sourceLineNo">958</span>                            ((0xff &amp; pixels[j + 2]) &lt;&lt; 16) |<a name="line.958"></a>
+<span class="sourceLineNo">959</span>                            ((0xff &amp; pixels[j + 1]) &lt;&lt;  8) |<a name="line.959"></a>
+<span class="sourceLineNo">960</span>                            ((0xff &amp; pixels[j    ])      );<a name="line.960"></a>
+<span class="sourceLineNo">961</span>                        j += 3;<a name="line.961"></a>
+<span class="sourceLineNo">962</span>                    } else {<a name="line.962"></a>
+<span class="sourceLineNo">963</span>                        for(int i = 0 ; i &lt; numBands; i++, j++) {<a name="line.963"></a>
+<span class="sourceLineNo">964</span>                            ipixels[m] |=<a name="line.964"></a>
+<span class="sourceLineNo">965</span>                                (((pixels[j]) &lt;&lt; bitPos[i]) &amp; bitMasks[i]);<a name="line.965"></a>
+<span class="sourceLineNo">966</span>                        }<a name="line.966"></a>
+<span class="sourceLineNo">967</span>                    }<a name="line.967"></a>
+<span class="sourceLineNo">968</span>                }<a name="line.968"></a>
+<span class="sourceLineNo">969</span>            } else {<a name="line.969"></a>
+<span class="sourceLineNo">970</span>                // We have two possibilities here:<a name="line.970"></a>
+<span class="sourceLineNo">971</span>                // 1. we are writing the indexed image with bitfields<a name="line.971"></a>
+<span class="sourceLineNo">972</span>                //    compression (this covers also the case of BYTE_BINARY)<a name="line.972"></a>
+<span class="sourceLineNo">973</span>                //    =&gt; use icm to get actual RGB color values.<a name="line.973"></a>
+<span class="sourceLineNo">974</span>                // 2. we are writing the gray-scaled image with BI_BITFIELDS<a name="line.974"></a>
+<span class="sourceLineNo">975</span>                //    compression<a name="line.975"></a>
+<span class="sourceLineNo">976</span>                //    =&gt; just replicate the level of gray to color components.<a name="line.976"></a>
+<span class="sourceLineNo">977</span>                for (int j = 0; j &lt; scanlineBytes; j++) {<a name="line.977"></a>
+<span class="sourceLineNo">978</span>                    if (icm != null) {<a name="line.978"></a>
+<span class="sourceLineNo">979</span>                        ipixels[j] = icm.getRGB(pixels[j]);<a name="line.979"></a>
+<span class="sourceLineNo">980</span>                    } else {<a name="line.980"></a>
+<span class="sourceLineNo">981</span>                        ipixels[j] =<a name="line.981"></a>
+<span class="sourceLineNo">982</span>                            pixels[j] &lt;&lt; 16 | pixels[j] &lt;&lt; 8 | pixels[j];<a name="line.982"></a>
+<span class="sourceLineNo">983</span>                    }<a name="line.983"></a>
+<span class="sourceLineNo">984</span>                }<a name="line.984"></a>
+<span class="sourceLineNo">985</span>            }<a name="line.985"></a>
+<span class="sourceLineNo">986</span>            stream.writeInts(ipixels, 0, ipixels.length);<a name="line.986"></a>
+<span class="sourceLineNo">987</span>            break;<a name="line.987"></a>
+<span class="sourceLineNo">988</span>        }<a name="line.988"></a>
+<span class="sourceLineNo">989</span><a name="line.989"></a>
+<span class="sourceLineNo">990</span>        // Write out the padding<a name="line.990"></a>
+<span class="sourceLineNo">991</span>        if (compressionType == BMPConstants.BI_RGB  ||<a name="line.991"></a>
+<span class="sourceLineNo">992</span>            compressionType == BMPConstants.BI_BITFIELDS){<a name="line.992"></a>
+<span class="sourceLineNo">993</span>            for(k=0; k&lt;padding; k++) {<a name="line.993"></a>
+<span class="sourceLineNo">994</span>                stream.writeByte(0);<a name="line.994"></a>
+<span class="sourceLineNo">995</span>            }<a name="line.995"></a>
+<span class="sourceLineNo">996</span>        }<a name="line.996"></a>
+<span class="sourceLineNo">997</span>    }<a name="line.997"></a>
+<span class="sourceLineNo">998</span><a name="line.998"></a>
+<span class="sourceLineNo">999</span>    private void encodeRLE8(byte[] bpixels, int scanlineBytes)<a name="line.999"></a>
+<span class="sourceLineNo">1000</span>        throws IOException{<a name="line.1000"></a>
+<span class="sourceLineNo">1001</span><a name="line.1001"></a>
+<span class="sourceLineNo">1002</span>        int runCount = 1, absVal = -1, j = -1;<a name="line.1002"></a>
+<span class="sourceLineNo">1003</span>        byte runVal = 0, nextVal =0 ;<a name="line.1003"></a>
+<span class="sourceLineNo">1004</span><a name="line.1004"></a>
+<span class="sourceLineNo">1005</span>        runVal = bpixels[++j];<a name="line.1005"></a>
+<span class="sourceLineNo">1006</span>        byte[] absBuf = new byte[256];<a name="line.1006"></a>
+<span class="sourceLineNo">1007</span><a name="line.1007"></a>
+<span class="sourceLineNo">1008</span>        while (j &lt; scanlineBytes-1) {<a name="line.1008"></a>
+<span class="sourceLineNo">1009</span>            nextVal = bpixels[++j];<a name="line.1009"></a>
+<span class="sourceLineNo">1010</span>            if (nextVal == runVal ){<a name="line.1010"></a>
+<span class="sourceLineNo">1011</span>                if(absVal &gt;= 3 ){<a name="line.1011"></a>
+<span class="sourceLineNo">1012</span>                    /// Check if there was an existing Absolute Run<a name="line.1012"></a>
+<span class="sourceLineNo">1013</span>                    stream.writeByte(0);<a name="line.1013"></a>
+<span class="sourceLineNo">1014</span>                    stream.writeByte(absVal);<a name="line.1014"></a>
+<span class="sourceLineNo">1015</span>                    incCompImageSize(2);<a name="line.1015"></a>
+<span class="sourceLineNo">1016</span>                    for(int a=0; a&lt;absVal;a++){<a name="line.1016"></a>
+<span class="sourceLineNo">1017</span>                        stream.writeByte(absBuf[a]);<a name="line.1017"></a>
+<span class="sourceLineNo">1018</span>                        incCompImageSize(1);<a name="line.1018"></a>
+<span class="sourceLineNo">1019</span>                    }<a name="line.1019"></a>
+<span class="sourceLineNo">1020</span>                    if (!isEven(absVal)){<a name="line.1020"></a>
+<span class="sourceLineNo">1021</span>                        //Padding<a name="line.1021"></a>
+<span class="sourceLineNo">1022</span>                        stream.writeByte(0);<a name="line.1022"></a>
+<span class="sourceLineNo">1023</span>                        incCompImageSize(1);<a name="line.1023"></a>
+<span class="sourceLineNo">1024</span>                    }<a name="line.1024"></a>
+<span class="sourceLineNo">1025</span>                }<a name="line.1025"></a>
+<span class="sourceLineNo">1026</span>                else if(absVal &gt; -1){<a name="line.1026"></a>
+<span class="sourceLineNo">1027</span>                    /// Absolute Encoding for less than 3<a name="line.1027"></a>
+<span class="sourceLineNo">1028</span>                    /// treated as regular encoding<a name="line.1028"></a>
+<span class="sourceLineNo">1029</span>                    /// Do not include the last element since it will<a name="line.1029"></a>
+<span class="sourceLineNo">1030</span>                    /// be inclued in the next encoding/run<a name="line.1030"></a>
+<span class="sourceLineNo">1031</span>                    for (int b=0;b&lt;absVal;b++){<a name="line.1031"></a>
+<span class="sourceLineNo">1032</span>                        stream.writeByte(1);<a name="line.1032"></a>
+<span class="sourceLineNo">1033</span>                        stream.writeByte(absBuf[b]);<a name="line.1033"></a>
+<span class="sourceLineNo">1034</span>                        incCompImageSize(2);<a name="line.1034"></a>
+<span class="sourceLineNo">1035</span>                    }<a name="line.1035"></a>
+<span class="sourceLineNo">1036</span>                }<a name="line.1036"></a>
+<span class="sourceLineNo">1037</span>                absVal = -1;<a name="line.1037"></a>
+<span class="sourceLineNo">1038</span>                runCount++;<a name="line.1038"></a>
+<span class="sourceLineNo">1039</span>                if (runCount == 256){<a name="line.1039"></a>
+<span class="sourceLineNo">1040</span>                    /// Only 255 values permitted<a name="line.1040"></a>
+<span class="sourceLineNo">1041</span>                    stream.writeByte(runCount-1);<a name="line.1041"></a>
+<span class="sourceLineNo">1042</span>                    stream.writeByte(runVal);<a name="line.1042"></a>
+<span class="sourceLineNo">1043</span>                    incCompImageSize(2);<a name="line.1043"></a>
+<span class="sourceLineNo">1044</span>                    runCount = 1;<a name="line.1044"></a>
+<span class="sourceLineNo">1045</span>                }<a name="line.1045"></a>
+<span class="sourceLineNo">1046</span>            }<a name="line.1046"></a>
+<span class="sourceLineNo">1047</span>            else {<a name="line.1047"></a>
+<span class="sourceLineNo">1048</span>                if (runCount &gt; 1){<a name="line.1048"></a>
+<span class="sourceLineNo">1049</span>                    /// If there was an existing run<a name="line.1049"></a>
+<span class="sourceLineNo">1050</span>                    stream.writeByte(runCount);<a name="line.1050"></a>
+<span class="sourceLineNo">1051</span>                    stream.writeByte(runVal);<a name="line.1051"></a>
+<span class="sourceLineNo">1052</span>                    incCompImageSize(2);<a name="line.1052"></a>
+<span class="sourceLineNo">1053</span>                } else if (absVal &lt; 0){<a name="line.1053"></a>
+<span class="sourceLineNo">1054</span>                    // First time..<a name="line.1054"></a>
+<span class="sourceLineNo">1055</span>                    absBuf[++absVal] = runVal;<a name="line.1055"></a>
+<span class="sourceLineNo">1056</span>                    absBuf[++absVal] = nextVal;<a name="line.1056"></a>
+<span class="sourceLineNo">1057</span>                } else if (absVal &lt; 254){<a name="line.1057"></a>
+<span class="sourceLineNo">1058</span>                    //  0-254 only<a name="line.1058"></a>
+<span class="sourceLineNo">1059</span>                    absBuf[++absVal] = nextVal;<a name="line.1059"></a>
+<span class="sourceLineNo">1060</span>                } else {<a name="line.1060"></a>
+<span class="sourceLineNo">1061</span>                    stream.writeByte(0);<a name="line.1061"></a>
+<span class="sourceLineNo">1062</span>                    stream.writeByte(absVal+1);<a name="line.1062"></a>
+<span class="sourceLineNo">1063</span>                    incCompImageSize(2);<a name="line.1063"></a>
+<span class="sourceLineNo">1064</span>                    for(int a=0; a&lt;=absVal;a++){<a name="line.1064"></a>
+<span class="sourceLineNo">1065</span>                        stream.writeByte(absBuf[a]);<a name="line.1065"></a>
+<span class="sourceLineNo">1066</span>                        incCompImageSize(1);<a name="line.1066"></a>
+<span class="sourceLineNo">1067</span>                    }<a name="line.1067"></a>
+<span class="sourceLineNo">1068</span>                    // padding since 255 elts is not even<a name="line.1068"></a>
+<span class="sourceLineNo">1069</span>                    stream.writeByte(0);<a name="line.1069"></a>
+<span class="sourceLineNo">1070</span>                    incCompImageSize(1);<a name="line.1070"></a>
+<span class="sourceLineNo">1071</span>                    absVal = -1;<a name="line.1071"></a>
+<span class="sourceLineNo">1072</span>                }<a name="line.1072"></a>
+<span class="sourceLineNo">1073</span>                runVal = nextVal;<a name="line.1073"></a>
+<span class="sourceLineNo">1074</span>                runCount = 1;<a name="line.1074"></a>
+<span class="sourceLineNo">1075</span>            }<a name="line.1075"></a>
+<span class="sourceLineNo">1076</span><a name="line.1076"></a>
+<span class="sourceLineNo">1077</span>            if (j == scanlineBytes-1){ // EOF scanline<a name="line.1077"></a>
+<span class="sourceLineNo">1078</span>                // Write the run<a name="line.1078"></a>
+<span class="sourceLineNo">1079</span>                if (absVal == -1){<a name="line.1079"></a>
+<span class="sourceLineNo">1080</span>                    stream.writeByte(runCount);<a name="line.1080"></a>
+<span class="sourceLineNo">1081</span>                    stream.writeByte(runVal);<a name="line.1081"></a>
+<span class="sourceLineNo">1082</span>                    incCompImageSize(2);<a name="line.1082"></a>
+<span class="sourceLineNo">1083</span>                    runCount = 1;<a name="line.1083"></a>
+<span class="sourceLineNo">1084</span>                }<a name="line.1084"></a>
+<span class="sourceLineNo">1085</span>                else {<a name="line.1085"></a>
+<span class="sourceLineNo">1086</span>                    // write the Absolute Run<a name="line.1086"></a>
+<span class="sourceLineNo">1087</span>                    if(absVal &gt;= 2){<a name="line.1087"></a>
+<span class="sourceLineNo">1088</span>                        stream.writeByte(0);<a name="line.1088"></a>
+<span class="sourceLineNo">1089</span>                        stream.writeByte(absVal+1);<a name="line.1089"></a>
+<span class="sourceLineNo">1090</span>                        incCompImageSize(2);<a name="line.1090"></a>
+<span class="sourceLineNo">1091</span>                        for(int a=0; a&lt;=absVal;a++){<a name="line.1091"></a>
+<span class="sourceLineNo">1092</span>                            stream.writeByte(absBuf[a]);<a name="line.1092"></a>
+<span class="sourceLineNo">1093</span>                            incCompImageSize(1);<a name="line.1093"></a>
+<span class="sourceLineNo">1094</span>                        }<a name="line.1094"></a>
+<span class="sourceLineNo">1095</span>                        if (!isEven(absVal+1)){<a name="line.1095"></a>
+<span class="sourceLineNo">1096</span>                            //Padding<a name="line.1096"></a>
+<span class="sourceLineNo">1097</span>                            stream.writeByte(0);<a name="line.1097"></a>
+<span class="sourceLineNo">1098</span>                            incCompImageSize(1);<a name="line.1098"></a>
+<span class="sourceLineNo">1099</span>                        }<a name="line.1099"></a>
+<span class="sourceLineNo">1100</span><a name="line.1100"></a>
+<span class="sourceLineNo">1101</span>                    }<a name="line.1101"></a>
+<span class="sourceLineNo">1102</span>                    else if(absVal &gt; -1){<a name="line.1102"></a>
+<span class="sourceLineNo">1103</span>                        for (int b=0;b&lt;=absVal;b++){<a name="line.1103"></a>
+<span class="sourceLineNo">1104</span>                            stream.writeByte(1);<a name="line.1104"></a>
+<span class="sourceLineNo">1105</span>                            stream.writeByte(absBuf[b]);<a name="line.1105"></a>
+<span class="sourceLineNo">1106</span>                            incCompImageSize(2);<a name="line.1106"></a>
+<span class="sourceLineNo">1107</span>                        }<a name="line.1107"></a>
+<span class="sourceLineNo">1108</span>                    }<a name="line.1108"></a>
+<span class="sourceLineNo">1109</span>                }<a name="line.1109"></a>
+<span class="sourceLineNo">1110</span>                /// EOF scanline<a name="line.1110"></a>
+<span class="sourceLineNo">1111</span><a name="line.1111"></a>
+<span class="sourceLineNo">1112</span>                stream.writeByte(0);<a name="line.1112"></a>
+<span class="sourceLineNo">1113</span>                stream.writeByte(0);<a name="line.1113"></a>
+<span class="sourceLineNo">1114</span>                incCompImageSize(2);<a name="line.1114"></a>
+<span class="sourceLineNo">1115</span>            }<a name="line.1115"></a>
+<span class="sourceLineNo">1116</span>        }<a name="line.1116"></a>
+<span class="sourceLineNo">1117</span>    }<a name="line.1117"></a>
+<span class="sourceLineNo">1118</span><a name="line.1118"></a>
+<span class="sourceLineNo">1119</span>    private void encodeRLE4(byte[] bipixels, int scanlineBytes)<a name="line.1119"></a>
+<span class="sourceLineNo">1120</span>        throws IOException {<a name="line.1120"></a>
+<span class="sourceLineNo">1121</span><a name="line.1121"></a>
+<span class="sourceLineNo">1122</span>        int runCount=2, absVal=-1, j=-1, pixel=0, q=0;<a name="line.1122"></a>
+<span class="sourceLineNo">1123</span>        byte runVal1=0, runVal2=0, nextVal1=0, nextVal2=0;<a name="line.1123"></a>
+<span class="sourceLineNo">1124</span>        byte[] absBuf = new byte[256];<a name="line.1124"></a>
+<span class="sourceLineNo">1125</span><a name="line.1125"></a>
+<span class="sourceLineNo">1126</span><a name="line.1126"></a>
+<span class="sourceLineNo">1127</span>        runVal1 = bipixels[++j];<a name="line.1127"></a>
+<span class="sourceLineNo">1128</span>        runVal2 = bipixels[++j];<a name="line.1128"></a>
+<span class="sourceLineNo">1129</span><a name="line.1129"></a>
+<span class="sourceLineNo">1130</span>        while (j &lt; scanlineBytes-2){<a name="line.1130"></a>
+<span class="sourceLineNo">1131</span>            nextVal1 = bipixels[++j];<a name="line.1131"></a>
+<span class="sourceLineNo">1132</span>            nextVal2 = bipixels[++j];<a name="line.1132"></a>
+<span class="sourceLineNo">1133</span><a name="line.1133"></a>
+<span class="sourceLineNo">1134</span>            if (nextVal1 == runVal1 ) {<a name="line.1134"></a>
+<span class="sourceLineNo">1135</span><a name="line.1135"></a>
+<span class="sourceLineNo">1136</span>                //Check if there was an existing Absolute Run<a name="line.1136"></a>
+<span class="sourceLineNo">1137</span>                if(absVal &gt;= 4){<a name="line.1137"></a>
+<span class="sourceLineNo">1138</span>                    stream.writeByte(0);<a name="line.1138"></a>
+<span class="sourceLineNo">1139</span>                    stream.writeByte(absVal - 1);<a name="line.1139"></a>
+<span class="sourceLineNo">1140</span>                    incCompImageSize(2);<a name="line.1140"></a>
+<span class="sourceLineNo">1141</span>                    // we need to exclude  last 2 elts, similarity of<a name="line.1141"></a>
+<span class="sourceLineNo">1142</span>                    // which caused to enter this part of the code<a name="line.1142"></a>
+<span class="sourceLineNo">1143</span>                    for(int a=0; a&lt;absVal-2;a+=2){<a name="line.1143"></a>
+<span class="sourceLineNo">1144</span>                        pixel = (absBuf[a] &lt;&lt; 4) | absBuf[a+1];<a name="line.1144"></a>
+<span class="sourceLineNo">1145</span>                        stream.writeByte((byte)pixel);<a name="line.1145"></a>
+<span class="sourceLineNo">1146</span>                        incCompImageSize(1);<a name="line.1146"></a>
+<span class="sourceLineNo">1147</span>                    }<a name="line.1147"></a>
+<span class="sourceLineNo">1148</span>                    // if # of elts is odd - read the last element<a name="line.1148"></a>
+<span class="sourceLineNo">1149</span>                    if(!(isEven(absVal-1))){<a name="line.1149"></a>
+<span class="sourceLineNo">1150</span>                        q = absBuf[absVal-2] &lt;&lt; 4| 0;<a name="line.1150"></a>
+<span class="sourceLineNo">1151</span>                        stream.writeByte(q);<a name="line.1151"></a>
+<span class="sourceLineNo">1152</span>                        incCompImageSize(1);<a name="line.1152"></a>
+<span class="sourceLineNo">1153</span>                    }<a name="line.1153"></a>
+<span class="sourceLineNo">1154</span>                    // Padding to word align absolute encoding<a name="line.1154"></a>
+<span class="sourceLineNo">1155</span>                    if ( !isEven((int)Math.ceil((absVal-1)/2)) ) {<a name="line.1155"></a>
+<span class="sourceLineNo">1156</span>                        stream.writeByte(0);<a name="line.1156"></a>
+<span class="sourceLineNo">1157</span>                        incCompImageSize(1);<a name="line.1157"></a>
+<span class="sourceLineNo">1158</span>                    }<a name="line.1158"></a>
+<span class="sourceLineNo">1159</span>                } else if (absVal &gt; -1){<a name="line.1159"></a>
+<span class="sourceLineNo">1160</span>                    stream.writeByte(2);<a name="line.1160"></a>
+<span class="sourceLineNo">1161</span>                    pixel = (absBuf[0] &lt;&lt; 4) | absBuf[1];<a name="line.1161"></a>
+<span class="sourceLineNo">1162</span>                    stream.writeByte(pixel);<a name="line.1162"></a>
+<span class="sourceLineNo">1163</span>                    incCompImageSize(2);<a name="line.1163"></a>
+<span class="sourceLineNo">1164</span>                }<a name="line.1164"></a>
+<span class="sourceLineNo">1165</span>                absVal = -1;<a name="line.1165"></a>
+<span class="sourceLineNo">1166</span><a name="line.1166"></a>
+<span class="sourceLineNo">1167</span>                if (nextVal2 == runVal2){<a name="line.1167"></a>
+<span class="sourceLineNo">1168</span>                    // Even runlength<a name="line.1168"></a>
+<span class="sourceLineNo">1169</span>                    runCount+=2;<a name="line.1169"></a>
+<span class="sourceLineNo">1170</span>                    if(runCount == 256){<a name="line.1170"></a>
+<span class="sourceLineNo">1171</span>                        stream.writeByte(runCount-1);<a name="line.1171"></a>
+<span class="sourceLineNo">1172</span>                        pixel = ( runVal1 &lt;&lt; 4) | runVal2;<a name="line.1172"></a>
+<span class="sourceLineNo">1173</span>                        stream.writeByte(pixel);<a name="line.1173"></a>
+<span class="sourceLineNo">1174</span>                        incCompImageSize(2);<a name="line.1174"></a>
+<span class="sourceLineNo">1175</span>                        runCount =2;<a name="line.1175"></a>
+<span class="sourceLineNo">1176</span>                        if(j&lt; scanlineBytes - 1){<a name="line.1176"></a>
+<span class="sourceLineNo">1177</span>                            runVal1 = runVal2;<a name="line.1177"></a>
+<span class="sourceLineNo">1178</span>                            runVal2 = bipixels[++j];<a name="line.1178"></a>
+<span class="sourceLineNo">1179</span>                        } else {<a name="line.1179"></a>
+<span class="sourceLineNo">1180</span>                            stream.writeByte(01);<a name="line.1180"></a>
+<span class="sourceLineNo">1181</span>                            int r = runVal2 &lt;&lt; 4 | 0;<a name="line.1181"></a>
+<span class="sourceLineNo">1182</span>                            stream.writeByte(r);<a name="line.1182"></a>
+<span class="sourceLineNo">1183</span>                            incCompImageSize(2);<a name="line.1183"></a>
+<span class="sourceLineNo">1184</span>                            runCount = -1;/// Only EOF required now<a name="line.1184"></a>
+<span class="sourceLineNo">1185</span>                        }<a name="line.1185"></a>
+<span class="sourceLineNo">1186</span>                    }<a name="line.1186"></a>
+<span class="sourceLineNo">1187</span>                } else {<a name="line.1187"></a>
+<span class="sourceLineNo">1188</span>                    // odd runlength and the run ends here<a name="line.1188"></a>
+<span class="sourceLineNo">1189</span>                    // runCount wont be &gt; 254 since 256/255 case will<a name="line.1189"></a>
+<span class="sourceLineNo">1190</span>                    // be taken care of in above code.<a name="line.1190"></a>
+<span class="sourceLineNo">1191</span>                    runCount++;<a name="line.1191"></a>
+<span class="sourceLineNo">1192</span>                    pixel = ( runVal1 &lt;&lt; 4) | runVal2;<a name="line.1192"></a>
+<span class="sourceLineNo">1193</span>                    stream.writeByte(runCount);<a name="line.1193"></a>
+<span class="sourceLineNo">1194</span>                    stream.writeByte(pixel);<a name="line.1194"></a>
+<span class="sourceLineNo">1195</span>                    incCompImageSize(2);<a name="line.1195"></a>
+<span class="sourceLineNo">1196</span>                    runCount = 2;<a name="line.1196"></a>
+<span class="sourceLineNo">1197</span>                    runVal1 = nextVal2;<a name="line.1197"></a>
+<span class="sourceLineNo">1198</span>                    // If end of scanline<a name="line.1198"></a>
+<span class="sourceLineNo">1199</span>                    if (j &lt; scanlineBytes -1){<a name="line.1199"></a>
+<span class="sourceLineNo">1200</span>                        runVal2 = bipixels[++j];<a name="line.1200"></a>
+<span class="sourceLineNo">1201</span>                    }else {<a name="line.1201"></a>
+<span class="sourceLineNo">1202</span>                        stream.writeByte(01);<a name="line.1202"></a>
+<span class="sourceLineNo">1203</span>                        int r = nextVal2 &lt;&lt; 4 | 0;<a name="line.1203"></a>
+<span class="sourceLineNo">1204</span>                        stream.writeByte(r);<a name="line.1204"></a>
+<span class="sourceLineNo">1205</span>                        incCompImageSize(2);<a name="line.1205"></a>
+<span class="sourceLineNo">1206</span>                        runCount = -1;/// Only EOF required now<a name="line.1206"></a>
+<span class="sourceLineNo">1207</span>                    }<a name="line.1207"></a>
+<span class="sourceLineNo">1208</span><a name="line.1208"></a>
+<span class="sourceLineNo">1209</span>                }<a name="line.1209"></a>
+<span class="sourceLineNo">1210</span>            } else{<a name="line.1210"></a>
+<span class="sourceLineNo">1211</span>                // Check for existing run<a name="line.1211"></a>
+<span class="sourceLineNo">1212</span>                if (runCount &gt; 2){<a name="line.1212"></a>
+<span class="sourceLineNo">1213</span>                    pixel = ( runVal1 &lt;&lt; 4) | runVal2;<a name="line.1213"></a>
+<span class="sourceLineNo">1214</span>                    stream.writeByte(runCount);<a name="line.1214"></a>
+<span class="sourceLineNo">1215</span>                    stream.writeByte(pixel);<a name="line.1215"></a>
+<span class="sourceLineNo">1216</span>                    incCompImageSize(2);<a name="line.1216"></a>
+<span class="sourceLineNo">1217</span>                } else if (absVal &lt; 0){ // first time<a name="line.1217"></a>
+<span class="sourceLineNo">1218</span>                    absBuf[++absVal] = runVal1;<a name="line.1218"></a>
+<span class="sourceLineNo">1219</span>                    absBuf[++absVal] = runVal2;<a name="line.1219"></a>
+<span class="sourceLineNo">1220</span>                    absBuf[++absVal] = nextVal1;<a name="line.1220"></a>
+<span class="sourceLineNo">1221</span>                    absBuf[++absVal] = nextVal2;<a name="line.1221"></a>
+<span class="sourceLineNo">1222</span>                } else if (absVal &lt; 253){ // only 255 elements<a name="line.1222"></a>
+<span class="sourceLineNo">1223</span>                    absBuf[++absVal] = nextVal1;<a name="line.1223"></a>
+<span class="sourceLineNo">1224</span>                    absBuf[++absVal] = nextVal2;<a name="line.1224"></a>
+<span class="sourceLineNo">1225</span>                } else {<a name="line.1225"></a>
+<span class="sourceLineNo">1226</span>                    stream.writeByte(0);<a name="line.1226"></a>
+<span class="sourceLineNo">1227</span>                    stream.writeByte(absVal+1);<a name="line.1227"></a>
+<span class="sourceLineNo">1228</span>                    incCompImageSize(2);<a name="line.1228"></a>
+<span class="sourceLineNo">1229</span>                    for(int a=0; a&lt;absVal;a+=2){<a name="line.1229"></a>
+<span class="sourceLineNo">1230</span>                        pixel = (absBuf[a] &lt;&lt; 4) | absBuf[a+1];<a name="line.1230"></a>
+<span class="sourceLineNo">1231</span>                        stream.writeByte((byte)pixel);<a name="line.1231"></a>
+<span class="sourceLineNo">1232</span>                        incCompImageSize(1);<a name="line.1232"></a>
+<span class="sourceLineNo">1233</span>                    }<a name="line.1233"></a>
+<span class="sourceLineNo">1234</span>                    // Padding for word align<a name="line.1234"></a>
+<span class="sourceLineNo">1235</span>                    // since it will fit into 127 bytes<a name="line.1235"></a>
+<span class="sourceLineNo">1236</span>                    stream.writeByte(0);<a name="line.1236"></a>
+<span class="sourceLineNo">1237</span>                    incCompImageSize(1);<a name="line.1237"></a>
+<span class="sourceLineNo">1238</span>                    absVal = -1;<a name="line.1238"></a>
+<span class="sourceLineNo">1239</span>                }<a name="line.1239"></a>
+<span class="sourceLineNo">1240</span><a name="line.1240"></a>
+<span class="sourceLineNo">1241</span>                runVal1 = nextVal1;<a name="line.1241"></a>
+<span class="sourceLineNo">1242</span>                runVal2 = nextVal2;<a name="line.1242"></a>
+<span class="sourceLineNo">1243</span>                runCount = 2;<a name="line.1243"></a>
+<span class="sourceLineNo">1244</span>            }<a name="line.1244"></a>
+<span class="sourceLineNo">1245</span>            // Handle the End of scanline for the last 2 4bits<a name="line.1245"></a>
+<span class="sourceLineNo">1246</span>            if (j &gt;= scanlineBytes-2 ) {<a name="line.1246"></a>
+<span class="sourceLineNo">1247</span>                if (absVal == -1 &amp;&amp; runCount &gt;= 2){<a name="line.1247"></a>
+<span class="sourceLineNo">1248</span>                    if (j == scanlineBytes-2){<a name="line.1248"></a>
+<span class="sourceLineNo">1249</span>                        if(bipixels[++j] == runVal1){<a name="line.1249"></a>
+<span class="sourceLineNo">1250</span>                            runCount++;<a name="line.1250"></a>
+<span class="sourceLineNo">1251</span>                            pixel = ( runVal1 &lt;&lt; 4) | runVal2;<a name="line.1251"></a>
+<span class="sourceLineNo">1252</span>                            stream.writeByte(runCount);<a name="line.1252"></a>
+<span class="sourceLineNo">1253</span>                            stream.writeByte(pixel);<a name="line.1253"></a>
+<span class="sourceLineNo">1254</span>                            incCompImageSize(2);<a name="line.1254"></a>
+<span class="sourceLineNo">1255</span>                        } else {<a name="line.1255"></a>
+<span class="sourceLineNo">1256</span>                            pixel = ( runVal1 &lt;&lt; 4) | runVal2;<a name="line.1256"></a>
+<span class="sourceLineNo">1257</span>                            stream.writeByte(runCount);<a name="line.1257"></a>
+<span class="sourceLineNo">1258</span>                            stream.writeByte(pixel);<a name="line.1258"></a>
+<span class="sourceLineNo">1259</span>                            stream.writeByte(01);<a name="line.1259"></a>
+<span class="sourceLineNo">1260</span>                            pixel =  bipixels[j]&lt;&lt;4 |0;<a name="line.1260"></a>
+<span class="sourceLineNo">1261</span>                            stream.writeByte(pixel);<a name="line.1261"></a>
+<span class="sourceLineNo">1262</span>                            int n = bipixels[j]&lt;&lt;4|0;<a name="line.1262"></a>
+<span class="sourceLineNo">1263</span>                            incCompImageSize(4);<a name="line.1263"></a>
+<span class="sourceLineNo">1264</span>                        }<a name="line.1264"></a>
+<span class="sourceLineNo">1265</span>                    } else {<a name="line.1265"></a>
+<span class="sourceLineNo">1266</span>                        stream.writeByte(runCount);<a name="line.1266"></a>
+<span class="sourceLineNo">1267</span>                        pixel =( runVal1 &lt;&lt; 4) | runVal2 ;<a name="line.1267"></a>
+<span class="sourceLineNo">1268</span>                        stream.writeByte(pixel);<a name="line.1268"></a>
+<span class="sourceLineNo">1269</span>                        incCompImageSize(2);<a name="line.1269"></a>
+<span class="sourceLineNo">1270</span>                    }<a name="line.1270"></a>
+<span class="sourceLineNo">1271</span>                } else if(absVal &gt; -1){<a name="line.1271"></a>
+<span class="sourceLineNo">1272</span>                    if (j == scanlineBytes-2){<a name="line.1272"></a>
+<span class="sourceLineNo">1273</span>                        absBuf[++absVal] = bipixels[++j];<a name="line.1273"></a>
+<span class="sourceLineNo">1274</span>                    }<a name="line.1274"></a>
+<span class="sourceLineNo">1275</span>                    if (absVal &gt;=2){<a name="line.1275"></a>
+<span class="sourceLineNo">1276</span>                        stream.writeByte(0);<a name="line.1276"></a>
+<span class="sourceLineNo">1277</span>                        stream.writeByte(absVal+1);<a name="line.1277"></a>
+<span class="sourceLineNo">1278</span>                        incCompImageSize(2);<a name="line.1278"></a>
+<span class="sourceLineNo">1279</span>                        for(int a=0; a&lt;absVal;a+=2){<a name="line.1279"></a>
+<span class="sourceLineNo">1280</span>                            pixel = (absBuf[a] &lt;&lt; 4) | absBuf[a+1];<a name="line.1280"></a>
+<span class="sourceLineNo">1281</span>                            stream.writeByte((byte)pixel);<a name="line.1281"></a>
+<span class="sourceLineNo">1282</span>                            incCompImageSize(1);<a name="line.1282"></a>
+<span class="sourceLineNo">1283</span>                        }<a name="line.1283"></a>
+<span class="sourceLineNo">1284</span>                        if(!(isEven(absVal+1))){<a name="line.1284"></a>
+<span class="sourceLineNo">1285</span>                            q = absBuf[absVal] &lt;&lt; 4|0;<a name="line.1285"></a>
+<span class="sourceLineNo">1286</span>                            stream.writeByte(q);<a name="line.1286"></a>
+<span class="sourceLineNo">1287</span>                            incCompImageSize(1);<a name="line.1287"></a>
+<span class="sourceLineNo">1288</span>                        }<a name="line.1288"></a>
+<span class="sourceLineNo">1289</span><a name="line.1289"></a>
+<span class="sourceLineNo">1290</span>                        // Padding<a name="line.1290"></a>
+<span class="sourceLineNo">1291</span>                        if ( !isEven((int)Math.ceil((absVal+1)/2)) ) {<a name="line.1291"></a>
+<span class="sourceLineNo">1292</span>                            stream.writeByte(0);<a name="line.1292"></a>
+<span class="sourceLineNo">1293</span>                            incCompImageSize(1);<a name="line.1293"></a>
+<span class="sourceLineNo">1294</span>                        }<a name="line.1294"></a>
+<span class="sourceLineNo">1295</span><a name="line.1295"></a>
+<span class="sourceLineNo">1296</span>                    } else {<a name="line.1296"></a>
+<span class="sourceLineNo">1297</span>                        switch (absVal){<a name="line.1297"></a>
+<span class="sourceLineNo">1298</span>                        case 0:<a name="line.1298"></a>
+<span class="sourceLineNo">1299</span>                            stream.writeByte(1);<a name="line.1299"></a>
+<span class="sourceLineNo">1300</span>                            int n = absBuf[0]&lt;&lt;4 | 0;<a name="line.1300"></a>
+<span class="sourceLineNo">1301</span>                            stream.writeByte(n);<a name="line.1301"></a>
+<span class="sourceLineNo">1302</span>                            incCompImageSize(2);<a name="line.1302"></a>
+<span class="sourceLineNo">1303</span>                            break;<a name="line.1303"></a>
+<span class="sourceLineNo">1304</span>                        case 1:<a name="line.1304"></a>
+<span class="sourceLineNo">1305</span>                            stream.writeByte(2);<a name="line.1305"></a>
+<span class="sourceLineNo">1306</span>                            pixel = (absBuf[0] &lt;&lt; 4) | absBuf[1];<a name="line.1306"></a>
+<span class="sourceLineNo">1307</span>                            stream.writeByte(pixel);<a name="line.1307"></a>
+<span class="sourceLineNo">1308</span>                            incCompImageSize(2);<a name="line.1308"></a>
+<span class="sourceLineNo">1309</span>                            break;<a name="line.1309"></a>
+<span class="sourceLineNo">1310</span>                        }<a name="line.1310"></a>
+<span class="sourceLineNo">1311</span>                    }<a name="line.1311"></a>
+<span class="sourceLineNo">1312</span><a name="line.1312"></a>
+<span class="sourceLineNo">1313</span>                }<a name="line.1313"></a>
+<span class="sourceLineNo">1314</span>                stream.writeByte(0);<a name="line.1314"></a>
+<span class="sourceLineNo">1315</span>                stream.writeByte(0);<a name="line.1315"></a>
+<span class="sourceLineNo">1316</span>                incCompImageSize(2);<a name="line.1316"></a>
+<span class="sourceLineNo">1317</span>            }<a name="line.1317"></a>
+<span class="sourceLineNo">1318</span>        }<a name="line.1318"></a>
+<span class="sourceLineNo">1319</span>    }<a name="line.1319"></a>
+<span class="sourceLineNo">1320</span><a name="line.1320"></a>
+<span class="sourceLineNo">1321</span><a name="line.1321"></a>
+<span class="sourceLineNo">1322</span>    private synchronized void incCompImageSize(int value){<a name="line.1322"></a>
+<span class="sourceLineNo">1323</span>        compImageSize = compImageSize + value;<a name="line.1323"></a>
+<span class="sourceLineNo">1324</span>    }<a name="line.1324"></a>
+<span class="sourceLineNo">1325</span><a name="line.1325"></a>
+<span class="sourceLineNo">1326</span>    private boolean isEven(int number) {<a name="line.1326"></a>
+<span class="sourceLineNo">1327</span>        return (number%2 == 0 ? true : false);<a name="line.1327"></a>
+<span class="sourceLineNo">1328</span>    }<a name="line.1328"></a>
+<span class="sourceLineNo">1329</span><a name="line.1329"></a>
+<span class="sourceLineNo">1330</span>    private void writeFileHeader(int fileSize, int offset) throws IOException {<a name="line.1330"></a>
+<span class="sourceLineNo">1331</span>        // magic value<a name="line.1331"></a>
+<span class="sourceLineNo">1332</span>        stream.writeByte('B');<a name="line.1332"></a>
+<span class="sourceLineNo">1333</span>        stream.writeByte('M');<a name="line.1333"></a>
+<span class="sourceLineNo">1334</span><a name="line.1334"></a>
+<span class="sourceLineNo">1335</span>        // File size<a name="line.1335"></a>
+<span class="sourceLineNo">1336</span>        stream.writeInt(fileSize);<a name="line.1336"></a>
+<span class="sourceLineNo">1337</span><a name="line.1337"></a>
+<span class="sourceLineNo">1338</span>        // reserved1 and reserved2<a name="line.1338"></a>
+<span class="sourceLineNo">1339</span>        stream.writeInt(0);<a name="line.1339"></a>
+<span class="sourceLineNo">1340</span><a name="line.1340"></a>
+<span class="sourceLineNo">1341</span>        // offset to image data<a name="line.1341"></a>
+<span class="sourceLineNo">1342</span>        stream.writeInt(offset);<a name="line.1342"></a>
+<span class="sourceLineNo">1343</span>    }<a name="line.1343"></a>
+<span class="sourceLineNo">1344</span><a name="line.1344"></a>
+<span class="sourceLineNo">1345</span><a name="line.1345"></a>
+<span class="sourceLineNo">1346</span>    private void writeInfoHeader(int headerSize,<a name="line.1346"></a>
+<span class="sourceLineNo">1347</span>                                 int bitsPerPixel) throws IOException {<a name="line.1347"></a>
+<span class="sourceLineNo">1348</span>        // size of header<a name="line.1348"></a>
+<span class="sourceLineNo">1349</span>        stream.writeInt(headerSize);<a name="line.1349"></a>
+<span class="sourceLineNo">1350</span><a name="line.1350"></a>
+<span class="sourceLineNo">1351</span>        // width<a name="line.1351"></a>
+<span class="sourceLineNo">1352</span>        stream.writeInt(w);<a name="line.1352"></a>
+<span class="sourceLineNo">1353</span><a name="line.1353"></a>
+<span class="sourceLineNo">1354</span>        // height<a name="line.1354"></a>
+<span class="sourceLineNo">1355</span>        if (isTopDown == true)<a name="line.1355"></a>
+<span class="sourceLineNo">1356</span>            stream.writeInt(-h);<a name="line.1356"></a>
+<span class="sourceLineNo">1357</span>        else <a name="line.1357"></a>
+<span class="sourceLineNo">1358</span>            stream.writeInt(h);<a name="line.1358"></a>
+<span class="sourceLineNo">1359</span><a name="line.1359"></a>
+<span class="sourceLineNo">1360</span>        // number of planes<a name="line.1360"></a>
+<span class="sourceLineNo">1361</span>        stream.writeShort(1);<a name="line.1361"></a>
+<span class="sourceLineNo">1362</span><a name="line.1362"></a>
+<span class="sourceLineNo">1363</span>        // Bits Per Pixel<a name="line.1363"></a>
+<span class="sourceLineNo">1364</span>        stream.writeShort(bitsPerPixel);<a name="line.1364"></a>
+<span class="sourceLineNo">1365</span>    }<a name="line.1365"></a>
+<span class="sourceLineNo">1366</span><a name="line.1366"></a>
+<span class="sourceLineNo">1367</span>    private void writeSize(int dword, int offset) throws IOException {<a name="line.1367"></a>
+<span class="sourceLineNo">1368</span>        stream.skipBytes(offset);<a name="line.1368"></a>
+<span class="sourceLineNo">1369</span>        stream.writeInt(dword);<a name="line.1369"></a>
+<span class="sourceLineNo">1370</span>    }<a name="line.1370"></a>
+<span class="sourceLineNo">1371</span><a name="line.1371"></a>
+<span class="sourceLineNo">1372</span>    public void reset() {<a name="line.1372"></a>
+<span class="sourceLineNo">1373</span>        super.reset();<a name="line.1373"></a>
+<span class="sourceLineNo">1374</span>        stream = null;<a name="line.1374"></a>
+<span class="sourceLineNo">1375</span>    }<a name="line.1375"></a>
+<span class="sourceLineNo">1376</span><a name="line.1376"></a>
+<span class="sourceLineNo">1377</span>    static int getCompressionType(String typeString) {<a name="line.1377"></a>
+<span class="sourceLineNo">1378</span>        for (int i = 0; i &lt; BMPConstants.compressionTypeNames.length; i++)<a name="line.1378"></a>
+<span class="sourceLineNo">1379</span>            if (BMPConstants.compressionTypeNames[i].equals(typeString))<a name="line.1379"></a>
+<span class="sourceLineNo">1380</span>                return i;<a name="line.1380"></a>
+<span class="sourceLineNo">1381</span>        return 0;<a name="line.1381"></a>
+<span class="sourceLineNo">1382</span>    }<a name="line.1382"></a>
+<span class="sourceLineNo">1383</span><a name="line.1383"></a>
+<span class="sourceLineNo">1384</span>    private void writeEmbedded(IIOImage image,<a name="line.1384"></a>
+<span class="sourceLineNo">1385</span>                               ImageWriteParam bmpParam) throws IOException {<a name="line.1385"></a>
+<span class="sourceLineNo">1386</span>        String format =<a name="line.1386"></a>
+<span class="sourceLineNo">1387</span>            compressionType == BMPConstants.BI_JPEG ? "jpeg" : "png";<a name="line.1387"></a>
+<span class="sourceLineNo">1388</span>        Iterator iterator = ImageIO.getImageWritersByFormatName(format);<a name="line.1388"></a>
+<span class="sourceLineNo">1389</span>        ImageWriter writer = null;<a name="line.1389"></a>
+<span class="sourceLineNo">1390</span>        if (iterator.hasNext())<a name="line.1390"></a>
+<span class="sourceLineNo">1391</span>            writer = (ImageWriter)iterator.next();<a name="line.1391"></a>
+<span class="sourceLineNo">1392</span>        if (writer != null) {<a name="line.1392"></a>
+<span class="sourceLineNo">1393</span>            if (embedded_stream == null) {<a name="line.1393"></a>
+<span class="sourceLineNo">1394</span>                throw new RuntimeException("No stream for writing embedded image!");<a name="line.1394"></a>
+<span class="sourceLineNo">1395</span>            }<a name="line.1395"></a>
+<span class="sourceLineNo">1396</span><a name="line.1396"></a>
+<span class="sourceLineNo">1397</span>            writer.addIIOWriteProgressListener(new IIOWriteProgressAdapter() {<a name="line.1397"></a>
+<span class="sourceLineNo">1398</span>                    public void imageProgress(ImageWriter source, float percentageDone) {<a name="line.1398"></a>
+<span class="sourceLineNo">1399</span>                        processImageProgress(percentageDone);<a name="line.1399"></a>
+<span class="sourceLineNo">1400</span>                    }<a name="line.1400"></a>
+<span class="sourceLineNo">1401</span>                });<a name="line.1401"></a>
+<span class="sourceLineNo">1402</span><a name="line.1402"></a>
+<span class="sourceLineNo">1403</span>            writer.addIIOWriteWarningListener(new IIOWriteWarningListener() {<a name="line.1403"></a>
+<span class="sourceLineNo">1404</span>                    public void warningOccurred(ImageWriter source, int imageIndex, String warning) {<a name="line.1404"></a>
+<span class="sourceLineNo">1405</span>                        processWarningOccurred(imageIndex, warning);<a name="line.1405"></a>
+<span class="sourceLineNo">1406</span>                    }<a name="line.1406"></a>
+<span class="sourceLineNo">1407</span>                });<a name="line.1407"></a>
+<span class="sourceLineNo">1408</span><a name="line.1408"></a>
+<span class="sourceLineNo">1409</span>            ImageOutputStream emb_ios = <a name="line.1409"></a>
+<span class="sourceLineNo">1410</span>                ImageIO.createImageOutputStream(embedded_stream);<a name="line.1410"></a>
+<span class="sourceLineNo">1411</span>            writer.setOutput(emb_ios);<a name="line.1411"></a>
+<span class="sourceLineNo">1412</span>            ImageWriteParam param = writer.getDefaultWriteParam();<a name="line.1412"></a>
+<span class="sourceLineNo">1413</span>            //param.setDestinationBands(bmpParam.getDestinationBands());<a name="line.1413"></a>
+<span class="sourceLineNo">1414</span>            param.setDestinationOffset(bmpParam.getDestinationOffset());<a name="line.1414"></a>
+<span class="sourceLineNo">1415</span>            param.setSourceBands(bmpParam.getSourceBands());<a name="line.1415"></a>
+<span class="sourceLineNo">1416</span>            param.setSourceRegion(bmpParam.getSourceRegion());<a name="line.1416"></a>
+<span class="sourceLineNo">1417</span>            param.setSourceSubsampling(bmpParam.getSourceXSubsampling(),<a name="line.1417"></a>
+<span class="sourceLineNo">1418</span>                                       bmpParam.getSourceYSubsampling(),<a name="line.1418"></a>
+<span class="sourceLineNo">1419</span>                                       bmpParam.getSubsamplingXOffset(),<a name="line.1419"></a>
+<span class="sourceLineNo">1420</span>                                       bmpParam.getSubsamplingYOffset());<a name="line.1420"></a>
+<span class="sourceLineNo">1421</span>            writer.write(null, image, param);<a name="line.1421"></a>
+<span class="sourceLineNo">1422</span>            emb_ios.flush();<a name="line.1422"></a>
+<span class="sourceLineNo">1423</span>        } else<a name="line.1423"></a>
+<span class="sourceLineNo">1424</span>            throw new RuntimeException(I18N.getString("BMPImageWrite5") + " " + format);<a name="line.1424"></a>
+<span class="sourceLineNo">1425</span><a name="line.1425"></a>
+<span class="sourceLineNo">1426</span>    }<a name="line.1426"></a>
+<span class="sourceLineNo">1427</span><a name="line.1427"></a>
+<span class="sourceLineNo">1428</span>    private int firstLowBit(int num) {<a name="line.1428"></a>
+<span class="sourceLineNo">1429</span>        int count = 0;<a name="line.1429"></a>
+<span class="sourceLineNo">1430</span>        while ((num &amp; 1) == 0) {<a name="line.1430"></a>
+<span class="sourceLineNo">1431</span>            count++;<a name="line.1431"></a>
+<span class="sourceLineNo">1432</span>            num &gt;&gt;&gt;= 1;<a name="line.1432"></a>
+<span class="sourceLineNo">1433</span>        }<a name="line.1433"></a>
+<span class="sourceLineNo">1434</span>        return count;<a name="line.1434"></a>
+<span class="sourceLineNo">1435</span>    }<a name="line.1435"></a>
+<span class="sourceLineNo">1436</span><a name="line.1436"></a>
+<span class="sourceLineNo">1437</span>    private class IIOWriteProgressAdapter implements IIOWriteProgressListener {<a name="line.1437"></a>
+<span class="sourceLineNo">1438</span><a name="line.1438"></a>
+<span class="sourceLineNo">1439</span>        public void imageComplete(ImageWriter source) {<a name="line.1439"></a>
+<span class="sourceLineNo">1440</span>        }<a name="line.1440"></a>
+<span class="sourceLineNo">1441</span><a name="line.1441"></a>
+<span class="sourceLineNo">1442</span>        public void imageProgress(ImageWriter source, float percentageDone) {<a name="line.1442"></a>
+<span class="sourceLineNo">1443</span>        }<a name="line.1443"></a>
+<span class="sourceLineNo">1444</span><a name="line.1444"></a>
+<span class="sourceLineNo">1445</span>        public void imageStarted(ImageWriter source, int imageIndex) {<a name="line.1445"></a>
+<span class="sourceLineNo">1446</span>        }<a name="line.1446"></a>
+<span class="sourceLineNo">1447</span><a name="line.1447"></a>
+<span class="sourceLineNo">1448</span>        public void thumbnailComplete(ImageWriter source) {<a name="line.1448"></a>
+<span class="sourceLineNo">1449</span>        }<a name="line.1449"></a>
+<span class="sourceLineNo">1450</span><a name="line.1450"></a>
+<span class="sourceLineNo">1451</span>        public void thumbnailProgress(ImageWriter source, float percentageDone) {<a name="line.1451"></a>
+<span class="sourceLineNo">1452</span>        }<a name="line.1452"></a>
+<span class="sourceLineNo">1453</span><a name="line.1453"></a>
+<span class="sourceLineNo">1454</span>        public void thumbnailStarted(ImageWriter source, int imageIndex, int thumbnailIndex) {<a name="line.1454"></a>
+<span class="sourceLineNo">1455</span>        }<a name="line.1455"></a>
+<span class="sourceLineNo">1456</span><a name="line.1456"></a>
+<span class="sourceLineNo">1457</span>        public void writeAborted(ImageWriter source) {<a name="line.1457"></a>
+<span class="sourceLineNo">1458</span>        }<a name="line.1458"></a>
+<span class="sourceLineNo">1459</span>    }<a name="line.1459"></a>
+<span class="sourceLineNo">1460</span><a name="line.1460"></a>
+<span class="sourceLineNo">1461</span>    /*<a name="line.1461"></a>
+<span class="sourceLineNo">1462</span>     * Returns preferred compression type for given image.<a name="line.1462"></a>
+<span class="sourceLineNo">1463</span>     * The default compression type is BI_RGB, but some image types can't be <a name="line.1463"></a>
+<span class="sourceLineNo">1464</span>     * encoded with using default compression without changing color resolution.<a name="line.1464"></a>
+<span class="sourceLineNo">1465</span>     * For example, BufferedImage.TYPE_USHORT_555_RGB and<a name="line.1465"></a>
+<span class="sourceLineNo">1466</span>     * BufferedImage.TYPE_USHORT_565_RGB may be encoded only by using the<a name="line.1466"></a>
+<span class="sourceLineNo">1467</span>     * BI_BITFIELDS compression type.<a name="line.1467"></a>
+<span class="sourceLineNo">1468</span>     *<a name="line.1468"></a>
+<span class="sourceLineNo">1469</span>     * NB: we probably need to extend this method if we encounter other image <a name="line.1469"></a>
+<span class="sourceLineNo">1470</span>     * types which can not be encoded with BI_RGB compression type. <a name="line.1470"></a>
+<span class="sourceLineNo">1471</span>     */<a name="line.1471"></a>
+<span class="sourceLineNo">1472</span>    static int getPreferredCompressionType(ColorModel cm, SampleModel sm) {<a name="line.1472"></a>
+<span class="sourceLineNo">1473</span>        ImageTypeSpecifier imageType = new ImageTypeSpecifier(cm, sm);<a name="line.1473"></a>
+<span class="sourceLineNo">1474</span>        return getPreferredCompressionType(imageType);<a name="line.1474"></a>
+<span class="sourceLineNo">1475</span>    }<a name="line.1475"></a>
+<span class="sourceLineNo">1476</span><a name="line.1476"></a>
+<span class="sourceLineNo">1477</span>    static int getPreferredCompressionType(ImageTypeSpecifier imageType) {<a name="line.1477"></a>
+<span class="sourceLineNo">1478</span>        int biType = imageType.getBufferedImageType();<a name="line.1478"></a>
+<span class="sourceLineNo">1479</span>        if (biType == BufferedImage.TYPE_USHORT_565_RGB ||<a name="line.1479"></a>
+<span class="sourceLineNo">1480</span>            biType == BufferedImage.TYPE_USHORT_555_RGB) {<a name="line.1480"></a>
+<span class="sourceLineNo">1481</span>            return  BI_BITFIELDS;<a name="line.1481"></a>
+<span class="sourceLineNo">1482</span>        }<a name="line.1482"></a>
+<span class="sourceLineNo">1483</span>        return BI_RGB;<a name="line.1483"></a>
+<span class="sourceLineNo">1484</span>    }<a name="line.1484"></a>
+<span class="sourceLineNo">1485</span><a name="line.1485"></a>
+<span class="sourceLineNo">1486</span>    /*<a name="line.1486"></a>
+<span class="sourceLineNo">1487</span>     * Check whether we can encode image of given type using compression method in question.<a name="line.1487"></a>
+<span class="sourceLineNo">1488</span>     *<a name="line.1488"></a>
+<span class="sourceLineNo">1489</span>     * For example, TYPE_USHORT_565_RGB can be encodeed with BI_BITFIELDS compression only.<a name="line.1489"></a>
+<span class="sourceLineNo">1490</span>     *<a name="line.1490"></a>
+<span class="sourceLineNo">1491</span>     * NB: method should be extended if other cases when we can not encode <a name="line.1491"></a>
+<span class="sourceLineNo">1492</span>     *     with given compression will be discovered.<a name="line.1492"></a>
+<span class="sourceLineNo">1493</span>     */<a name="line.1493"></a>
+<span class="sourceLineNo">1494</span>    protected boolean canEncodeImage(int compression, ColorModel cm, SampleModel sm) {<a name="line.1494"></a>
+<span class="sourceLineNo">1495</span>        ImageTypeSpecifier imgType = new ImageTypeSpecifier(cm, sm);<a name="line.1495"></a>
+<span class="sourceLineNo">1496</span>        return canEncodeImage(compression, imgType);<a name="line.1496"></a>
+<span class="sourceLineNo">1497</span>    }<a name="line.1497"></a>
+<span class="sourceLineNo">1498</span><a name="line.1498"></a>
+<span class="sourceLineNo">1499</span>    protected boolean canEncodeImage(int compression, ImageTypeSpecifier imgType) {<a name="line.1499"></a>
+<span class="sourceLineNo">1500</span>        ImageWriterSpi spi = this.getOriginatingProvider();<a name="line.1500"></a>
+<span class="sourceLineNo">1501</span>        if (!spi.canEncodeImage(imgType)) {<a name="line.1501"></a>
+<span class="sourceLineNo">1502</span>            return false;<a name="line.1502"></a>
+<span class="sourceLineNo">1503</span>        }<a name="line.1503"></a>
+<span class="sourceLineNo">1504</span>        int bpp = imgType.getColorModel().getPixelSize();<a name="line.1504"></a>
+<span class="sourceLineNo">1505</span>        if (compressionType == BI_RLE4 &amp;&amp; bpp != 4) {<a name="line.1505"></a>
+<span class="sourceLineNo">1506</span>            // only 4bpp images can be encoded as BI_RLE4<a name="line.1506"></a>
+<span class="sourceLineNo">1507</span>            return false;<a name="line.1507"></a>
+<span class="sourceLineNo">1508</span>        }<a name="line.1508"></a>
+<span class="sourceLineNo">1509</span>        if (compressionType == BI_RLE8 &amp;&amp; bpp != 8) {<a name="line.1509"></a>
+<span class="sourceLineNo">1510</span>            // only 8bpp images can be encoded as BI_RLE8<a name="line.1510"></a>
+<span class="sourceLineNo">1511</span>            return false;<a name="line.1511"></a>
+<span class="sourceLineNo">1512</span>        }<a name="line.1512"></a>
+<span class="sourceLineNo">1513</span>        if (bpp == 16) {<a name="line.1513"></a>
+<span class="sourceLineNo">1514</span>            /*<a name="line.1514"></a>
+<span class="sourceLineNo">1515</span>             * Technically we expect that we may be able to<a name="line.1515"></a>
+<span class="sourceLineNo">1516</span>             * encode only some of SinglePixelPackedSampleModel<a name="line.1516"></a>
+<span class="sourceLineNo">1517</span>             * images here.<a name="line.1517"></a>
+<span class="sourceLineNo">1518</span>             *<a name="line.1518"></a>
+<span class="sourceLineNo">1519</span>             * In addition we should take into account following:<a name="line.1519"></a>
+<span class="sourceLineNo">1520</span>             *<a name="line.1520"></a>
+<span class="sourceLineNo">1521</span>             * 1. BI_RGB case, according to the MSDN description:<a name="line.1521"></a>
+<span class="sourceLineNo">1522</span>             *<a name="line.1522"></a>
+<span class="sourceLineNo">1523</span>             *     The bitmap has a maximum of 2^16 colors. If the<a name="line.1523"></a>
+<span class="sourceLineNo">1524</span>             *     biCompression member of the BITMAPINFOHEADER is BI_RGB,<a name="line.1524"></a>
+<span class="sourceLineNo">1525</span>             *     the bmiColors member of BITMAPINFO is NULL. Each WORD<a name="line.1525"></a>
+<span class="sourceLineNo">1526</span>             *     in the bitmap array represents a single pixel. The<a name="line.1526"></a>
+<span class="sourceLineNo">1527</span>             *     relative intensities of red, green, and blue are<a name="line.1527"></a>
+<span class="sourceLineNo">1528</span>             *     represented with five bits for each color component.<a name="line.1528"></a>
+<span class="sourceLineNo">1529</span>             *<a name="line.1529"></a>
+<span class="sourceLineNo">1530</span>             * 2. BI_BITFIELDS case, according ot the MSDN description:<a name="line.1530"></a>
+<span class="sourceLineNo">1531</span>             *<a name="line.1531"></a>
+<span class="sourceLineNo">1532</span>             *     Windows 95/98/Me: When the biCompression member is<a name="line.1532"></a>
+<span class="sourceLineNo">1533</span>             *     BI_BITFIELDS, the system supports only the following<a name="line.1533"></a>
+<span class="sourceLineNo">1534</span>             *     16bpp color masks: A 5-5-5 16-bit image, where the blue<a name="line.1534"></a>
+<span class="sourceLineNo">1535</span>             *     mask is 0x001F, the green mask is 0x03E0, and the red mask<a name="line.1535"></a>
+<span class="sourceLineNo">1536</span>             *     is 0x7C00; and a 5-6-5 16-bit image, where the blue mask<a name="line.1536"></a>
+<span class="sourceLineNo">1537</span>             *     is 0x001F, the green mask is 0x07E0, and the red mask is<a name="line.1537"></a>
+<span class="sourceLineNo">1538</span>             *     0xF800.<a name="line.1538"></a>
+<span class="sourceLineNo">1539</span>             */<a name="line.1539"></a>
+<span class="sourceLineNo">1540</span>            boolean canUseRGB = false;<a name="line.1540"></a>
+<span class="sourceLineNo">1541</span>            boolean canUseBITFIELDS = false;<a name="line.1541"></a>
+<span class="sourceLineNo">1542</span><a name="line.1542"></a>
+<span class="sourceLineNo">1543</span>            SampleModel sm = imgType.getSampleModel();<a name="line.1543"></a>
+<span class="sourceLineNo">1544</span>            if (sm instanceof SinglePixelPackedSampleModel) {<a name="line.1544"></a>
+<span class="sourceLineNo">1545</span>                int[] sizes =<a name="line.1545"></a>
+<span class="sourceLineNo">1546</span>                    ((SinglePixelPackedSampleModel)sm).getSampleSize();<a name="line.1546"></a>
+<span class="sourceLineNo">1547</span><a name="line.1547"></a>
+<span class="sourceLineNo">1548</span>                canUseRGB = true;<a name="line.1548"></a>
+<span class="sourceLineNo">1549</span>                canUseBITFIELDS = true;<a name="line.1549"></a>
+<span class="sourceLineNo">1550</span>                for (int i = 0; i &lt; sizes.length; i++) {<a name="line.1550"></a>
+<span class="sourceLineNo">1551</span>                    canUseRGB       &amp;=  (sizes[i] == 5);<a name="line.1551"></a>
+<span class="sourceLineNo">1552</span>                    canUseBITFIELDS &amp;= ((sizes[i] == 5) ||<a name="line.1552"></a>
+<span class="sourceLineNo">1553</span>                                        (i == 1 &amp;&amp; sizes[i] == 6));<a name="line.1553"></a>
+<span class="sourceLineNo">1554</span>                }<a name="line.1554"></a>
+<span class="sourceLineNo">1555</span>            }<a name="line.1555"></a>
+<span class="sourceLineNo">1556</span><a name="line.1556"></a>
+<span class="sourceLineNo">1557</span>            return (((compressionType == BI_RGB) &amp;&amp; canUseRGB) ||<a name="line.1557"></a>
+<span class="sourceLineNo">1558</span>                    ((compressionType == BI_BITFIELDS) &amp;&amp; canUseBITFIELDS));<a name="line.1558"></a>
+<span class="sourceLineNo">1559</span>        }<a name="line.1559"></a>
+<span class="sourceLineNo">1560</span>        return true;<a name="line.1560"></a>
+<span class="sourceLineNo">1561</span>    }<a name="line.1561"></a>
+<span class="sourceLineNo">1562</span><a name="line.1562"></a>
+<span class="sourceLineNo">1563</span>    protected void writeMaskToPalette(int mask, int i,<a name="line.1563"></a>
+<span class="sourceLineNo">1564</span>                                      byte[] r, byte[]g, byte[] b, byte[]a) {<a name="line.1564"></a>
+<span class="sourceLineNo">1565</span>        b[i] = (byte)(0xff &amp; (mask &gt;&gt; 24));<a name="line.1565"></a>
+<span class="sourceLineNo">1566</span>        g[i] = (byte)(0xff &amp; (mask &gt;&gt; 16));<a name="line.1566"></a>
+<span class="sourceLineNo">1567</span>        r[i] = (byte)(0xff &amp; (mask &gt;&gt; 8));<a name="line.1567"></a>
+<span class="sourceLineNo">1568</span>        a[i] = (byte)(0xff &amp; mask);<a name="line.1568"></a>
+<span class="sourceLineNo">1569</span>    }<a name="line.1569"></a>
+<span class="sourceLineNo">1570</span><a name="line.1570"></a>
+<span class="sourceLineNo">1571</span>    private int roundBpp(int x) {<a name="line.1571"></a>
+<span class="sourceLineNo">1572</span>        if (x &lt;= 8) {<a name="line.1572"></a>
+<span class="sourceLineNo">1573</span>            return 8;<a name="line.1573"></a>
+<span class="sourceLineNo">1574</span>        } else if (x &lt;= 16) {<a name="line.1574"></a>
+<span class="sourceLineNo">1575</span>            return 16;<a name="line.1575"></a>
+<span class="sourceLineNo">1576</span>        } if (x &lt;= 24) {<a name="line.1576"></a>
+<span class="sourceLineNo">1577</span>            return 24;<a name="line.1577"></a>
+<span class="sourceLineNo">1578</span>        } else {<a name="line.1578"></a>
+<span class="sourceLineNo">1579</span>            return 32;<a name="line.1579"></a>
+<span class="sourceLineNo">1580</span>        }<a name="line.1580"></a>
+<span class="sourceLineNo">1581</span>    }<a name="line.1581"></a>
+<span class="sourceLineNo">1582</span>}<a name="line.1582"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>
