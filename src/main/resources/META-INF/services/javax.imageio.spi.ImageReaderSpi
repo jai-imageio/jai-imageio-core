@@ -46,7 +46,7 @@
 #
 #com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageReaderSpi
 #com.sun.media.imageioimpl.plugins.png.CLibPNGImageReaderSpi
-com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReaderSpi
+#com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReaderSpi
 #com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReaderCodecLibSpi
 com.sun.media.imageioimpl.plugins.wbmp.WBMPImageReaderSpi
 com.sun.media.imageioimpl.plugins.bmp.BMPImageReaderSpi
