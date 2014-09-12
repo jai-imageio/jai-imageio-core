@@ -1,6 +1,8 @@
 jai-imageio-core-standalone 
 ===========================
 
+[![Build Status](https://travis-ci.org/stain/jai-imageio-core.svg)](https://travis-ci.org/stain/jai-imageio-core)
+
 NOTE: This is a 'standalone' version of
 [jai-imageio-core](https://java.net/projects/jai-imageio-core/) where
 dependencies to jai-core (javax.media.jai) has been removed. This
