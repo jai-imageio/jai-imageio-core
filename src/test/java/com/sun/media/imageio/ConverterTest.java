@@ -24,11 +24,7 @@ public class ConverterTest {
 			File f = File.createTempFile("imageio-test", "." + type);
 			ImageIO.write(img, type, f);
 			System.out.println(f);
-			try {
-				ImageIO.read(f);
-			} catch (Exception ex) {
-				System.err.println("Failed " + f  + " " + ex.getLocalizedMessage());
-			}
+			ImageIO.read(f);
 		}
 	}
 	
