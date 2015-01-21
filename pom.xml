@@ -27,7 +27,7 @@
 	<url>https://github.com/stain/jai-imageio-core</url>
 	<build>
 		<plugins>
-		
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -45,9 +45,7 @@
 					<execution>
 						<goals>
 							<goal>jar</goal>
-							<!--  
-						<goal>test-jar</goal>
-						-->
+							<!-- <goal>test-jar</goal> -->
 						</goals>
 					</execution>
 				</executions>
@@ -64,15 +62,13 @@
 					</execution>
 				</executions>
 				<configuration>
-          <!-- uncomment for JDK8 javadoc -->
-          <!-- 
-          <additionalparam>-Xdoclint:none</additionalparam>
-          -->
+					<!-- uncomment for JDK8 javadoc -->
+					<!-- <additionalparam>-Xdoclint:none</additionalparam> -->
 					<linksource>true</linksource>
 					<protected>true</protected>
-          <links>
-            <link>http://docs.oracle.com/javase/7/docs/api/</link>
-          </links>
+					<links>
+						<link>http://docs.oracle.com/javase/7/docs/api/</link>
+					</links>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -85,7 +81,7 @@
 							<mode>development</mode>
 							<url>${project.url}</url>
 						</manifestEntries>
-						 <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+						<manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
 					</archive>
 				</configuration>
 			</plugin>
