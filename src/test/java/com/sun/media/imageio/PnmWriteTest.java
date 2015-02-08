@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.sun.media.imageio;
 
 import com.sun.media.imageio.plugins.pnm.PNMImageWriteParam;
@@ -17,8 +12,8 @@ import javax.imageio.stream.ImageOutputStream;
 import org.junit.Test;
 
 /**
- *
- * @author peterhull
+ * Test PPM writing, ASCII and RAW.
+ * @author peterhull90@gmail.com
  */
 public class PnmWriteTest {
 
