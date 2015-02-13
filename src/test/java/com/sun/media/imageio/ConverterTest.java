@@ -21,6 +21,11 @@ public class ConverterTest {
 		BufferedImage img = ImageIO.read(pngFile);
 
 		for (String type : ImageIO.getWriterFormatNames()) {
+			if (type.equalsIgnoreCase("jpg") || type.equalsIgnoreCase("jpeg")) {
+				// Avoid issue #6 on OpenJDK8/Debian 
+				continue;
+			}
+			
 			File f = File.createTempFile("imageio-test", "." + type);
 			ImageIO.write(img, type, f);
 			System.out.println(f);
