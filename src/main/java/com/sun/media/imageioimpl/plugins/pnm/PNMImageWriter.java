@@ -579,8 +579,6 @@ public class PNMImageWriter extends ImageWriter {
 
             case PPM_ASCII:
                 if (reds == null) {	// no need to expand
-                    int[] bandOffset =
-                        ((ComponentSampleModel)sampleModel).getBandOffsets();
                     for (int i = 0; i < size; i += scaleX * numBands) {
                         for (int j = 0; j < numBands; j++) {
                             if ((count++ % 16) == 0)
