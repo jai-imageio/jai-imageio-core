@@ -44,13 +44,13 @@
 #
 # --- JAI-Image I/O ImageReader plug-ins ---
 #
-#com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageReaderSpi
-#com.sun.media.imageioimpl.plugins.png.CLibPNGImageReaderSpi
-#com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReaderSpi
-#com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReaderCodecLibSpi
-com.sun.media.imageioimpl.plugins.wbmp.WBMPImageReaderSpi
-com.sun.media.imageioimpl.plugins.bmp.BMPImageReaderSpi
-com.sun.media.imageioimpl.plugins.pcx.PCXImageReaderSpi
-com.sun.media.imageioimpl.plugins.pnm.PNMImageReaderSpi
-com.sun.media.imageioimpl.plugins.raw.RawImageReaderSpi
-com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi
+#com.github.jaiimageio.impl.plugins.jpeg.CLibJPEGImageReaderSpi
+#com.github.jaiimageio.impl.plugins.png.CLibPNGImageReaderSpi
+#com.github.jaiimageio.impl.plugins.jpeg2000.J2KImageReaderSpi
+#com.github.jaiimageio.impl.plugins.jpeg2000.J2KImageReaderCodecLibSpi
+com.github.jaiimageio.impl.plugins.wbmp.WBMPImageReaderSpi
+com.github.jaiimageio.impl.plugins.bmp.BMPImageReaderSpi
+com.github.jaiimageio.impl.plugins.pcx.PCXImageReaderSpi
+com.github.jaiimageio.impl.plugins.pnm.PNMImageReaderSpi
+com.github.jaiimageio.impl.plugins.raw.RawImageReaderSpi
+com.github.jaiimageio.impl.plugins.tiff.TIFFImageReaderSpi

@@ -60,7 +60,7 @@ are provided in the package {@link com.sun.media.jai.operator}.
 Image I/O stream classes based on the new <code>java.nio</code> I/O APIs,
 for use with the "raw" format image reader plug-in, and for reading
 discontiguous image data are provided in the package
-{@link com.sun.media.imageio.stream}.
+{@link com.github.jaiimageio.stream}.
 
 <h2>Java Image I/O Reader and Writer Plug-ins</h2>
 
@@ -291,7 +291,7 @@ revert to the respective defaults for reading and writing.
 <code>ImageReader</code> and <code>ImageWriter</code> plug-ins are provided
 for the Bitmap (BMP) format. A summary of the attributes of these plug-ins is
 given in the following table with more details in the description of the
-package {@link com.sun.media.imageio.plugins.bmp}.
+package {@link com.github.jaiimageio.plugins.bmp}.
 
 <p>
 <table border=1>
@@ -320,7 +320,7 @@ href="./com/sun/media/imageio/plugins/bmp/package-summary.html#ImageMetadata"
 </tr>
 <tr>
 <td>{@link javax.imageio.ImageWriteParam}</td>
-<td>{@link com.sun.media.imageio.plugins.bmp.BMPImageWriteParam}</td>
+<td>{@link com.github.jaiimageio.plugins.bmp.BMPImageWriteParam}</td>
 </tr>
 <tr>
 <td>References</td>
@@ -550,7 +550,7 @@ setting if provided, otherwise interlaced),
 <code>ImageReader</code> and <code>ImageWriter</code> plug-ins are provided
 for the JPEG image format. These plug-ins are accelerated using native code.
 If security permission settings disallow loading native code, or if the
-system property "com.sun.media.imageio.disableCodecLib" is set to "true"
+system property "com.github.jaiimageio.disableCodecLib" is set to "true"
 at the time of plug-in registration the service provider will deregister
 itself and the plug-ins will not be available.</p>
 
@@ -599,7 +599,7 @@ format. If the JPEG stream contains an EXIF APP1 marker segment, the primary
 IFD contained therein will be available from the metadata tree extracted
 using the TIFF extra metadata format name. The <code>IIOMetadata</code>
 object returned by the JPEG reader may also be used in a call to
-{@link com.sun.media.imageio.plugins.tiff.TIFFDirectory#createFromMetadata
+{@link com.github.jaiimageio.plugins.tiff.TIFFDirectory#createFromMetadata
 TIFFDirectory.createFromMetadata()} to create a <code>TIFFDirectory</code>
 instance from which <code>TIFFField</code>s may be easily extracted.</p>
 
@@ -699,9 +699,9 @@ Java<sup>TM</sup> and native-based <code>ImageReader</code> and
 <code>ImageWriter</code> plug-ins are provided for the JPEG 2000 image format.
 A summary of the attributes of these plug-ins is given in the table below
 with more details in the description of the package
-{@link com.sun.media.imageio.plugins.jpeg2000}.
+{@link com.github.jaiimageio.plugins.jpeg2000}.
 If security permission settings disallow loading native code, or if the
-system property "com.sun.media.imageio.disableCodecLib" is set to "true"
+system property "com.github.jaiimageio.disableCodecLib" is set to "true"
 at the time of plug-in registration the native service providers will
 deregister themselves and the native plug-ins will not be available. If both
 the native and Java<sup>TM</sup> plug-ins are registered, the native plug-ins
@@ -734,11 +734,11 @@ href="./com/sun/media/imageio/plugins/jpeg2000/package-summary.html#ImageMetadat
 </tr>
 <tr>
 <td>{@link javax.imageio.ImageReadParam}</td>
-<td>{@link com.sun.media.imageio.plugins.jpeg2000.J2KImageReadParam}</td>
+<td>{@link com.github.jaiimageio.plugins.jpeg2000.J2KImageReadParam}</td>
 </tr>
 <tr>
 <td>{@link javax.imageio.ImageWriteParam}</td>
-<td>{@link com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam}</td>
+<td>{@link com.github.jaiimageio.plugins.jpeg2000.J2KImageWriteParam}</td>
 </tr>
 <tr>
 <td>References</td>
@@ -791,7 +791,7 @@ PCX Summary from the Encyclopedia of Graphics File Formats</a><br/>
 for the Portable Network Graphics (PNG) image format. These plug-ins are
 accelerated using native code.
 If security permission settings disallow loading native code, or if the
-system property "com.sun.media.imageio.disableCodecLib" is set to "true"
+system property "com.github.jaiimageio.disableCodecLib" is set to "true"
 at the time of plug-in registration the service provider will deregister
 itself and the plug-ins will not be available.</p>
 
@@ -1032,7 +1032,7 @@ for the "portable anymap" (PNM) image format which refers collectively to the
 formats PBM (portable bitmap), PGM (portable graymap), and PPM (portable
 pixmap). A summary of the attributes of these plug-ins is given in the
 following table with more details in the description of the package
-{@link com.sun.media.imageio.plugins.pnm}.
+{@link com.github.jaiimageio.plugins.pnm}.
 
 <p>
 <table border=1>
@@ -1062,7 +1062,7 @@ href="./com/sun/media/imageio/plugins/pnm/package-summary.html#ImageMetadata"
 </tr>
 <tr>
 <td>{@link javax.imageio.ImageWriteParam}</td>
-<td>{@link com.sun.media.imageio.plugins.pnm.PNMImageWriteParam}</td>
+<td>{@link com.github.jaiimageio.plugins.pnm.PNMImageWriteParam}</td>
 </tr>
 <tr>
 <td>References</td>
@@ -1081,7 +1081,7 @@ href="./com/sun/media/imageio/plugins/pnm/package-summary.html#ImageMetadata"
 <code>ImageReader</code> and <code>ImageWriter</code> plug-ins are provided
 for the "raw" image format. The <code>ImageReader</code> plug-in for the
 "raw" format requires an input which is a
-{@link com.sun.media.imageio.stream.RawImageInputStream}.
+{@link com.github.jaiimageio.stream.RawImageInputStream}.
 
 <p>The reader plug-in reads any uncompressed data defined by 
 <code>ComponentSampleModel</code>,
@@ -1089,7 +1089,7 @@ for the "raw" image format. The <code>ImageReader</code> plug-in for the
 <code>MultiPixelPackedSampleModel</code> as viewed via the 
 <code>ImageInputStream</code>.  For example, if extra data are prepended or
 appended to image lines,
-{@link com.sun.media.imageio.stream.SegmentedImageInputStream} may be used
+{@link com.github.jaiimageio.stream.SegmentedImageInputStream} may be used
 to define the location of the image data for each line. Thus, if the
 data viewed from <code>RawImageInputStream</code> are defined by the
 <code>SampleModel</code>s above
@@ -1132,7 +1132,7 @@ is available the "Format" operation may be used for reformatting the data.</p>
 <tr>
 <td>References</td>
 <td>XML {@link org.xml.sax.InputSource} defined at
-{@link com.sun.media.imageio.stream.RawImageInputStream#RawImageInputStream(javax.imageio.stream.ImageInputStream,org.xml.sax.InputSource)}</td>
+{@link com.github.jaiimageio.stream.RawImageInputStream#RawImageInputStream(javax.imageio.stream.ImageInputStream,org.xml.sax.InputSource)}</td>
 </tr>
 </table>
 </p>
@@ -1160,10 +1160,10 @@ Raw ImageWriteParam Subclass Attributes</a></b>
 <code>ImageReader</code> and <code>ImageWriter</code> plug-ins are provided
 for the Tag(ged) Image File Format (TIFF). A summary of the attributes of these
 plug-ins is given in the table below with more details in the description
-of the package {@link com.sun.media.imageio.plugins.tiff}. Native code
+of the package {@link com.github.jaiimageio.plugins.tiff}. Native code
 is used to accelerate bilevel encodings. If security permission settings
 disallow loading native code, or if the system property
-"com.sun.media.imageio.disableCodecLib" is set to "true" at the time of
+"com.github.jaiimageio.disableCodecLib" is set to "true" at the time of
 (de)compression, native acceleration will not be used.</p>
 
 <p>
@@ -1199,11 +1199,11 @@ href="./com/sun/media/imageio/plugins/tiff/package-summary.html#ImageMetadata"
 </tr>
 <tr>
 <td>{@link javax.imageio.ImageReadParam}</td>
-<td>{@link com.sun.media.imageio.plugins.tiff.TIFFImageReadParam}</td>
+<td>{@link com.github.jaiimageio.plugins.tiff.TIFFImageReadParam}</td>
 </tr>
 <tr>
 <td>{@link javax.imageio.ImageWriteParam}</td>
-<td>{@link com.sun.media.imageio.plugins.tiff.TIFFImageWriteParam}</td>
+<td>{@link com.github.jaiimageio.plugins.tiff.TIFFImageWriteParam}</td>
 </tr>
 <tr>
 <td>References</td>
@@ -1289,8 +1289,8 @@ The XML schema for the WBMP native image metadata format is as follows:
 &lt;!-- Schema for WBMP native image metadata format. --&gt;
 
 &lt;xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns="http://com.sun.media.imageio.plugins"
-            targetNamespace="http://com.sun.media.imageio.plugins"&gt;
+            xmlns="http://com.github.jaiimageio.plugins"
+            targetNamespace="http://com.github.jaiimageio.plugins"&gt;
 
   &lt;!-- WBMP Schema 1.0 root element. --&gt;
   &lt;xsd:element name="com_sun_media_imageio_plugins_wbmp_image_1.0"&gt;

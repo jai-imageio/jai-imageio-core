@@ -44,4 +44,4 @@
 #
 # --- JAI-Image I/O ImageReader plug-ins ---
 #
-com.sun.media.imageioimpl.stream.ChannelImageOutputStreamSpi
+com.github.jaiimageio.impl.stream.ChannelImageOutputStreamSpi

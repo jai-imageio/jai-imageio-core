@@ -44,14 +44,14 @@
 #
 # --- JAI-Image I/O ImageWriter plug-ins ---
 #
-#com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageWriterSpi
-#com.sun.media.imageioimpl.plugins.png.CLibPNGImageWriterSpi
-#com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriterSpi
-#com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriterCodecLibSpi
-com.sun.media.imageioimpl.plugins.wbmp.WBMPImageWriterSpi
-com.sun.media.imageioimpl.plugins.bmp.BMPImageWriterSpi
-com.sun.media.imageioimpl.plugins.gif.GIFImageWriterSpi
-com.sun.media.imageioimpl.plugins.pcx.PCXImageWriterSpi
-com.sun.media.imageioimpl.plugins.pnm.PNMImageWriterSpi
-com.sun.media.imageioimpl.plugins.raw.RawImageWriterSpi
-com.sun.media.imageioimpl.plugins.tiff.TIFFImageWriterSpi
+#com.github.jaiimageio.impl.plugins.jpeg.CLibJPEGImageWriterSpi
+#com.github.jaiimageio.impl.plugins.png.CLibPNGImageWriterSpi
+#com.github.jaiimageio.impl.plugins.jpeg2000.J2KImageWriterSpi
+#com.github.jaiimageio.impl.plugins.jpeg2000.J2KImageWriterCodecLibSpi
+com.github.jaiimageio.impl.plugins.wbmp.WBMPImageWriterSpi
+com.github.jaiimageio.impl.plugins.bmp.BMPImageWriterSpi
+com.github.jaiimageio.impl.plugins.gif.GIFImageWriterSpi
+com.github.jaiimageio.impl.plugins.pcx.PCXImageWriterSpi
+com.github.jaiimageio.impl.plugins.pnm.PNMImageWriterSpi
+com.github.jaiimageio.impl.plugins.raw.RawImageWriterSpi
+com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriterSpi
