@@ -55,27 +55,6 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.1</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<!-- uncomment for JDK8 javadoc -->
-					<!-- <additionalparam>-Xdoclint:none</additionalparam> -->
-					<linksource>true</linksource>
-					<protected>true</protected>
-					<links>
-						<link>http://docs.oracle.com/javase/7/docs/api/</link>
-					</links>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.5</version>
 				<configuration>
@@ -104,6 +83,61 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>java8-and-higher</id>
+			<activation>
+				<jdk>[1.8,</jdk>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.10.1</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<additionalparam>-Xdoclint:none</additionalparam>
+							<linksource>true</linksource>
+							<protected>true</protected>
+							<links>
+								<link>http://docs.oracle.com/javase/8/docs/api/</link>
+							</links>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>pre-java8</id>
+			<activation>
+				<jdk>[1.5,1.8)</jdk>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<configuration>
+							<!-- Override config without doclint option -->
+							<linksource>true</linksource>
+							<protected>true</protected>
+							<links>
+								<link>http://docs.oracle.com/javase/7/docs/api/</link>
+							</links>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<dependencies>
 		<dependency>
@@ -153,31 +187,31 @@
 			<name>Stian Soiland-Reyes</name>
 			<email>stian@s11.no</email>
 			<url>http://orcid.org/0000-0001-9842-9718</url>
-      <organization>s11</organization>
-      <organizationUrl>http://s11.no/</organizationUrl>
-      <roles>
-        <role>build maintainer</role>
-        <role>release manager</role>
-      </roles>
+			<organization>s11</organization>
+			<organizationUrl>http://s11.no/</organizationUrl>
+			<roles>
+				<role>build maintainer</role>
+				<role>release manager</role>
+			</roles>
 		</developer>
 	</developers>
-  <contributors>
+	<contributors>
 		<contributor>
 			<name>John Hewson</name>
-      <email>john@jahewson.com</email>
-      <url>http://jahewson.com/</url>
-      <roles>
-        <role>license reviewer</role>
-      </roles>
-    </contributor>
+			<email>john@jahewson.com</email>
+			<url>http://jahewson.com/</url>
+			<roles>
+				<role>license reviewer</role>
+			</roles>
+		</contributor>
 		<contributor>
 			<name>Peter Hull</name>
-      <url>https://github.com/peterhull90</url>
-      <roles>
-        <role>developer</role>
-      </roles>
-    </contributor>
-  </contributors>
+			<url>https://github.com/peterhull90</url>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</contributor>
+	</contributors>
 
 	<issueManagement>
 		<system>GitHub</system>
