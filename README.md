@@ -8,14 +8,14 @@ NOTE: This is a fork of
 which is no longer maintained upstream. 
 
 This 'standalone' version has removed has removed 
-dependencies to jai-core (javax.media.jai) and JPEG 2000 (jj2000).
+dependencies to jai-core packages (`javax.media.jai`) and JPEG 2000 (`jj2000`).
 This version also does excludes the C
 implementations from libJIIO, meaning that this version is platform independent
-and fully redistributable under the 3-clause BSD license in LICENSE.txt
-(and thus is Apache and GPL compatible).
+and fully redistributable under the 3-clause BSD license in
+[LICENSE.txt](LICENSE.txt) (and thus is Apache and GPL compatible).
 
-[JPEG 2000 support](https://github.com/jai-imageio/jai-imageio-jpeg2000)
-is available as an additional module `jai-imageio-jpeg2000`
+JPEG 2000 support is available as an additional module 
+[jai-imageio-jpeg2000](https://github.com/jai-imageio/jai-imageio-jpeg2000)
 with a different (non-GPL compatible) license.
 
 
