@@ -6,7 +6,7 @@
   </prerequisites>
   <groupId>com.github.jai-imageio</groupId>
   <artifactId>jai-imageio-core</artifactId>
-  <version>1.2.1</version>
+  <version>1.2.2-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Java Advanced Imaging Image I/O Tools API core (standalone)</name>
   <description>
@@ -242,7 +242,7 @@
     <connection>scm:git:git://github.com/jai-imageio/jai-imageio-core.git</connection>
     <developerConnection>scm:git:git@github.com:jai-imageio/jai-imageio-core.git</developerConnection>
     <url>https://github.com/jai-imageio/jai-imageio-core/</url>
-    <tag>jai-imageio-core-1.2.1</tag>
+    <tag>HEAD</tag>
   </scm>
   <developers>
     <developer>
