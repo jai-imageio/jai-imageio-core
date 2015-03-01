@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <prerequisites>
     <maven>2.2.1</maven>
   </prerequisites>
   <groupId>com.github.jai-imageio</groupId>
   <artifactId>jai-imageio-core</artifactId>
-  <version>1.2.1-SNAPSHOT</version>
+  <version>1.2.1</version>
   <packaging>jar</packaging>
   <name>Java Advanced Imaging Image I/O Tools API core (standalone)</name>
   <description>
@@ -243,6 +242,7 @@
     <connection>scm:git:git://github.com/jai-imageio/jai-imageio-core.git</connection>
     <developerConnection>scm:git:git@github.com:jai-imageio/jai-imageio-core.git</developerConnection>
     <url>https://github.com/jai-imageio/jai-imageio-core/</url>
+    <tag>jai-imageio-core-1.2.1</tag>
   </scm>
   <developers>
     <developer>
