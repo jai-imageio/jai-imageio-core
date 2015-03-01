@@ -1,5 +1,5 @@
-jai-imageio-core-standalone
-===========================
+jai-imageio-core (standalone)
+=============================
 
 [![Build Status](https://travis-ci.org/jai-imageio/jai-imageio-core.svg)](https://travis-ci.org/jai-imageio/jai-imageio-core)
 
