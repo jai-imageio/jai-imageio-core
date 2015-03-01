@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Specification-Title: Java Advanced Imaging Image I/O Tools
 Specification-Version: ${version}
-Specification-Vendor: Sun Microsystems, Inc.
-Implementation-Title: com.sun.media.imageio
+Specification-Vendor: https://github.com/jai-imageio/
+Implementation-Title: com.github.jai-imageio
 Implementation-Version: ${version}
-Implementation-Vendor: Sun Microsystems, Inc.
-Extension-Name: com.sun.media.imageio
+Implementation-Vendor: https://github.com/jai-imageio/
+Extension-Name: com.github.jai-imageio
