@@ -46,6 +46,7 @@ package com.github.jaiimageio.impl.plugins.clib;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.imageio.stream.ImageInputStream;
 
 /**

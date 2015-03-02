@@ -44,25 +44,15 @@
  */
 package com.github.jaiimageio.impl.plugins.tiff;
 
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
+import java.io.IOException;
 
 import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageReadParam;
-import javax.imageio.plugins.jpeg.JPEGHuffmanTable;
-import javax.imageio.plugins.jpeg.JPEGImageReadParam;
-import javax.imageio.plugins.jpeg.JPEGQTable;
-import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 
 import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
-import com.github.jaiimageio.plugins.tiff.TIFFDecompressor;
 import com.github.jaiimageio.plugins.tiff.TIFFField;
 
 /**

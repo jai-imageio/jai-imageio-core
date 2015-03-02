@@ -44,8 +44,6 @@
  */
 package com.github.jaiimageio.impl.plugins.tiff;
 
-import java.io.IOException;
-
 import javax.imageio.metadata.IIOMetadata;
 
 import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;

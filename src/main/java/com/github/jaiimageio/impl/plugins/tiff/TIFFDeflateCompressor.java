@@ -44,13 +44,9 @@
  */
 package com.github.jaiimageio.impl.plugins.tiff;
 
-import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
-import com.github.jaiimageio.plugins.tiff.TIFFCompressor;
-
-import java.io.IOException;
-import java.util.zip.Deflater;
-
 import javax.imageio.ImageWriteParam;
+
+import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
 
 /**
  * Compressor for Deflate compression.

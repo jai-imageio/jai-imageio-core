@@ -46,10 +46,10 @@ package com.github.jaiimageio.impl.common;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.RenderedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.SampleModel;
 import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.util.Enumeration;
 import java.util.Hashtable;

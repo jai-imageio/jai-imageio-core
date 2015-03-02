@@ -50,18 +50,17 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.MultiPixelPackedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.imageio.IIOException;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import com.github.jaiimageio.impl.common.ImageUtil;
 

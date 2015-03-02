@@ -44,12 +44,8 @@
  */
 package com.github.jaiimageio.impl.plugins.raw;
 
-import java.awt.Rectangle;
-import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
-import java.util.Collections;
 import java.util.Locale;
-import java.util.Iterator;
+
 import javax.imageio.ImageWriteParam;
 
 /**

@@ -44,7 +44,6 @@
  */
 package com.github.jaiimageio.impl.plugins.pnm;
 
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.color.ColorSpace;
 import java.awt.image.ColorModel;
@@ -56,24 +55,18 @@ import java.awt.image.MultiPixelPackedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.Iterator;
 
-import javax.imageio.IIOImage;
 import javax.imageio.IIOException;
+import javax.imageio.IIOImage;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.metadata.IIOMetadataFormatImpl;
 import javax.imageio.metadata.IIOInvalidTreeException;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
-
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.github.jaiimageio.impl.common.ImageUtil;
 import com.github.jaiimageio.plugins.pnm.PNMImageWriteParam;

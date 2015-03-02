@@ -45,10 +45,8 @@
 
 package com.github.jaiimageio.impl.plugins.png;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.ListResourceBundle;
+
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;

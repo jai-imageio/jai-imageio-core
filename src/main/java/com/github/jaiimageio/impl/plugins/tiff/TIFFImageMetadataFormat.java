@@ -44,20 +44,8 @@
  */
 package com.github.jaiimageio.impl.plugins.tiff;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadataFormat;
-
-import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
-import com.github.jaiimageio.plugins.tiff.TIFFTag;
-import com.github.jaiimageio.plugins.tiff.TIFFTagSet;
 
 public class TIFFImageMetadataFormat extends TIFFMetadataFormat {
 

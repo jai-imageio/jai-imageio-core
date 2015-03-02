@@ -48,6 +48,7 @@ package com.github.jaiimageio.impl.plugins.gif;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
+
 import org.w3c.dom.Node;
 
 /**

@@ -46,15 +46,13 @@
 package com.github.jaiimageio.impl.plugins.gif;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.imageio.ImageTypeSpecifier;
+
 import javax.imageio.metadata.IIOInvalidTreeException;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
+import javax.imageio.metadata.IIOMetadataNode;
+
 import org.w3c.dom.Node;
 
 /**

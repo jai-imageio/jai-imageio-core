@@ -44,8 +44,6 @@
  */
 package com.github.jaiimageio.impl.plugins.tiff;
 
-import com.github.jaiimageio.plugins.tiff.TIFFCompressor;
-
 import java.awt.Point;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
@@ -58,28 +56,29 @@ import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
-import java.io.IOException;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 
 import org.w3c.dom.Node;
+
+import com.github.jaiimageio.plugins.tiff.TIFFCompressor;
 
 /**
  * Base class for all possible forms of JPEG compression in TIFF.

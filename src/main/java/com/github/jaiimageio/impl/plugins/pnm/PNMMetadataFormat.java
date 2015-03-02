@@ -45,8 +45,9 @@
 package com.github.jaiimageio.impl.plugins.pnm;
 
 import java.util.Hashtable;
-import javax.imageio.metadata.*;
+
 import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.metadata.IIOMetadataFormatImpl;
 
 public class PNMMetadataFormat extends IIOMetadataFormatImpl {
     /** The table to link the child to its parent.

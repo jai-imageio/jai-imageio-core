@@ -45,7 +45,6 @@
 
 package com.github.jaiimageio.impl.plugins.jpeg;
 
-import java.awt.Dimension;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
@@ -56,8 +55,6 @@ import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
@@ -68,19 +65,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
-import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.plugins.jpeg.JPEGHuffmanTable;
 import javax.imageio.plugins.jpeg.JPEGQTable;
 import javax.imageio.stream.ImageInputStream;
@@ -90,10 +83,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
-import com.github.jaiimageio.plugins.tiff.EXIFGPSTagSet;
-import com.github.jaiimageio.plugins.tiff.EXIFInteroperabilityTagSet;
 import com.github.jaiimageio.plugins.tiff.EXIFParentTIFFTagSet;
-import com.github.jaiimageio.plugins.tiff.EXIFTIFFTagSet;
 import com.github.jaiimageio.plugins.tiff.TIFFDirectory;
 import com.github.jaiimageio.plugins.tiff.TIFFField;
 import com.github.jaiimageio.plugins.tiff.TIFFTag;

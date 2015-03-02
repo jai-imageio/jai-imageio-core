@@ -44,18 +44,16 @@
  */
 package com.github.jaiimageio.impl.plugins.tiff;
 
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.DataBufferByte;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 
 import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
 import com.github.jaiimageio.plugins.tiff.TIFFDecompressor;

@@ -49,15 +49,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
-
-import org.w3c.dom.Node;
 
 import com.github.jaiimageio.impl.plugins.tiff.TIFFIFD;
 import com.github.jaiimageio.impl.plugins.tiff.TIFFImageMetadata;

@@ -44,10 +44,10 @@
  */
 package com.github.jaiimageio.impl.plugins.tiff;
 
+import java.io.IOException;
+
 import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
 import com.github.jaiimageio.plugins.tiff.TIFFCompressor;
-
-import java.io.IOException;
 
 /**
  *

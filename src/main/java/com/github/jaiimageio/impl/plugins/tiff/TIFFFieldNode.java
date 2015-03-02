@@ -44,20 +44,13 @@
  */
 package com.github.jaiimageio.impl.plugins.tiff;
 
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.stream.ImageOutputStream;
 
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import com.github.jaiimageio.impl.plugins.tiff.TIFFIFD;
-import com.github.jaiimageio.impl.plugins.tiff.TIFFImageMetadata;
 import com.github.jaiimageio.plugins.tiff.TIFFDirectory;
 import com.github.jaiimageio.plugins.tiff.TIFFField;
 import com.github.jaiimageio.plugins.tiff.TIFFTag;

@@ -44,14 +44,9 @@
  */
 package com.github.jaiimageio.impl.plugins.tiff;
 
-import java.awt.Rectangle;
 import java.io.IOException;
 
-import javax.imageio.ImageReader;
-
-import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
 import com.github.jaiimageio.plugins.tiff.TIFFDecompressor;
-import com.github.jaiimageio.plugins.tiff.TIFFTag;
 
 public class TIFFPackBitsDecompressor extends TIFFDecompressor {
 

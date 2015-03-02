@@ -45,9 +45,11 @@
 package com.github.jaiimageio.impl.plugins.tiff;
 
 import java.nio.ByteOrder;
+
+import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.metadata.IIOInvalidTreeException;
+
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 

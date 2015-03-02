@@ -44,7 +44,7 @@
  */
 package com.github.jaiimageio.impl.plugins.pnm;
 
-import java.util.*;
+import java.util.ListResourceBundle;
 
 public class PNMMetadataFormatResources extends ListResourceBundle {
     static final Object[][] contents = {

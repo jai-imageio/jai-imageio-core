@@ -45,8 +45,8 @@
 package com.github.jaiimageio.impl.stream;
 
 import java.io.File;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.NonReadableChannelException;

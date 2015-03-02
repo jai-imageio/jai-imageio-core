@@ -46,12 +46,8 @@ package com.github.jaiimageio.impl.plugins.pnm;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
@@ -62,19 +58,17 @@ import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.StringTokenizer;
 
-import javax.imageio.IIOException;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.StringTokenizer;
 
 import com.github.jaiimageio.impl.common.ImageUtil;
 

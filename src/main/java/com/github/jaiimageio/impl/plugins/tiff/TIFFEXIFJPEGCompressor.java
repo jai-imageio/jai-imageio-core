@@ -44,25 +44,10 @@
  */
 package com.github.jaiimageio.impl.plugins.tiff;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import javax.imageio.IIOException;
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.stream.MemoryCacheImageOutputStream;
 
 import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
-import com.github.jaiimageio.plugins.tiff.EXIFParentTIFFTagSet;
-import com.github.jaiimageio.plugins.tiff.EXIFTIFFTagSet;
-import com.github.jaiimageio.plugins.tiff.TIFFCompressor;
-import com.github.jaiimageio.plugins.tiff.TIFFField;
-import com.github.jaiimageio.plugins.tiff.TIFFTag;
-import com.github.jaiimageio.plugins.tiff.TIFFTagSet;
 
 /**
  * A <code>TIFFCompressor</code> for the JPEG variant of EXIF.

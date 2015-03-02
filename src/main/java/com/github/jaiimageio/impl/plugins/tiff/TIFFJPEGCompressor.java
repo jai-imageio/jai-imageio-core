@@ -44,10 +44,6 @@
  */
 package com.github.jaiimageio.impl.plugins.tiff;
 
-import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
-import com.github.jaiimageio.plugins.tiff.TIFFField;
-import com.github.jaiimageio.plugins.tiff.TIFFTag;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
@@ -60,6 +56,10 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
+
+import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
+import com.github.jaiimageio.plugins.tiff.TIFFField;
+import com.github.jaiimageio.plugins.tiff.TIFFTag;
 
 /**
  * Compressor for encoding compression type 7, TTN2/Adobe JPEG-in-TIFF.

@@ -46,11 +46,18 @@ package com.github.jaiimageio.impl.plugins.pcx;
 
 import java.awt.Rectangle;
 import java.awt.color.ColorSpace;
-import java.awt.image.*;
+import java.awt.image.ColorModel;
+import java.awt.image.IndexColorModel;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
 import java.io.IOException;
 import java.nio.ByteOrder;
 
-import javax.imageio.*;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
 

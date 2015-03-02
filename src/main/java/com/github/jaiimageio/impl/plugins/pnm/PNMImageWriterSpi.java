@@ -45,18 +45,15 @@
 package com.github.jaiimageio.impl.plugins.pnm;
 
 import java.awt.image.DataBuffer;
-
-import javax.imageio.spi.ImageWriterSpi;
-import javax.imageio.spi.ServiceRegistry;
-import javax.imageio.spi.IIORegistry;
-import javax.imageio.ImageWriter;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.IIOException;
-
 import java.util.Locale;
 
+import javax.imageio.IIOException;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.spi.ServiceRegistry;
+
 import com.github.jaiimageio.impl.common.PackageUtil;
-import com.github.jaiimageio.plugins.pnm.PNMImageWriteParam;
 
 public class PNMImageWriterSpi extends ImageWriterSpi {
     private static String [] readerSpiNames =

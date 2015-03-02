@@ -44,15 +44,15 @@
  */
 package com.github.jaiimageio.impl.plugins.tiff;
 
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
-import javax.imageio.stream.MemoryCacheImageInputStream;
+import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 
 import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
 import com.github.jaiimageio.plugins.tiff.TIFFDecompressor;

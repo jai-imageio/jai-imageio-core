@@ -44,10 +44,8 @@
  */
 package com.github.jaiimageio.plugins.tiff;
 
-import java.util.Map;
 import java.util.HashMap;
-import javax.imageio.metadata.IIOMetadataNode;
-import org.w3c.dom.Node;
+import java.util.Map;
 
 /**
  * A class defining the notion of a TIFF tag.  A TIFF tag is a key

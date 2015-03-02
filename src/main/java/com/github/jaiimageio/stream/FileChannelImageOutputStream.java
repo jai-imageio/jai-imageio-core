@@ -44,7 +44,6 @@
  */
 package com.github.jaiimageio.stream;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -55,6 +54,7 @@ import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
 import java.nio.channels.FileChannel;
+
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStreamImpl;
 

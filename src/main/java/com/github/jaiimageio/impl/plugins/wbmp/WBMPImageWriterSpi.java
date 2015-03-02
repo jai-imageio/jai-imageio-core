@@ -44,18 +44,15 @@
  */
 package com.github.jaiimageio.impl.plugins.wbmp;
 
-import javax.imageio.spi.ImageWriterSpi;
-import javax.imageio.spi.ServiceRegistry;
-import javax.imageio.spi.IIORegistry;
-import javax.imageio.ImageWriter;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.IIOException;
-
-import java.awt.image.ColorModel;
-import java.awt.image.IndexColorModel;
 import java.awt.image.MultiPixelPackedSampleModel;
 import java.awt.image.SampleModel;
 import java.util.Locale;
+
+import javax.imageio.IIOException;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.spi.ServiceRegistry;
 
 import com.github.jaiimageio.impl.common.ImageUtil;
 import com.github.jaiimageio.impl.common.PackageUtil;

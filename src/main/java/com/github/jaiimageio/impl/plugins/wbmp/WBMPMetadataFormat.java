@@ -45,7 +45,6 @@
 
 package com.github.jaiimageio.impl.plugins.wbmp;
 
-import java.util.Arrays;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;

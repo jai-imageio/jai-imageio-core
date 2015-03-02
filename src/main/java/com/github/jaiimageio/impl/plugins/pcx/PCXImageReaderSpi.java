@@ -47,8 +47,10 @@ package com.github.jaiimageio.impl.plugins.pcx;
 import java.io.IOException;
 import java.util.Locale;
 
-import javax.imageio.*;
-import javax.imageio.spi.*;
+import javax.imageio.IIOException;
+import javax.imageio.ImageReader;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 
 import com.github.jaiimageio.impl.common.PackageUtil;

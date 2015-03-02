@@ -44,8 +44,6 @@
  */
 package com.github.jaiimageio.impl.plugins.tiff;
 
-import java.awt.color.ColorSpace;
-
 import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
 import com.github.jaiimageio.plugins.tiff.TIFFColorConverter;
 import com.github.jaiimageio.plugins.tiff.TIFFField;

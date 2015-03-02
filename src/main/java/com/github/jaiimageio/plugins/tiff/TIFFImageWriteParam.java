@@ -44,8 +44,6 @@
  */
 package com.github.jaiimageio.plugins.tiff;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 import javax.imageio.ImageWriteParam;

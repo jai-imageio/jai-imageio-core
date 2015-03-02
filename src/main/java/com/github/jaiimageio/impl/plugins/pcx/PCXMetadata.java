@@ -52,8 +52,6 @@ import javax.imageio.metadata.IIOMetadataNode;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import com.github.jaiimageio.impl.common.ImageUtil;
-
 public class PCXMetadata extends IIOMetadata implements Cloneable, PCXConstants {
 
     short version;

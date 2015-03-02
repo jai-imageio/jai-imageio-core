@@ -44,11 +44,16 @@
  */
 package com.github.jaiimageio.impl.plugins.pcx;
 
-import java.awt.image.*;
+import java.awt.image.DataBuffer;
+import java.awt.image.SampleModel;
+import java.awt.image.SinglePixelPackedSampleModel;
 import java.util.Locale;
 
-import javax.imageio.*;
-import javax.imageio.spi.*;
+import javax.imageio.IIOException;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.spi.ServiceRegistry;
 
 import com.github.jaiimageio.impl.common.PackageUtil;
 
