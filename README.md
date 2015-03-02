@@ -130,7 +130,8 @@ access the code.
 The complete copyright notice for this project is in
 [COPYRIGHT.txt](COPYRIGHT.txt)
 
-The source code license for this project is **BSD 3-clause**, see
+The source code license for this project is **BSD 3-clause** with an
+additional nuclear disclaimer, see
 [LICENSE.txt](LICENSE.txt)
 
 
