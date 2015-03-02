@@ -18,17 +18,22 @@ Java's [ImageIO](http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.
 * tiff
 * gif (write)
 
+The classes of this projects are not generally used directly, but through
+the SPI plugin mechanism of ImageIO. See the 
+[ImageIO guide](http://docs.oracle.com/javase/8/docs/technotes/guides/imageio/spec/imageio_guideTOC.fm.html)
+for details.
 
-This project is called 'standalone' as it has removed 
-dependencies to jai-core packages (`javax.media.jai`) and JPEG 2000 (`jj2000`).
-This version also does excludes the C
+This project is called 'standalone' as unlike the [original
+jai-imageio-core](https://java.net/projects/jai-imageio-core/) 
+it has removed dependencies to jai-core packages (`javax.media.jai`) and JPEG
+2000 (`jj2000`).  This version also does not include the C
 implementations from libJIIO, meaning that this version is platform independent
 and fully redistributable under the 3-clause BSD license in
 [LICENSE.txt](LICENSE.txt) (and thus is Apache and GPL compatible).
 
 JPEG 2000 support is available as an additional module 
 [jai-imageio-jpeg2000](https://github.com/jai-imageio/jai-imageio-jpeg2000)
-with a different (non-GPL compatible) license.
+as it has a different (non-GPL compatible) license.
 
 
 If you are not concerned about GPL compatibility or source code
@@ -142,3 +147,5 @@ More info
 * http://www.oracle.com/technetwork/java/current-142188.html
 * http://download.java.net/media/jai/builds/release/1_1_3/
 * http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html
+* http://docs.oracle.com/javase/8/docs/technotes/guides/imageio/index.html 
+* http://docs.oracle.com/javase/8/docs/technotes/guides/imageio/spec/imageio_guideTOC.fm.html
