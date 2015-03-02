@@ -121,6 +121,7 @@ Changelog
 ---------
 
 * 1.3.0 - Java package changed to com.github.jaiimageio
+    MANIFEST.MF metadata corrected.
 * 1.2.1 - Version 1.2.1 released. Pushing to Maven Central and BinTray. 
       Workaround for OpenJDK8 libjpeg bug (issue #6).
       groupId changed from net.java.dev.jai-imageio to com.github.jai-imageio.
