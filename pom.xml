@@ -65,7 +65,6 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <mode>development</mode>
               <url>${project.url}</url>
               <Specification-Title>${project.title}</Specification-Title>
               <Specification-Version>${project.version}</Specification-Version>
