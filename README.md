@@ -47,45 +47,26 @@ might still be of use to someone else.
 Usage
 -----
 
-To build this project, use Apache Maven 2.0.9 or newer and run:
+To build this project, use Apache Maven 2.2.1 or newer and run:
 
     mvn clean install
 
-To use jai-imageio-core-standalone from a Maven project, add:
+To use jai-imageio-corefrom a Maven project, add:
 
     <dependency>
         <groupId>com.github.jai-imageio</groupId>
-        <artifactId>jai-imageio-core-standalone</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <artifactId>jai-imageio-core</artifactId>
+        <version>1.3.0</version>
     </dependency>
 
 (see the latest `<version>` within [pom.xml](pom.xml#L10).
-
-and:
-
-    <repositories>
-        <repository>
-            <releases />
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>mygrid-repository</id>
-            <name>myGrid Repository</name>
-            <url>http://www.mygrid.org.uk/maven/repository</url>
-        </repository>
-    </repositories>
-
-This repository includes source JARs and javadoc, which should be picked
-up for instance by the Eclipse Maven support.  
-
-TODO: [release to Maven Central](https://github.com/jai-imageio/jai-imageio-core/issues/9).
 
 
 Download
 --------
 
-To download the binary JARs, browse the 
-[Maven repository](http://www.mygrid.org.uk/maven/repository/net/java/dev/jai-imageio/jai-imageio-core-standalone/).
+To download the binary JAR, see the 
+[Downloads at BinTray](https://bintray.com/jai-imageio/maven/jai-imageio-core-standalone/view).
 
 
 Javadoc
@@ -118,18 +99,21 @@ The source code license for this project is **BSD 3-clause**, see
 Changelog
 ---------
 
-* 2015-02-13 - groupId changed from net.java.dev.jai-imageio to com.github.jai-imageio.
+* 1.3.0 - Java package changed to com.github.jaiimageio
+* 1.2.1 - Version 1.2.1 released. Pushing to Maven Central and BinTray. 
+      Workaround for OpenJDK8 libjpeg bug (issue #6).
+      groupId changed from net.java.dev.jai-imageio to com.github.jai-imageio.
       Fix for PNM ASCII write (issue #7).
-* 2014-09-13 - Removed last jpeg2000 plugin. Javadoc now includes overview.      
-* 2014-09-12 -  Separated out [JPEG 2000](https://github.com/jai-imageio/jai-imageio-core/issues/4)
+* 1.2-pre-dr-b04-2014-09-13 - Removed last jpeg2000 plugin. Javadoc now includes overview.      
+* 1.2-pre-dr-b04-2014-09-12 - Separated out [JPEG 2000](https://github.com/jai-imageio/jai-imageio-core/issues/4)
       support from [jai-imageio-core](http://github.com/jai-imageio/jai-imageio-core)
       for [licensing reasons](https://github.com/jai-imageio/jai-imageio-core/issues/4).
       Re-enabled junit test (issue #5).
-* 2013-04-23 - Updated README and pom, newer maven plugins, removed
+* 1.2-pre-dr-b04-2013-04-23 - Updated README and pom, newer maven plugins, removed
   broken links to dev.java.net. Javadocs included and published at
   http://jai-imageio.github.com/jai-imageio-core/
-* 2011-07-04 - Avoid Maven many build warnings. Fixed character set.
-* 2010-04-30 - Initial Maven version, based on CVS checkout from
+* 1.2-pre-dr-b04-2011-07-04 - Avoid Maven many build warnings. Fixed character set.
+* 1.2-pre-dr-b04-2010-04-30 - Initial Maven version, based on CVS checkout from
   dev.java.net, but with Maven pom.xml and only code covered
   by open source license.
 
