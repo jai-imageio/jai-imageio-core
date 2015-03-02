@@ -5,7 +5,7 @@ jai-imageio-core (standalone)
 
 NOTE: This is a fork of the
 [original jai-imageio-core](https://java.net/projects/jai-imageio-core/)
-(which was no longer maintained).
+(which is no longer maintained).
 
 
 This project adds read/write support for the following file types to 
