@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Specification-Title: Java Advanced Imaging Image I/O Tools
-Specification-Version: ${version}
-Specification-Vendor: https://github.com/jai-imageio/
-Implementation-Title: com.github.jai-imageio
-Implementation-Version: ${version}
-Implementation-Vendor: https://github.com/jai-imageio/
-Extension-Name: com.github.jai-imageio

@@ -51,8 +51,7 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
+      <plugin> <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.5</version>
         <executions>
@@ -68,8 +67,14 @@
             <manifestEntries>
               <mode>development</mode>
               <url>${project.url}</url>
+              <Specification-Title>${project.title}</Specification-Title>
+              <Specification-Version>${project.version}</Specification-Version>
+              <Specification-Vendor>https://github.com/jai-imageio/</Specification-Vendor>
+              <Implementation-Title>${project.groupId}</Implementation-Title>
+              <Implementation-Version>${project.version}</Implementation-Version>
+              <Implementation-Vendor>https://github.com/jai-imageio/</Implementation-Vendor>
+              <Extension-Name>com.github.jaiimageio</Extension-Name>
             </manifestEntries>
-            <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
           </archive>
         </configuration>
       </plugin>
