@@ -16,6 +16,10 @@
     modified BSD license and should be GPL compatible.
   </description>
   <url>https://github.com/jai-imageio/jai-imageio-core</url>
+  <organization>
+    <name>jai-imageio GitHub group</name>
+    <url>https://github.com/jai-imageio/</url>
+  </organization>
   <licenses>
     <license>
       <name>BSD 3-clause License</name>
@@ -67,13 +71,13 @@
           <archive>
             <manifestEntries>
               <url>${project.url}</url>
-              <Specification-Title>${project.name}</Specification-Title>
-              <Specification-Version>${project.version}</Specification-Version>
-              <Specification-Vendor>https://github.com/jai-imageio/</Specification-Vendor>
-              <Implementation-Title>${project.groupId}</Implementation-Title>
+              <Specification-Title>Java Advanced Imaging</Specification-Title>
+              <Specification-Version>1.1-mr</Specification-Version>
+              <Specification-Vendor>Sun Microsystems, Inc.</Specification-Vendor>
+              <Implementation-Title>${project.name}</Implementation-Title>
               <Implementation-Version>${project.version}</Implementation-Version>
-              <Implementation-Vendor>https://github.com/jai-imageio/</Implementation-Vendor>
-              <Extension-Name>com.github.jaiimageio</Extension-Name>
+              <Implementation-Vendor>${project.organization.url} ${project.organization.name}</Implementation-Vendor>
+              <Extension-Name>${project.groupId}-${project.artifactId}</Extension-Name>
             </manifestEntries>
           </archive>
         </configuration>
@@ -257,6 +261,7 @@
     <url>https://github.com/jai-imageio/jai-imageio-core/</url>
     <tag>HEAD</tag>
   </scm>
+
   <developers>
     <developer>
       <name>Stian Soiland-Reyes</name>
