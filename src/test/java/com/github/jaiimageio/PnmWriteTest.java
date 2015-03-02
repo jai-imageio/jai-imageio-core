@@ -13,6 +13,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test PPM writing, ASCII and RAW.
@@ -37,7 +38,7 @@ public class PnmWriteTest {
 
     private static void write(File f, boolean raw, BufferedImage image) throws IOException {
         Iterator<ImageWriter> writers = ImageIO.getImageWritersBySuffix("ppm");
-        assert (writers.hasNext());
+        assertTrue(writers.hasNext());
         ImageWriter writer = writers.next();
         PNMImageWriteParam defaultWriteParam = (PNMImageWriteParam) writer.getDefaultWriteParam();
         defaultWriteParam.setRaw(raw);
