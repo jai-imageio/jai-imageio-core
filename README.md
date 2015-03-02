@@ -79,6 +79,9 @@ To use jai-imageio-core from a Maven project, add:
         <version>1.3.0</version>
     </dependency>
 
+To find the latest `<version>` above, see 
+[jai-imageio-core at BinTray](https://bintray.com/jai-imageio/maven/jai-imageio-core-standalone)
+
 jai-imageio-core is mirrored to Maven Central. Alternatively you can use this
 explicit repository:
 
@@ -93,11 +96,8 @@ explicit repository:
       </repository>
     </repositories>
 
-The Maven repository include additional artifact types such as `javadoc` and `sources`
-which should be picked up by your IDE's Maven integration.
-
-To find the latest `<version>` above, see 
-[jai-imageio-core at BinTray](https://bintray.com/jai-imageio/maven/jai-imageio-core-standalone)
+The Maven repository include additional artifact types such as `javadoc` and
+`sources` which should be picked up by your IDE's Maven integration.
 
 
 Download
