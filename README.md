@@ -65,7 +65,8 @@ might still be of use to someone else.
 Usage
 -----
 
-To build this project, use [Apache Maven](https://maven.apache.org/download.cgi) 
+This project requires Java 6 or newer.  To build this project, use [Apache
+Maven](https://maven.apache.org/download.cgi) 
 2.2.1 or newer and run:
 
     mvn clean install
