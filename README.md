@@ -65,7 +65,7 @@ might still be of use to someone else.
 Usage
 -----
 
-This project requires Java 6 or newer.  To build this project, use [Apache
+This project requires Java 5 or newer.  To build this project, use [Apache
 Maven](https://maven.apache.org/download.cgi) 
 2.2.1 or newer and run:
 
@@ -78,6 +78,23 @@ To use jai-imageio-core from a Maven project, add:
         <artifactId>jai-imageio-core</artifactId>
         <version>1.3.0</version>
     </dependency>
+
+jai-imageio-core is mirrored to Maven Central. Alternatively you can use this
+explicit repository:
+
+    <repositories>
+      <repository>
+        <id>bintray-jai-imageio</id>
+        <name>jai-imageio at bintray</name>
+        <url>http://dl.bintray.com/jai-imageio/maven/</url>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+      </repository>
+    </repositories>
+
+The Maven repository include additional artifact types such as `javadoc` and `sources`
+which should be picked up by your IDE's Maven integration.
 
 To find the latest `<version>` above, see 
 [jai-imageio-core at BinTray](https://bintray.com/jai-imageio/maven/jai-imageio-core-standalone)
