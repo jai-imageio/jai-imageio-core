@@ -26,14 +26,15 @@ public class PnmWriteTest {
     @Test
     public void writeRaw() throws Exception {
         File f = File.createTempFile("test-raw", ".ppm");
+        f.deleteOnExit();
         write(f, true, image);
     }
 
     @Test
     public void writeAscii() throws Exception {
         File f = File.createTempFile("test-ascii", ".ppm");
+        f.deleteOnExit();
         write(f, false, image);
-
     }
 
     private static void write(File f, boolean raw, BufferedImage image) throws IOException {
