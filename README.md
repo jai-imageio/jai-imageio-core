@@ -7,7 +7,19 @@ NOTE: This is a fork of
 [jai-imageio-core](https://java.net/projects/jai-imageio-core/) 
 which is no longer maintained upstream. 
 
-This 'standalone' version has removed has removed 
+This project adds read/write support for the following file types to 
+Java's [ImageIO](http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html):
+ 
+* wbmp
+* bmp
+* pcx
+* pnm
+* raw
+* tiff
+* gif (write)
+
+
+This project is called 'standalone' as it has removed 
 dependencies to jai-core packages (`javax.media.jai`) and JPEG 2000 (`jj2000`).
 This version also does excludes the C
 implementations from libJIIO, meaning that this version is platform independent
@@ -39,7 +51,7 @@ You are however encouraged to raise a
 [Github Pull Request](https://github.com/jai-imageio/jai-imageio-core/pulls)
 with any suggested improvements.
 
-You can also look at and raise an
+You can also raise an
 [issue](https://github.com/jai-imageio/jai-imageio-core/issues) - your stacktrace
 might still be of use to someone else.
 
@@ -47,11 +59,12 @@ might still be of use to someone else.
 Usage
 -----
 
-To build this project, use Apache Maven 2.2.1 or newer and run:
+To build this project, use [Apache Maven](https://maven.apache.org/download.cgi) 
+2.2.1 or newer and run:
 
     mvn clean install
 
-To use jai-imageio-corefrom a Maven project, add:
+To use jai-imageio-core from a Maven project, add:
 
     <dependency>
         <groupId>com.github.jai-imageio</groupId>
@@ -59,7 +72,8 @@ To use jai-imageio-corefrom a Maven project, add:
         <version>1.3.0</version>
     </dependency>
 
-(see the latest `<version>` within [pom.xml](pom.xml#L10).
+To find the latest `<version>` above, see 
+[jai-imageio-core at BinTray](https://bintray.com/jai-imageio/maven/jai-imageio-core-standalone)
 
 
 Download
@@ -127,4 +141,4 @@ More info
 * https://java.net/projects/jai-imageio-core/
 * http://www.oracle.com/technetwork/java/current-142188.html
 * http://download.java.net/media/jai/builds/release/1_1_3/
-
+* http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html
