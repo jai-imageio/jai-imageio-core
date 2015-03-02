@@ -3,9 +3,10 @@ jai-imageio-core (standalone)
 
 [![Build Status](https://travis-ci.org/jai-imageio/jai-imageio-core.svg)](https://travis-ci.org/jai-imageio/jai-imageio-core)
 
-NOTE: This is a fork of
-[jai-imageio-core](https://java.net/projects/jai-imageio-core/) 
-which is no longer maintained upstream. 
+NOTE: This is a fork of the
+[original jai-imageio-core](https://java.net/projects/jai-imageio-core/)
+(which was no longer maintained).
+
 
 This project adds read/write support for the following file types to 
 Java's [ImageIO](http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html):
