@@ -750,7 +750,8 @@ public class GIFImageWriter extends ImageWriter {
     /**
      * Writes any extension blocks, the Image Descriptor, and the image data
      *
-     * @param iioimage The image and image metadata.
+     * @param image The image.
+     * @param imageMetadata The Image metadata.
      * @param param The write parameters.
      * @param globalColorTable The Global Color Table.
      * @param sourceBounds The source region.
