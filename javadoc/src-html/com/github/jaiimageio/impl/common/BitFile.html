@@ -1,0 +1,232 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * $RCSfile: BitFile.java,v $<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * <a name="line.4"></a>
+<span class="sourceLineNo">005</span> * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * <a name="line.6"></a>
+<span class="sourceLineNo">007</span> * Redistribution and use in source and binary forms, with or without<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * modification, are permitted provided that the following conditions<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * are met: <a name="line.9"></a>
+<span class="sourceLineNo">010</span> * <a name="line.10"></a>
+<span class="sourceLineNo">011</span> * - Redistribution of source code must retain the above copyright <a name="line.11"></a>
+<span class="sourceLineNo">012</span> *   notice, this  list of conditions and the following disclaimer.<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * <a name="line.13"></a>
+<span class="sourceLineNo">014</span> * - Redistribution in binary form must reproduce the above copyright<a name="line.14"></a>
+<span class="sourceLineNo">015</span> *   notice, this list of conditions and the following disclaimer in <a name="line.15"></a>
+<span class="sourceLineNo">016</span> *   the documentation and/or other materials provided with the<a name="line.16"></a>
+<span class="sourceLineNo">017</span> *   distribution.<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * <a name="line.18"></a>
+<span class="sourceLineNo">019</span> * Neither the name of Sun Microsystems, Inc. or the names of <a name="line.19"></a>
+<span class="sourceLineNo">020</span> * contributors may be used to endorse or promote products derived <a name="line.20"></a>
+<span class="sourceLineNo">021</span> * from this software without specific prior written permission.<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * <a name="line.22"></a>
+<span class="sourceLineNo">023</span> * This software is provided "AS IS," without a warranty of any <a name="line.23"></a>
+<span class="sourceLineNo">024</span> * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND <a name="line.24"></a>
+<span class="sourceLineNo">025</span> * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, <a name="line.25"></a>
+<span class="sourceLineNo">026</span> * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY<a name="line.26"></a>
+<span class="sourceLineNo">027</span> * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL <a name="line.27"></a>
+<span class="sourceLineNo">028</span> * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF <a name="line.28"></a>
+<span class="sourceLineNo">029</span> * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS<a name="line.29"></a>
+<span class="sourceLineNo">030</span> * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR <a name="line.30"></a>
+<span class="sourceLineNo">031</span> * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,<a name="line.31"></a>
+<span class="sourceLineNo">032</span> * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR<a name="line.33"></a>
+<span class="sourceLineNo">034</span> * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE<a name="line.34"></a>
+<span class="sourceLineNo">035</span> * POSSIBILITY OF SUCH DAMAGES. <a name="line.35"></a>
+<span class="sourceLineNo">036</span> * <a name="line.36"></a>
+<span class="sourceLineNo">037</span> * You acknowledge that this software is not designed or intended for <a name="line.37"></a>
+<span class="sourceLineNo">038</span> * use in the design, construction, operation or maintenance of any <a name="line.38"></a>
+<span class="sourceLineNo">039</span> * nuclear facility. <a name="line.39"></a>
+<span class="sourceLineNo">040</span> *<a name="line.40"></a>
+<span class="sourceLineNo">041</span> * $Revision: 1.1 $<a name="line.41"></a>
+<span class="sourceLineNo">042</span> * $Date: 2005/02/11 05:01:21 $<a name="line.42"></a>
+<span class="sourceLineNo">043</span> * $State: Exp $<a name="line.43"></a>
+<span class="sourceLineNo">044</span> */<a name="line.44"></a>
+<span class="sourceLineNo">045</span><a name="line.45"></a>
+<span class="sourceLineNo">046</span>package com.github.jaiimageio.impl.common;<a name="line.46"></a>
+<span class="sourceLineNo">047</span><a name="line.47"></a>
+<span class="sourceLineNo">048</span>import java.io.IOException;<a name="line.48"></a>
+<span class="sourceLineNo">049</span><a name="line.49"></a>
+<span class="sourceLineNo">050</span>import javax.imageio.stream.ImageOutputStream;<a name="line.50"></a>
+<span class="sourceLineNo">051</span><a name="line.51"></a>
+<span class="sourceLineNo">052</span>/**<a name="line.52"></a>
+<span class="sourceLineNo">053</span> * Came from GIFEncoder initially.<a name="line.53"></a>
+<span class="sourceLineNo">054</span> * Modified - to allow for output compressed data without the block counts<a name="line.54"></a>
+<span class="sourceLineNo">055</span> * which breakup the compressed data stream for GIF.<a name="line.55"></a>
+<span class="sourceLineNo">056</span> **/<a name="line.56"></a>
+<span class="sourceLineNo">057</span>public class BitFile<a name="line.57"></a>
+<span class="sourceLineNo">058</span>{<a name="line.58"></a>
+<span class="sourceLineNo">059</span>    ImageOutputStream output_;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>    byte buffer_[];<a name="line.60"></a>
+<span class="sourceLineNo">061</span>    int index_;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    int bitsLeft_;      // bits left at current index that are avail.<a name="line.62"></a>
+<span class="sourceLineNo">063</span><a name="line.63"></a>
+<span class="sourceLineNo">064</span>    /** note this also indicates gif format BITFile. **/<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    boolean blocks_ = false;<a name="line.65"></a>
+<span class="sourceLineNo">066</span><a name="line.66"></a>
+<span class="sourceLineNo">067</span>    /**<a name="line.67"></a>
+<span class="sourceLineNo">068</span>         * @param output destination for output data<a name="line.68"></a>
+<span class="sourceLineNo">069</span>         * @param blocks GIF LZW requires block counts for output data<a name="line.69"></a>
+<span class="sourceLineNo">070</span>         **/<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    public BitFile(ImageOutputStream    output, boolean blocks)<a name="line.71"></a>
+<span class="sourceLineNo">072</span>    {<a name="line.72"></a>
+<span class="sourceLineNo">073</span>        output_ = output;<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        blocks_ = blocks;<a name="line.74"></a>
+<span class="sourceLineNo">075</span>        buffer_ = new byte[256];<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        index_ = 0;<a name="line.76"></a>
+<span class="sourceLineNo">077</span>        bitsLeft_ =     8;<a name="line.77"></a>
+<span class="sourceLineNo">078</span>    }<a name="line.78"></a>
+<span class="sourceLineNo">079</span><a name="line.79"></a>
+<span class="sourceLineNo">080</span>    public void flush() throws IOException<a name="line.80"></a>
+<span class="sourceLineNo">081</span>    {<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        int     numBytes = index_ +     (bitsLeft_ == 8 ? 0     : 1);<a name="line.82"></a>
+<span class="sourceLineNo">083</span>        if (numBytes &gt; 0)<a name="line.83"></a>
+<span class="sourceLineNo">084</span>            {<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                if (blocks_)<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                    output_.write(numBytes);<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                output_.write(buffer_, 0, numBytes);<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                buffer_[0] = 0;<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                index_ = 0;<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                bitsLeft_ =     8;<a name="line.90"></a>
+<span class="sourceLineNo">091</span>            }<a name="line.91"></a>
+<span class="sourceLineNo">092</span>    }<a name="line.92"></a>
+<span class="sourceLineNo">093</span><a name="line.93"></a>
+<span class="sourceLineNo">094</span>    public void writeBits(int bits,     int     numbits) throws IOException<a name="line.94"></a>
+<span class="sourceLineNo">095</span>    {<a name="line.95"></a>
+<span class="sourceLineNo">096</span>        int     bitsWritten     = 0;<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        int     numBytes = 255;         // gif block count<a name="line.97"></a>
+<span class="sourceLineNo">098</span>        do<a name="line.98"></a>
+<span class="sourceLineNo">099</span>            {<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                // This handles the GIF block count stuff<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                if ((index_     == 254 &amp;&amp; bitsLeft_     == 0) || index_ &gt; 254)<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                    {<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                        if (blocks_)<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                            output_.write(numBytes);<a name="line.104"></a>
+<span class="sourceLineNo">105</span><a name="line.105"></a>
+<span class="sourceLineNo">106</span>                        output_.write(buffer_, 0, numBytes);<a name="line.106"></a>
+<span class="sourceLineNo">107</span><a name="line.107"></a>
+<span class="sourceLineNo">108</span>                        buffer_[0] = 0;<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                        index_ = 0;<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                        bitsLeft_ =     8;<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                    }<a name="line.111"></a>
+<span class="sourceLineNo">112</span><a name="line.112"></a>
+<span class="sourceLineNo">113</span>                if (numbits     &lt;= bitsLeft_) // bits contents fit in current index byte<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                    {<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                        if (blocks_) // GIF<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                            {<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                                buffer_[index_] |= (bits &amp; ((1 &lt;&lt; numbits) - 1)) &lt;&lt;     (8 - bitsLeft_);<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                                bitsWritten     += numbits;<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                                bitsLeft_ -= numbits;<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                                numbits = 0;<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                            }<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                        else<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                            {<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                                buffer_[index_] |= (bits &amp; ((1 &lt;&lt; numbits) - 1)) &lt;&lt;     (bitsLeft_ - numbits);<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                                bitsWritten     += numbits;<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                                bitsLeft_ -= numbits;<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                                numbits = 0;<a name="line.127"></a>
+<span class="sourceLineNo">128</span><a name="line.128"></a>
+<span class="sourceLineNo">129</span>                            }<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                    }<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                else    // bits overflow from current byte to next.<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                    {<a name="line.132"></a>
+<span class="sourceLineNo">133</span>                        if (blocks_)    // GIF<a name="line.133"></a>
+<span class="sourceLineNo">134</span>                            {<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                                // if bits  &gt; space left in current byte then the lowest order bits<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                                // of code are taken and put in current byte and rest put in next.<a name="line.136"></a>
+<span class="sourceLineNo">137</span>                                buffer_[index_] |= (bits &amp; ((1 &lt;&lt; bitsLeft_) - 1)) &lt;&lt; (8 - bitsLeft_);<a name="line.137"></a>
+<span class="sourceLineNo">138</span>                                bitsWritten     += bitsLeft_;<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                                bits &gt;&gt;= bitsLeft_;<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                                numbits -= bitsLeft_;<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                                buffer_[++index_] =     0;<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                                bitsLeft_ =     8;<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                            }<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                        else<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                            {<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                                // if bits  &gt; space left in current byte then the highest order bits<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                                // of code are taken and put in current byte and rest put in next.<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                                // at highest order bit location !! <a name="line.148"></a>
+<span class="sourceLineNo">149</span>                                int topbits = (bits &gt;&gt;&gt; (numbits - bitsLeft_)) &amp; ((1 &lt;&lt; bitsLeft_) - 1);<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                                buffer_[index_] |= topbits;<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                                numbits -= bitsLeft_;   // ok this many bits gone off the top<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                                bitsWritten     += bitsLeft_;<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                                buffer_[++index_] =     0;      // next index<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                                bitsLeft_ =     8;<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                            }<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                    }<a name="line.156"></a>
+<span class="sourceLineNo">157</span><a name="line.157"></a>
+<span class="sourceLineNo">158</span>            } while     (numbits !=     0);<a name="line.158"></a>
+<span class="sourceLineNo">159</span>    }<a name="line.159"></a>
+<span class="sourceLineNo">160</span>}<a name="line.160"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

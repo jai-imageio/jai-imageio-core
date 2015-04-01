@@ -1,0 +1,297 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * $RCSfile: PCXMetadata.java,v $<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * <a name="line.4"></a>
+<span class="sourceLineNo">005</span> * Copyright (c) 2007 Sun Microsystems, Inc. All  Rights Reserved.<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * <a name="line.6"></a>
+<span class="sourceLineNo">007</span> * Redistribution and use in source and binary forms, with or without<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * modification, are permitted provided that the following conditions<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * are met: <a name="line.9"></a>
+<span class="sourceLineNo">010</span> * <a name="line.10"></a>
+<span class="sourceLineNo">011</span> * - Redistribution of source code must retain the above copyright <a name="line.11"></a>
+<span class="sourceLineNo">012</span> *   notice, this  list of conditions and the following disclaimer.<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * <a name="line.13"></a>
+<span class="sourceLineNo">014</span> * - Redistribution in binary form must reproduce the above copyright<a name="line.14"></a>
+<span class="sourceLineNo">015</span> *   notice, this list of conditions and the following disclaimer in <a name="line.15"></a>
+<span class="sourceLineNo">016</span> *   the documentation and/or other materials provided with the<a name="line.16"></a>
+<span class="sourceLineNo">017</span> *   distribution.<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * <a name="line.18"></a>
+<span class="sourceLineNo">019</span> * Neither the name of Sun Microsystems, Inc. or the names of <a name="line.19"></a>
+<span class="sourceLineNo">020</span> * contributors may be used to endorse or promote products derived <a name="line.20"></a>
+<span class="sourceLineNo">021</span> * from this software without specific prior written permission.<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * <a name="line.22"></a>
+<span class="sourceLineNo">023</span> * This software is provided "AS IS," without a warranty of any <a name="line.23"></a>
+<span class="sourceLineNo">024</span> * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND <a name="line.24"></a>
+<span class="sourceLineNo">025</span> * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, <a name="line.25"></a>
+<span class="sourceLineNo">026</span> * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY<a name="line.26"></a>
+<span class="sourceLineNo">027</span> * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL <a name="line.27"></a>
+<span class="sourceLineNo">028</span> * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF <a name="line.28"></a>
+<span class="sourceLineNo">029</span> * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS<a name="line.29"></a>
+<span class="sourceLineNo">030</span> * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR <a name="line.30"></a>
+<span class="sourceLineNo">031</span> * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,<a name="line.31"></a>
+<span class="sourceLineNo">032</span> * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR<a name="line.33"></a>
+<span class="sourceLineNo">034</span> * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE<a name="line.34"></a>
+<span class="sourceLineNo">035</span> * POSSIBILITY OF SUCH DAMAGES. <a name="line.35"></a>
+<span class="sourceLineNo">036</span> * <a name="line.36"></a>
+<span class="sourceLineNo">037</span> * You acknowledge that this software is not designed or intended for <a name="line.37"></a>
+<span class="sourceLineNo">038</span> * use in the design, construction, operation or maintenance of any <a name="line.38"></a>
+<span class="sourceLineNo">039</span> * nuclear facility. <a name="line.39"></a>
+<span class="sourceLineNo">040</span> *<a name="line.40"></a>
+<span class="sourceLineNo">041</span> * $Revision: 1.2 $<a name="line.41"></a>
+<span class="sourceLineNo">042</span> * $Date: 2007/09/07 19:12:25 $<a name="line.42"></a>
+<span class="sourceLineNo">043</span> * $State: Exp $<a name="line.43"></a>
+<span class="sourceLineNo">044</span> */<a name="line.44"></a>
+<span class="sourceLineNo">045</span>package com.github.jaiimageio.impl.plugins.pcx;<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>import javax.imageio.metadata.IIOInvalidTreeException;<a name="line.47"></a>
+<span class="sourceLineNo">048</span>import javax.imageio.metadata.IIOMetadata;<a name="line.48"></a>
+<span class="sourceLineNo">049</span>import javax.imageio.metadata.IIOMetadataFormatImpl;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>import javax.imageio.metadata.IIOMetadataNode;<a name="line.50"></a>
+<span class="sourceLineNo">051</span><a name="line.51"></a>
+<span class="sourceLineNo">052</span>import org.w3c.dom.NamedNodeMap;<a name="line.52"></a>
+<span class="sourceLineNo">053</span>import org.w3c.dom.Node;<a name="line.53"></a>
+<span class="sourceLineNo">054</span><a name="line.54"></a>
+<span class="sourceLineNo">055</span>public class PCXMetadata extends IIOMetadata implements Cloneable, PCXConstants {<a name="line.55"></a>
+<span class="sourceLineNo">056</span><a name="line.56"></a>
+<span class="sourceLineNo">057</span>    short version;<a name="line.57"></a>
+<span class="sourceLineNo">058</span>    byte bitsPerPixel;<a name="line.58"></a>
+<span class="sourceLineNo">059</span>    boolean gotxmin, gotymin;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>    short xmin, ymin;<a name="line.60"></a>
+<span class="sourceLineNo">061</span>    int vdpi, hdpi;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    int hsize,vsize;<a name="line.62"></a>
+<span class="sourceLineNo">063</span><a name="line.63"></a>
+<span class="sourceLineNo">064</span>    PCXMetadata() {<a name="line.64"></a>
+<span class="sourceLineNo">065</span>        super(true, null, null, null, null);<a name="line.65"></a>
+<span class="sourceLineNo">066</span>        reset();<a name="line.66"></a>
+<span class="sourceLineNo">067</span>    }<a name="line.67"></a>
+<span class="sourceLineNo">068</span><a name="line.68"></a>
+<span class="sourceLineNo">069</span>    public Node getAsTree(String formatName) {<a name="line.69"></a>
+<span class="sourceLineNo">070</span>        if (formatName.equals(IIOMetadataFormatImpl.standardMetadataFormatName)) {<a name="line.70"></a>
+<span class="sourceLineNo">071</span>            return getStandardTree();<a name="line.71"></a>
+<span class="sourceLineNo">072</span>        } else {<a name="line.72"></a>
+<span class="sourceLineNo">073</span>            throw new IllegalArgumentException("Not a recognized format!");<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        }<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    }<a name="line.75"></a>
+<span class="sourceLineNo">076</span><a name="line.76"></a>
+<span class="sourceLineNo">077</span>    public boolean isReadOnly() {<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        return false;<a name="line.78"></a>
+<span class="sourceLineNo">079</span>    }<a name="line.79"></a>
+<span class="sourceLineNo">080</span><a name="line.80"></a>
+<span class="sourceLineNo">081</span>    public void mergeTree(String formatName, Node root) throws IIOInvalidTreeException {<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        if (formatName.equals(IIOMetadataFormatImpl.standardMetadataFormatName)) {<a name="line.82"></a>
+<span class="sourceLineNo">083</span>            if (root == null) {<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                throw new IllegalArgumentException("root == null!");<a name="line.84"></a>
+<span class="sourceLineNo">085</span>            }<a name="line.85"></a>
+<span class="sourceLineNo">086</span>            mergeStandardTree(root);<a name="line.86"></a>
+<span class="sourceLineNo">087</span>        } else {<a name="line.87"></a>
+<span class="sourceLineNo">088</span>            throw new IllegalArgumentException("Not a recognized format!");<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        }   <a name="line.89"></a>
+<span class="sourceLineNo">090</span>    }<a name="line.90"></a>
+<span class="sourceLineNo">091</span><a name="line.91"></a>
+<span class="sourceLineNo">092</span>    public void reset() {<a name="line.92"></a>
+<span class="sourceLineNo">093</span>        version = VERSION_3_0;<a name="line.93"></a>
+<span class="sourceLineNo">094</span>        bitsPerPixel = 0;<a name="line.94"></a>
+<span class="sourceLineNo">095</span>        gotxmin = false;<a name="line.95"></a>
+<span class="sourceLineNo">096</span>        gotymin = false;<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        xmin = 0;<a name="line.97"></a>
+<span class="sourceLineNo">098</span>        ymin = 0;<a name="line.98"></a>
+<span class="sourceLineNo">099</span>        vdpi = 72;<a name="line.99"></a>
+<span class="sourceLineNo">100</span>        hdpi = 72;<a name="line.100"></a>
+<span class="sourceLineNo">101</span>        hsize = 0;<a name="line.101"></a>
+<span class="sourceLineNo">102</span>        vsize = 0;<a name="line.102"></a>
+<span class="sourceLineNo">103</span>    }<a name="line.103"></a>
+<span class="sourceLineNo">104</span><a name="line.104"></a>
+<span class="sourceLineNo">105</span>    public IIOMetadataNode getStandardDocumentNode() {<a name="line.105"></a>
+<span class="sourceLineNo">106</span>        String versionString;<a name="line.106"></a>
+<span class="sourceLineNo">107</span>        switch(version) {<a name="line.107"></a>
+<span class="sourceLineNo">108</span>        case VERSION_2_5:<a name="line.108"></a>
+<span class="sourceLineNo">109</span>            versionString = "2.5";<a name="line.109"></a>
+<span class="sourceLineNo">110</span>            break;<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        case VERSION_2_8_W_PALETTE:<a name="line.111"></a>
+<span class="sourceLineNo">112</span>            versionString = "2.8 with palette";<a name="line.112"></a>
+<span class="sourceLineNo">113</span>            break;<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        case VERSION_2_8_WO_PALETTE:<a name="line.114"></a>
+<span class="sourceLineNo">115</span>            versionString = "2.8 without palette";<a name="line.115"></a>
+<span class="sourceLineNo">116</span>            break;<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        case VERSION_PC_WINDOWS:<a name="line.117"></a>
+<span class="sourceLineNo">118</span>            versionString = "PC Paintbrush for Windows";<a name="line.118"></a>
+<span class="sourceLineNo">119</span>            break;<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        case VERSION_3_0:<a name="line.120"></a>
+<span class="sourceLineNo">121</span>            versionString = "3.0";<a name="line.121"></a>
+<span class="sourceLineNo">122</span>            break;<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        default:<a name="line.123"></a>
+<span class="sourceLineNo">124</span>            // unknown<a name="line.124"></a>
+<span class="sourceLineNo">125</span>            versionString = null;<a name="line.125"></a>
+<span class="sourceLineNo">126</span>        }<a name="line.126"></a>
+<span class="sourceLineNo">127</span><a name="line.127"></a>
+<span class="sourceLineNo">128</span>        IIOMetadataNode documentNode = null;<a name="line.128"></a>
+<span class="sourceLineNo">129</span>        if(versionString != null) {<a name="line.129"></a>
+<span class="sourceLineNo">130</span>            documentNode = new IIOMetadataNode("Document");<a name="line.130"></a>
+<span class="sourceLineNo">131</span>            IIOMetadataNode node = new IIOMetadataNode("FormatVersion");<a name="line.131"></a>
+<span class="sourceLineNo">132</span>            node.setAttribute("value", versionString);<a name="line.132"></a>
+<span class="sourceLineNo">133</span>            documentNode.appendChild(node);<a name="line.133"></a>
+<span class="sourceLineNo">134</span>        }<a name="line.134"></a>
+<span class="sourceLineNo">135</span><a name="line.135"></a>
+<span class="sourceLineNo">136</span>        return documentNode;<a name="line.136"></a>
+<span class="sourceLineNo">137</span>    }<a name="line.137"></a>
+<span class="sourceLineNo">138</span><a name="line.138"></a>
+<span class="sourceLineNo">139</span>    public IIOMetadataNode getStandardDimensionNode() {<a name="line.139"></a>
+<span class="sourceLineNo">140</span>        IIOMetadataNode dimensionNode = new IIOMetadataNode("Dimension");<a name="line.140"></a>
+<span class="sourceLineNo">141</span>        IIOMetadataNode node = null; // scratch node<a name="line.141"></a>
+<span class="sourceLineNo">142</span><a name="line.142"></a>
+<span class="sourceLineNo">143</span>        node = new IIOMetadataNode("HorizontalPixelOffset");<a name="line.143"></a>
+<span class="sourceLineNo">144</span>        node.setAttribute("value", String.valueOf(xmin));<a name="line.144"></a>
+<span class="sourceLineNo">145</span>        dimensionNode.appendChild(node);<a name="line.145"></a>
+<span class="sourceLineNo">146</span><a name="line.146"></a>
+<span class="sourceLineNo">147</span>        node = new IIOMetadataNode("VerticalPixelOffset");<a name="line.147"></a>
+<span class="sourceLineNo">148</span>        node.setAttribute("value", String.valueOf(ymin));<a name="line.148"></a>
+<span class="sourceLineNo">149</span>        dimensionNode.appendChild(node);<a name="line.149"></a>
+<span class="sourceLineNo">150</span><a name="line.150"></a>
+<span class="sourceLineNo">151</span>        node = new IIOMetadataNode("HorizontalPixelSize");<a name="line.151"></a>
+<span class="sourceLineNo">152</span>        node.setAttribute("value", String.valueOf(254.0/hdpi));<a name="line.152"></a>
+<span class="sourceLineNo">153</span>        dimensionNode.appendChild(node);<a name="line.153"></a>
+<span class="sourceLineNo">154</span><a name="line.154"></a>
+<span class="sourceLineNo">155</span>        node = new IIOMetadataNode("VerticalPixelSize");<a name="line.155"></a>
+<span class="sourceLineNo">156</span>        node.setAttribute("value", String.valueOf(254.0/vdpi));<a name="line.156"></a>
+<span class="sourceLineNo">157</span>        dimensionNode.appendChild(node);<a name="line.157"></a>
+<span class="sourceLineNo">158</span><a name="line.158"></a>
+<span class="sourceLineNo">159</span>        if(hsize != 0) {<a name="line.159"></a>
+<span class="sourceLineNo">160</span>            node = new IIOMetadataNode("HorizontalScreenSize");<a name="line.160"></a>
+<span class="sourceLineNo">161</span>            node.setAttribute("value", String.valueOf(hsize));<a name="line.161"></a>
+<span class="sourceLineNo">162</span>            dimensionNode.appendChild(node);<a name="line.162"></a>
+<span class="sourceLineNo">163</span>        }<a name="line.163"></a>
+<span class="sourceLineNo">164</span><a name="line.164"></a>
+<span class="sourceLineNo">165</span>        if(vsize != 0) {<a name="line.165"></a>
+<span class="sourceLineNo">166</span>            node = new IIOMetadataNode("VerticalScreenSize");<a name="line.166"></a>
+<span class="sourceLineNo">167</span>            node.setAttribute("value", String.valueOf(vsize));<a name="line.167"></a>
+<span class="sourceLineNo">168</span>            dimensionNode.appendChild(node);<a name="line.168"></a>
+<span class="sourceLineNo">169</span>        }<a name="line.169"></a>
+<span class="sourceLineNo">170</span><a name="line.170"></a>
+<span class="sourceLineNo">171</span>        return dimensionNode;<a name="line.171"></a>
+<span class="sourceLineNo">172</span>    }<a name="line.172"></a>
+<span class="sourceLineNo">173</span><a name="line.173"></a>
+<span class="sourceLineNo">174</span>    private void mergeStandardTree(Node root) throws IIOInvalidTreeException {<a name="line.174"></a>
+<span class="sourceLineNo">175</span>        Node node = root;<a name="line.175"></a>
+<span class="sourceLineNo">176</span>        if (!node.getNodeName().equals(IIOMetadataFormatImpl.standardMetadataFormatName))<a name="line.176"></a>
+<span class="sourceLineNo">177</span>            throw new IIOInvalidTreeException("Root must be " +<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                                              IIOMetadataFormatImpl.standardMetadataFormatName,<a name="line.178"></a>
+<span class="sourceLineNo">179</span>                                              node);<a name="line.179"></a>
+<span class="sourceLineNo">180</span><a name="line.180"></a>
+<span class="sourceLineNo">181</span>        node = node.getFirstChild();<a name="line.181"></a>
+<span class="sourceLineNo">182</span>        while (node != null) {<a name="line.182"></a>
+<span class="sourceLineNo">183</span>            String name = node.getNodeName();<a name="line.183"></a>
+<span class="sourceLineNo">184</span><a name="line.184"></a>
+<span class="sourceLineNo">185</span>            if (name.equals("Dimension")) {<a name="line.185"></a>
+<span class="sourceLineNo">186</span>                Node child = node.getFirstChild();<a name="line.186"></a>
+<span class="sourceLineNo">187</span><a name="line.187"></a>
+<span class="sourceLineNo">188</span>                while (child != null) {<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                    String childName = child.getNodeName();<a name="line.189"></a>
+<span class="sourceLineNo">190</span>                    if (childName.equals("HorizontalPixelOffset")) {<a name="line.190"></a>
+<span class="sourceLineNo">191</span>                        String hpo = getAttribute(child, "value");<a name="line.191"></a>
+<span class="sourceLineNo">192</span>                        xmin = Short.valueOf(hpo).shortValue();<a name="line.192"></a>
+<span class="sourceLineNo">193</span>                        gotxmin = true;<a name="line.193"></a>
+<span class="sourceLineNo">194</span>                    } else if (childName.equals("VerticalPixelOffset")) {<a name="line.194"></a>
+<span class="sourceLineNo">195</span>                        String vpo = getAttribute(child, "value");<a name="line.195"></a>
+<span class="sourceLineNo">196</span>                        ymin = Short.valueOf(vpo).shortValue();<a name="line.196"></a>
+<span class="sourceLineNo">197</span>                        gotymin = true;<a name="line.197"></a>
+<span class="sourceLineNo">198</span>                    } else if (childName.equals("HorizontalPixelSize")) {<a name="line.198"></a>
+<span class="sourceLineNo">199</span>                        String hps = getAttribute(child, "value");<a name="line.199"></a>
+<span class="sourceLineNo">200</span>                        hdpi = (int)(254.0F/Float.parseFloat(hps) + 0.5F);<a name="line.200"></a>
+<span class="sourceLineNo">201</span>                    } else if (childName.equals("VerticalPixelSize")) {<a name="line.201"></a>
+<span class="sourceLineNo">202</span>                        String vps = getAttribute(child, "value");<a name="line.202"></a>
+<span class="sourceLineNo">203</span>                        vdpi = (int)(254.0F/Float.parseFloat(vps) + 0.5F);<a name="line.203"></a>
+<span class="sourceLineNo">204</span>                    } else if (childName.equals("HorizontalScreenSize")) {<a name="line.204"></a>
+<span class="sourceLineNo">205</span>                        String hss = getAttribute(child, "value");<a name="line.205"></a>
+<span class="sourceLineNo">206</span>                        hsize = Integer.valueOf(hss).intValue();<a name="line.206"></a>
+<span class="sourceLineNo">207</span>                    } else if (childName.equals("VerticalScreenSize")) {<a name="line.207"></a>
+<span class="sourceLineNo">208</span>                        String vss = getAttribute(child, "value");<a name="line.208"></a>
+<span class="sourceLineNo">209</span>                        vsize = Integer.valueOf(vss).intValue();<a name="line.209"></a>
+<span class="sourceLineNo">210</span>                    }<a name="line.210"></a>
+<span class="sourceLineNo">211</span><a name="line.211"></a>
+<span class="sourceLineNo">212</span>                    child = child.getNextSibling();<a name="line.212"></a>
+<span class="sourceLineNo">213</span>                }<a name="line.213"></a>
+<span class="sourceLineNo">214</span>            }<a name="line.214"></a>
+<span class="sourceLineNo">215</span><a name="line.215"></a>
+<span class="sourceLineNo">216</span>            node = node.getNextSibling();<a name="line.216"></a>
+<span class="sourceLineNo">217</span>        }<a name="line.217"></a>
+<span class="sourceLineNo">218</span>    }<a name="line.218"></a>
+<span class="sourceLineNo">219</span><a name="line.219"></a>
+<span class="sourceLineNo">220</span>    private static String getAttribute(Node node, String attrName) {<a name="line.220"></a>
+<span class="sourceLineNo">221</span>        NamedNodeMap attrs = node.getAttributes();<a name="line.221"></a>
+<span class="sourceLineNo">222</span>        Node attr = attrs.getNamedItem(attrName);<a name="line.222"></a>
+<span class="sourceLineNo">223</span>        return attr != null ? attr.getNodeValue() : null;<a name="line.223"></a>
+<span class="sourceLineNo">224</span>    }<a name="line.224"></a>
+<span class="sourceLineNo">225</span>}<a name="line.225"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

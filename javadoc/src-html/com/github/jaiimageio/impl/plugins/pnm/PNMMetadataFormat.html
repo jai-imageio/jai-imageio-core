@@ -1,0 +1,194 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * $RCSfile: PNMMetadataFormat.java,v $<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * <a name="line.4"></a>
+<span class="sourceLineNo">005</span> * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * <a name="line.6"></a>
+<span class="sourceLineNo">007</span> * Redistribution and use in source and binary forms, with or without<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * modification, are permitted provided that the following conditions<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * are met: <a name="line.9"></a>
+<span class="sourceLineNo">010</span> * <a name="line.10"></a>
+<span class="sourceLineNo">011</span> * - Redistribution of source code must retain the above copyright <a name="line.11"></a>
+<span class="sourceLineNo">012</span> *   notice, this  list of conditions and the following disclaimer.<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * <a name="line.13"></a>
+<span class="sourceLineNo">014</span> * - Redistribution in binary form must reproduce the above copyright<a name="line.14"></a>
+<span class="sourceLineNo">015</span> *   notice, this list of conditions and the following disclaimer in <a name="line.15"></a>
+<span class="sourceLineNo">016</span> *   the documentation and/or other materials provided with the<a name="line.16"></a>
+<span class="sourceLineNo">017</span> *   distribution.<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * <a name="line.18"></a>
+<span class="sourceLineNo">019</span> * Neither the name of Sun Microsystems, Inc. or the names of <a name="line.19"></a>
+<span class="sourceLineNo">020</span> * contributors may be used to endorse or promote products derived <a name="line.20"></a>
+<span class="sourceLineNo">021</span> * from this software without specific prior written permission.<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * <a name="line.22"></a>
+<span class="sourceLineNo">023</span> * This software is provided "AS IS," without a warranty of any <a name="line.23"></a>
+<span class="sourceLineNo">024</span> * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND <a name="line.24"></a>
+<span class="sourceLineNo">025</span> * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, <a name="line.25"></a>
+<span class="sourceLineNo">026</span> * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY<a name="line.26"></a>
+<span class="sourceLineNo">027</span> * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL <a name="line.27"></a>
+<span class="sourceLineNo">028</span> * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF <a name="line.28"></a>
+<span class="sourceLineNo">029</span> * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS<a name="line.29"></a>
+<span class="sourceLineNo">030</span> * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR <a name="line.30"></a>
+<span class="sourceLineNo">031</span> * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,<a name="line.31"></a>
+<span class="sourceLineNo">032</span> * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR<a name="line.33"></a>
+<span class="sourceLineNo">034</span> * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE<a name="line.34"></a>
+<span class="sourceLineNo">035</span> * POSSIBILITY OF SUCH DAMAGES. <a name="line.35"></a>
+<span class="sourceLineNo">036</span> * <a name="line.36"></a>
+<span class="sourceLineNo">037</span> * You acknowledge that this software is not designed or intended for <a name="line.37"></a>
+<span class="sourceLineNo">038</span> * use in the design, construction, operation or maintenance of any <a name="line.38"></a>
+<span class="sourceLineNo">039</span> * nuclear facility. <a name="line.39"></a>
+<span class="sourceLineNo">040</span> *<a name="line.40"></a>
+<span class="sourceLineNo">041</span> * $Revision: 1.1 $<a name="line.41"></a>
+<span class="sourceLineNo">042</span> * $Date: 2005/02/11 05:01:41 $<a name="line.42"></a>
+<span class="sourceLineNo">043</span> * $State: Exp $<a name="line.43"></a>
+<span class="sourceLineNo">044</span> */<a name="line.44"></a>
+<span class="sourceLineNo">045</span>package com.github.jaiimageio.impl.plugins.pnm;<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>import java.util.Hashtable;<a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span>import javax.imageio.ImageTypeSpecifier;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>import javax.imageio.metadata.IIOMetadataFormatImpl;<a name="line.50"></a>
+<span class="sourceLineNo">051</span><a name="line.51"></a>
+<span class="sourceLineNo">052</span>public class PNMMetadataFormat extends IIOMetadataFormatImpl {<a name="line.52"></a>
+<span class="sourceLineNo">053</span>    /** The table to link the child to its parent.<a name="line.53"></a>
+<span class="sourceLineNo">054</span>     */<a name="line.54"></a>
+<span class="sourceLineNo">055</span>    private static Hashtable parents = new Hashtable();<a name="line.55"></a>
+<span class="sourceLineNo">056</span><a name="line.56"></a>
+<span class="sourceLineNo">057</span>    static {<a name="line.57"></a>
+<span class="sourceLineNo">058</span>        //children for the root<a name="line.58"></a>
+<span class="sourceLineNo">059</span>        parents.put("FormatName", "com_sun_media_imageio_plugins_pnm_image_1.0");<a name="line.59"></a>
+<span class="sourceLineNo">060</span>        parents.put("Variant", "com_sun_media_imageio_plugins_pnm_image_1.0");<a name="line.60"></a>
+<span class="sourceLineNo">061</span>        parents.put("Width", "com_sun_media_imageio_plugins_pnm_image_1.0");<a name="line.61"></a>
+<span class="sourceLineNo">062</span>        parents.put("Height", "com_sun_media_imageio_plugins_pnm_image_1.0");<a name="line.62"></a>
+<span class="sourceLineNo">063</span>        parents.put("MaximumSample", "com_sun_media_imageio_plugins_pnm_image_1.0");<a name="line.63"></a>
+<span class="sourceLineNo">064</span>        parents.put("Comment", "com_sun_media_imageio_plugins_pnm_image_1.0");<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    }<a name="line.65"></a>
+<span class="sourceLineNo">066</span><a name="line.66"></a>
+<span class="sourceLineNo">067</span>    private static PNMMetadataFormat instance;<a name="line.67"></a>
+<span class="sourceLineNo">068</span><a name="line.68"></a>
+<span class="sourceLineNo">069</span>    public static synchronized PNMMetadataFormat getInstance() {<a name="line.69"></a>
+<span class="sourceLineNo">070</span>        if (instance == null)<a name="line.70"></a>
+<span class="sourceLineNo">071</span>            instance = new PNMMetadataFormat();<a name="line.71"></a>
+<span class="sourceLineNo">072</span>        return instance;<a name="line.72"></a>
+<span class="sourceLineNo">073</span>    }<a name="line.73"></a>
+<span class="sourceLineNo">074</span><a name="line.74"></a>
+<span class="sourceLineNo">075</span>    String resourceBaseName = this.getClass().getName() + "Resources";<a name="line.75"></a>
+<span class="sourceLineNo">076</span><a name="line.76"></a>
+<span class="sourceLineNo">077</span>    /** Constructs &lt;code&gt;PNMMetadataFormat&lt;/code&gt;.  Calls the super<a name="line.77"></a>
+<span class="sourceLineNo">078</span>     *  class constructor.  Sets the resource base name.  Adds the elements<a name="line.78"></a>
+<span class="sourceLineNo">079</span>     *  into this format object based on the XML schema and DTD.<a name="line.79"></a>
+<span class="sourceLineNo">080</span>     */<a name="line.80"></a>
+<span class="sourceLineNo">081</span>    PNMMetadataFormat() {<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        super("com_sun_media_imageio_plugins_pnm_image_1.0", CHILD_POLICY_ALL);<a name="line.82"></a>
+<span class="sourceLineNo">083</span>        setResourceBaseName(resourceBaseName);<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        addElements();<a name="line.84"></a>
+<span class="sourceLineNo">085</span>    }<a name="line.85"></a>
+<span class="sourceLineNo">086</span><a name="line.86"></a>
+<span class="sourceLineNo">087</span>    /** Adds the elements into this format object based on the XML<a name="line.87"></a>
+<span class="sourceLineNo">088</span>     *  schema and DTD.<a name="line.88"></a>
+<span class="sourceLineNo">089</span>     */<a name="line.89"></a>
+<span class="sourceLineNo">090</span>    private void addElements() {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        addElement("FormatName",<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                      getParent("FormatName"),<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                      CHILD_POLICY_EMPTY);<a name="line.93"></a>
+<span class="sourceLineNo">094</span><a name="line.94"></a>
+<span class="sourceLineNo">095</span>        addElement("Variant",<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                      getParent("Variant"),<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                      CHILD_POLICY_EMPTY);<a name="line.97"></a>
+<span class="sourceLineNo">098</span>        addElement("Width",<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                      getParent("Width"),<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                      CHILD_POLICY_EMPTY);<a name="line.100"></a>
+<span class="sourceLineNo">101</span>        addElement("Height",<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                      getParent("Height"),<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                      CHILD_POLICY_EMPTY);<a name="line.103"></a>
+<span class="sourceLineNo">104</span>        addElement("MaximumSample",<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                      getParent("MaximumSample"),<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                      CHILD_POLICY_EMPTY);<a name="line.106"></a>
+<span class="sourceLineNo">107</span>        addElement("Comment",<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                      getParent("Comment"),<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                      CHILD_POLICY_EMPTY);<a name="line.109"></a>
+<span class="sourceLineNo">110</span>    }<a name="line.110"></a>
+<span class="sourceLineNo">111</span><a name="line.111"></a>
+<span class="sourceLineNo">112</span>    public String getParent(String elementName) {<a name="line.112"></a>
+<span class="sourceLineNo">113</span>        return (String)parents.get(elementName);<a name="line.113"></a>
+<span class="sourceLineNo">114</span>    }<a name="line.114"></a>
+<span class="sourceLineNo">115</span><a name="line.115"></a>
+<span class="sourceLineNo">116</span>    public boolean canNodeAppear(String elementName,<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                                 ImageTypeSpecifier imageType) {<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        if (getParent(elementName) != null)<a name="line.118"></a>
+<span class="sourceLineNo">119</span>            return true;<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        return false;<a name="line.120"></a>
+<span class="sourceLineNo">121</span>    }<a name="line.121"></a>
+<span class="sourceLineNo">122</span>}<a name="line.122"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

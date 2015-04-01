@@ -1,0 +1,241 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * $RCSfile: TIFFCIELabColorConverter.java,v $<a name="line.2"></a>
+<span class="sourceLineNo">003</span> *<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * <a name="line.4"></a>
+<span class="sourceLineNo">005</span> * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * <a name="line.6"></a>
+<span class="sourceLineNo">007</span> * Redistribution and use in source and binary forms, with or without<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * modification, are permitted provided that the following conditions<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * are met: <a name="line.9"></a>
+<span class="sourceLineNo">010</span> * <a name="line.10"></a>
+<span class="sourceLineNo">011</span> * - Redistribution of source code must retain the above copyright <a name="line.11"></a>
+<span class="sourceLineNo">012</span> *   notice, this  list of conditions and the following disclaimer.<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * <a name="line.13"></a>
+<span class="sourceLineNo">014</span> * - Redistribution in binary form must reproduce the above copyright<a name="line.14"></a>
+<span class="sourceLineNo">015</span> *   notice, this list of conditions and the following disclaimer in <a name="line.15"></a>
+<span class="sourceLineNo">016</span> *   the documentation and/or other materials provided with the<a name="line.16"></a>
+<span class="sourceLineNo">017</span> *   distribution.<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * <a name="line.18"></a>
+<span class="sourceLineNo">019</span> * Neither the name of Sun Microsystems, Inc. or the names of <a name="line.19"></a>
+<span class="sourceLineNo">020</span> * contributors may be used to endorse or promote products derived <a name="line.20"></a>
+<span class="sourceLineNo">021</span> * from this software without specific prior written permission.<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * <a name="line.22"></a>
+<span class="sourceLineNo">023</span> * This software is provided "AS IS," without a warranty of any <a name="line.23"></a>
+<span class="sourceLineNo">024</span> * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND <a name="line.24"></a>
+<span class="sourceLineNo">025</span> * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, <a name="line.25"></a>
+<span class="sourceLineNo">026</span> * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY<a name="line.26"></a>
+<span class="sourceLineNo">027</span> * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL <a name="line.27"></a>
+<span class="sourceLineNo">028</span> * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF <a name="line.28"></a>
+<span class="sourceLineNo">029</span> * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS<a name="line.29"></a>
+<span class="sourceLineNo">030</span> * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR <a name="line.30"></a>
+<span class="sourceLineNo">031</span> * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,<a name="line.31"></a>
+<span class="sourceLineNo">032</span> * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR<a name="line.33"></a>
+<span class="sourceLineNo">034</span> * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE<a name="line.34"></a>
+<span class="sourceLineNo">035</span> * POSSIBILITY OF SUCH DAMAGES. <a name="line.35"></a>
+<span class="sourceLineNo">036</span> * <a name="line.36"></a>
+<span class="sourceLineNo">037</span> * You acknowledge that this software is not designed or intended for <a name="line.37"></a>
+<span class="sourceLineNo">038</span> * use in the design, construction, operation or maintenance of any <a name="line.38"></a>
+<span class="sourceLineNo">039</span> * nuclear facility. <a name="line.39"></a>
+<span class="sourceLineNo">040</span> *<a name="line.40"></a>
+<span class="sourceLineNo">041</span> * $Revision: 1.1 $<a name="line.41"></a>
+<span class="sourceLineNo">042</span> * $Date: 2005/02/11 05:01:44 $<a name="line.42"></a>
+<span class="sourceLineNo">043</span> * $State: Exp $<a name="line.43"></a>
+<span class="sourceLineNo">044</span> */<a name="line.44"></a>
+<span class="sourceLineNo">045</span>package com.github.jaiimageio.impl.plugins.tiff;<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>import com.github.jaiimageio.plugins.tiff.TIFFColorConverter;<a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span>/**<a name="line.49"></a>
+<span class="sourceLineNo">050</span> */<a name="line.50"></a>
+<span class="sourceLineNo">051</span>public class TIFFCIELabColorConverter extends TIFFColorConverter {<a name="line.51"></a>
+<span class="sourceLineNo">052</span><a name="line.52"></a>
+<span class="sourceLineNo">053</span>    // XYX coordinate or reference white (CIE D65)<a name="line.53"></a>
+<span class="sourceLineNo">054</span>    private static final float Xn = 95.047f;<a name="line.54"></a>
+<span class="sourceLineNo">055</span>    private static final float Yn = 100.0f;<a name="line.55"></a>
+<span class="sourceLineNo">056</span>    private static final float Zn = 108.883f;<a name="line.56"></a>
+<span class="sourceLineNo">057</span><a name="line.57"></a>
+<span class="sourceLineNo">058</span>    private static final float THRESHOLD = (float)Math.pow(0.008856, 1.0/3.0);<a name="line.58"></a>
+<span class="sourceLineNo">059</span><a name="line.59"></a>
+<span class="sourceLineNo">060</span>    public TIFFCIELabColorConverter() {}<a name="line.60"></a>
+<span class="sourceLineNo">061</span><a name="line.61"></a>
+<span class="sourceLineNo">062</span><a name="line.62"></a>
+<span class="sourceLineNo">063</span>    private float clamp(float x) {<a name="line.63"></a>
+<span class="sourceLineNo">064</span>        if (x &lt; 0.0f) {<a name="line.64"></a>
+<span class="sourceLineNo">065</span>            return 0.0f;<a name="line.65"></a>
+<span class="sourceLineNo">066</span>        } else if (x &gt; 100.0f) {<a name="line.66"></a>
+<span class="sourceLineNo">067</span>            return 255.0f;<a name="line.67"></a>
+<span class="sourceLineNo">068</span>        } else {<a name="line.68"></a>
+<span class="sourceLineNo">069</span>            return x*(255.0f/100.0f);<a name="line.69"></a>
+<span class="sourceLineNo">070</span>        }<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    }<a name="line.71"></a>
+<span class="sourceLineNo">072</span><a name="line.72"></a>
+<span class="sourceLineNo">073</span>    private float clamp2(float x) {<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        if (x &lt; 0.0f) {<a name="line.74"></a>
+<span class="sourceLineNo">075</span>            return 0.0f;<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        } else if (x &gt; 255.0f) {<a name="line.76"></a>
+<span class="sourceLineNo">077</span>            return 255.0f;<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        } else {<a name="line.78"></a>
+<span class="sourceLineNo">079</span>            return x;<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        }<a name="line.80"></a>
+<span class="sourceLineNo">081</span>    }<a name="line.81"></a>
+<span class="sourceLineNo">082</span><a name="line.82"></a>
+<span class="sourceLineNo">083</span>    public void fromRGB(float r, float g, float b, float[] result) {<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        float X =  0.412453f*r + 0.357580f*g + 0.180423f*b;<a name="line.84"></a>
+<span class="sourceLineNo">085</span>        float Y =  0.212671f*r + 0.715160f*g + 0.072169f*b;<a name="line.85"></a>
+<span class="sourceLineNo">086</span>        float Z =  0.019334f*r + 0.119193f*g + 0.950227f*b;<a name="line.86"></a>
+<span class="sourceLineNo">087</span><a name="line.87"></a>
+<span class="sourceLineNo">088</span>        float YYn = Y/Yn;<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        float XXn = X/Xn;<a name="line.89"></a>
+<span class="sourceLineNo">090</span>        float ZZn = Z/Zn;<a name="line.90"></a>
+<span class="sourceLineNo">091</span><a name="line.91"></a>
+<span class="sourceLineNo">092</span>        if (YYn &lt; 0.008856f) {<a name="line.92"></a>
+<span class="sourceLineNo">093</span>            YYn = 7.787f*YYn + 16.0f/116.0f;<a name="line.93"></a>
+<span class="sourceLineNo">094</span>        } else {<a name="line.94"></a>
+<span class="sourceLineNo">095</span>            YYn = (float)Math.pow(YYn, 1.0/3.0);<a name="line.95"></a>
+<span class="sourceLineNo">096</span>        }<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        <a name="line.97"></a>
+<span class="sourceLineNo">098</span>        if (XXn &lt; 0.008856f) {<a name="line.98"></a>
+<span class="sourceLineNo">099</span>            XXn = 7.787f*XXn + 16.0f/116.0f;<a name="line.99"></a>
+<span class="sourceLineNo">100</span>        } else {<a name="line.100"></a>
+<span class="sourceLineNo">101</span>            XXn = (float)Math.pow(XXn, 1.0/3.0);<a name="line.101"></a>
+<span class="sourceLineNo">102</span>        }<a name="line.102"></a>
+<span class="sourceLineNo">103</span>        <a name="line.103"></a>
+<span class="sourceLineNo">104</span>        if (ZZn &lt; 0.008856f) {<a name="line.104"></a>
+<span class="sourceLineNo">105</span>            ZZn = 7.787f*ZZn + 16.0f/116.0f;<a name="line.105"></a>
+<span class="sourceLineNo">106</span>        } else {<a name="line.106"></a>
+<span class="sourceLineNo">107</span>            ZZn = (float)Math.pow(ZZn, 1.0/3.0);<a name="line.107"></a>
+<span class="sourceLineNo">108</span>        }<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        <a name="line.109"></a>
+<span class="sourceLineNo">110</span>        float LStar = 116.0f*YYn - 16.0f;<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        float aStar = 500.0f*(XXn - YYn);<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        float bStar = 200.0f*(YYn - ZZn);<a name="line.112"></a>
+<span class="sourceLineNo">113</span><a name="line.113"></a>
+<span class="sourceLineNo">114</span>        LStar *= 255.0f/100.0f;<a name="line.114"></a>
+<span class="sourceLineNo">115</span>        if (aStar &lt; 0.0f) {<a name="line.115"></a>
+<span class="sourceLineNo">116</span>            aStar += 256.0f;<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        }<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        if (bStar &lt; 0.0f) {<a name="line.118"></a>
+<span class="sourceLineNo">119</span>            bStar += 256.0f;<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        }<a name="line.120"></a>
+<span class="sourceLineNo">121</span><a name="line.121"></a>
+<span class="sourceLineNo">122</span>        result[0] = clamp2(LStar);<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        result[1] = clamp2(aStar);<a name="line.123"></a>
+<span class="sourceLineNo">124</span>        result[2] = clamp2(bStar);<a name="line.124"></a>
+<span class="sourceLineNo">125</span>    }<a name="line.125"></a>
+<span class="sourceLineNo">126</span><a name="line.126"></a>
+<span class="sourceLineNo">127</span>    public void toRGB(float x0, float x1, float x2, float[] rgb) {<a name="line.127"></a>
+<span class="sourceLineNo">128</span>        float LStar = x0*100.0f/255.0f;<a name="line.128"></a>
+<span class="sourceLineNo">129</span>        float aStar = (x1 &gt; 128.0f) ? (x1 - 256.0f) : x1;<a name="line.129"></a>
+<span class="sourceLineNo">130</span>        float bStar = (x2 &gt; 128.0f) ? (x2 - 256.0f) : x2;<a name="line.130"></a>
+<span class="sourceLineNo">131</span><a name="line.131"></a>
+<span class="sourceLineNo">132</span>        float YYn; // Y/Yn<a name="line.132"></a>
+<span class="sourceLineNo">133</span>        float fY; // 'F' value for Y<a name="line.133"></a>
+<span class="sourceLineNo">134</span>        <a name="line.134"></a>
+<span class="sourceLineNo">135</span>        if (LStar &lt; 8.0f) {<a name="line.135"></a>
+<span class="sourceLineNo">136</span>            YYn = LStar/903.3f;<a name="line.136"></a>
+<span class="sourceLineNo">137</span>            fY = 7.787f*YYn + 16.0f/116.0f;<a name="line.137"></a>
+<span class="sourceLineNo">138</span>        } else {<a name="line.138"></a>
+<span class="sourceLineNo">139</span>            float YYn_cubeRoot = (LStar + 16.0f)/116.0f;<a name="line.139"></a>
+<span class="sourceLineNo">140</span>            YYn = YYn_cubeRoot*YYn_cubeRoot*YYn_cubeRoot;<a name="line.140"></a>
+<span class="sourceLineNo">141</span>            fY = (float)Math.pow(YYn, 1.0/3.0);<a name="line.141"></a>
+<span class="sourceLineNo">142</span>        }<a name="line.142"></a>
+<span class="sourceLineNo">143</span>        float Y = YYn*Yn;<a name="line.143"></a>
+<span class="sourceLineNo">144</span>        <a name="line.144"></a>
+<span class="sourceLineNo">145</span>        float fX = fY + (aStar/500.0f);<a name="line.145"></a>
+<span class="sourceLineNo">146</span>        float X;<a name="line.146"></a>
+<span class="sourceLineNo">147</span>        if (fX &lt;= THRESHOLD) {<a name="line.147"></a>
+<span class="sourceLineNo">148</span>            X = Xn*(fX - 16.0f/116.0f)/7.787f;<a name="line.148"></a>
+<span class="sourceLineNo">149</span>        } else {<a name="line.149"></a>
+<span class="sourceLineNo">150</span>            X = Xn*fX*fX*fX;<a name="line.150"></a>
+<span class="sourceLineNo">151</span>        }<a name="line.151"></a>
+<span class="sourceLineNo">152</span>        <a name="line.152"></a>
+<span class="sourceLineNo">153</span>        float fZ = fY - bStar/200.0f;<a name="line.153"></a>
+<span class="sourceLineNo">154</span>        float Z;<a name="line.154"></a>
+<span class="sourceLineNo">155</span>        if (fZ &lt;= THRESHOLD) {<a name="line.155"></a>
+<span class="sourceLineNo">156</span>            Z = Zn*(fZ - 16.0f/116.0f)/7.787f;<a name="line.156"></a>
+<span class="sourceLineNo">157</span>        } else {<a name="line.157"></a>
+<span class="sourceLineNo">158</span>            Z = Zn*fZ*fZ*fZ;<a name="line.158"></a>
+<span class="sourceLineNo">159</span>        }<a name="line.159"></a>
+<span class="sourceLineNo">160</span><a name="line.160"></a>
+<span class="sourceLineNo">161</span>        float R =  3.240479f*X - 1.537150f*Y - 0.498535f*Z;<a name="line.161"></a>
+<span class="sourceLineNo">162</span>        float G = -0.969256f*X + 1.875992f*Y + 0.041556f*Z;<a name="line.162"></a>
+<span class="sourceLineNo">163</span>        float B =  0.055648f*X - 0.204043f*Y + 1.057311f*Z;<a name="line.163"></a>
+<span class="sourceLineNo">164</span><a name="line.164"></a>
+<span class="sourceLineNo">165</span>        rgb[0] = clamp(R);<a name="line.165"></a>
+<span class="sourceLineNo">166</span>        rgb[1] = clamp(G);<a name="line.166"></a>
+<span class="sourceLineNo">167</span>        rgb[2] = clamp(B);<a name="line.167"></a>
+<span class="sourceLineNo">168</span>    }<a name="line.168"></a>
+<span class="sourceLineNo">169</span>}<a name="line.169"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>
