@@ -436,6 +436,8 @@ public class TIFFImageWriter extends ImageWriter {
             } catch(IIOException e) {
                 // XXX Warning
                 return null;
+            } finally {
+              bogusWriter.dispose();
             }
         }
 

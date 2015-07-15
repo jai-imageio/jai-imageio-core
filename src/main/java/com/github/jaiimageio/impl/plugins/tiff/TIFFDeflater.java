@@ -140,4 +140,12 @@ public class TIFFDeflater extends TIFFCompressor {
 
         return numCompressedBytes;
     }
+    
+    public void dispose() {
+      if (deflater != null) {
+        deflater.end();
+        deflater = null;
+      }
+      super.dispose();
+    }
 }
