@@ -3626,6 +3626,9 @@ public class TIFFImageWriter extends ImageWriter {
         imageType = null;
         byteOrder = null;
         param = null;
+        if(compressor != null){
+          compressor.dispose();
+        }
         compressor = null;
         colorConverter = null;
         streamMetadata = null;
