@@ -56,11 +56,12 @@ You can also raise an
 [issue](https://github.com/jai-imageio/jai-imageio-core/issues) - your stacktrace
 might still be of use to someone else.
 
-Current contributors:
+Current committers and contributors:
 
 * [Stian Soiland-Reyes](http://orcid.org/0000-0001-9842-9718)
 * [John Hewson](http://jahewson.com/)
 * [Peter Hull](https://github.com/peterhull90)
+* [Mark Carroll](https://github.com/mtbc)
 * [Robin Stevens](https://github.com/PissedCapslock)
 * [Yannick De Turck](https://github.com/yannickdeturck)
 
@@ -128,6 +129,7 @@ Copyright and licenses
 * Copyright © 2015 Peter Hull
 * Copyright © 2015 Yannick De Turck
 * Copyright © 2015 Robin Stevens
+* Copyright © 2015 Mark Carroll
 
 The source code for the jai-imageio-core project is copyrighted code that
 is licensed to individuals or companies who download or otherwise

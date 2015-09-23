@@ -309,11 +309,19 @@
       <url>http://jahewson.com/</url>
       <roles>
         <role>license reviewer</role>
+        <role>developer</role>
       </roles>
     </contributor>
     <contributor>
       <name>Peter Hull</name>
       <url>https://github.com/peterhull90</url>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Mark Carroll</name>
+      <url>https://github.com/mtbc</url>
       <roles>
         <role>developer</role>
       </roles>
