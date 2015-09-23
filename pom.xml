@@ -318,6 +318,20 @@
         <role>developer</role>
       </roles>
     </contributor>
+    <contributor>
+      <name>Robin Stevens</name>
+      <url>https://github.com/PissedCapslock</url>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Yannick De Turck</name>
+      <url>https://github.com/yannickdeturck</url>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </contributor>
   </contributors>
 
   <issueManagement>

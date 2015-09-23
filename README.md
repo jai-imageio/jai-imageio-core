@@ -48,18 +48,22 @@ http://download.osgeo.org/webdav/geotools/javax/media/jai_core/1.1.3/).
 Contribute
 ----------
 
-There is **NO ACTIVE DEVELOPMENT** in this repository; any commits here are
-mainly to keep the build working with recent versions of Maven/Java - the date
-in the version number indicates the time of such modifications and should not
-have any effect on functionality.
-
-You are however encouraged to raise a 
+You are encouraged to raise a 
 [Github Pull Request](https://github.com/jai-imageio/jai-imageio-core/pulls)
 with any suggested improvements.
 
 You can also raise an
 [issue](https://github.com/jai-imageio/jai-imageio-core/issues) - your stacktrace
 might still be of use to someone else.
+
+Current contributors:
+
+* [Stian Soiland-Reyes](http://orcid.org/0000-0001-9842-9718)
+* [John Hewson](http://jahewson.com/)
+* [Peter Hull](https://github.com/peterhull90)
+* [Robin Stevens](https://github.com/PissedCapslock)
+* [Yannick De Turck](https://github.com/yannickdeturck)
+
 
 
 Usage
@@ -122,6 +126,8 @@ Copyright and licenses
 * Copyright © 2010-2014 University of Manchester
 * Copyright © 2010-2015 Stian Soiland-Reyes
 * Copyright © 2015 Peter Hull
+* Copyright © 2015 Yannick De Turck
+* Copyright © 2015 Robin Stevens
 
 The source code for the jai-imageio-core project is copyrighted code that
 is licensed to individuals or companies who download or otherwise
