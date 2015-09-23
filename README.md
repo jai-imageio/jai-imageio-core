@@ -146,7 +146,9 @@ additional nuclear disclaimer, see
 Changelog
 ---------
 
-* 1.3.0 - Java package changed to com.github.jaiimageio
+* 1.3.1 - Available as OSGi bundle (issue #13). 
+      Fixed memory leak in TIFFImageWriter (issue #14).
+* 1.3.0 - Java package changed to com.github.jaiimageio (issue #10).
     MANIFEST.MF metadata corrected.
 * 1.2.1 - Version 1.2.1 released. Pushing to Maven Central and BinTray. 
       Workaround for OpenJDK8 libjpeg bug (issue #6).
