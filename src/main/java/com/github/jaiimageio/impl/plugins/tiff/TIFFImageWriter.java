@@ -436,6 +436,8 @@ public class TIFFImageWriter extends ImageWriter {
             } catch(IIOException e) {
                 // XXX Warning
                 return null;
+            } finally {
+              bogusWriter.dispose();
             }
         }
 
@@ -3624,6 +3626,9 @@ public class TIFFImageWriter extends ImageWriter {
         imageType = null;
         byteOrder = null;
         param = null;
+        if(compressor != null){
+          compressor.dispose();
+        }
         compressor = null;
         colorConverter = null;
         streamMetadata = null;
