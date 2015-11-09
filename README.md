@@ -81,7 +81,7 @@ To use jai-imageio-core from a Maven project, add:
     <dependency>
         <groupId>com.github.jai-imageio</groupId>
         <artifactId>jai-imageio-core</artifactId>
-        <version>1.3.0</version>
+        <version>1.3.1</version>
     </dependency>
 
 To find the latest `<version>` above, see 
@@ -109,7 +109,8 @@ Download
 --------
 
 To download the binary JAR, see the 
-[Downloads at BinTray](https://bintray.com/jai-imageio/maven/jai-imageio-core-standalone/view).
+[Downloads at BinTray](https://bintray.com/jai-imageio/maven/jai-imageio-core-standalone/view)
+or the [GitHub releases](https://github.com/jai-imageio/jai-imageio-core/releases)
 
 
 Javadoc
