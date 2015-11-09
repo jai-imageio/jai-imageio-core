@@ -87,8 +87,10 @@ To use jai-imageio-core from a Maven project, add:
 To find the latest `<version>` above, see 
 [jai-imageio-core at BinTray](https://bintray.com/jai-imageio/maven/jai-imageio-core-standalone)
 
-jai-imageio-core is mirrored to Maven Central. Alternatively you can use this
-explicit repository:
+jai-imageio-core is [mirrored to Maven Central](https://repo1.maven.org/maven2/com/github/jai-imageio/jai-imageio-core/). 
+
+Alternatively (e.g. right after a new release), you can use this
+explicit [bintray repository](https://dl.bintray.com/jai-imageio/maven/):
 
     <repositories>
       <repository>
