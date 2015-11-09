@@ -94,7 +94,7 @@ explicit repository:
       <repository>
         <id>bintray-jai-imageio</id>
         <name>jai-imageio at bintray</name>
-        <url>http://dl.bintray.com/jai-imageio/maven/</url>
+        <url>https://dl.bintray.com/jai-imageio/maven/</url>
         <snapshots>
           <enabled>false</enabled>
         </snapshots>
