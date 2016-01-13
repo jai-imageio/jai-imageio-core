@@ -74,6 +74,12 @@ public class TIFFImageMetadata extends IIOMetadata {
 
     // package scope
 
+    public static final String SUN_BaselineTIFFTagSetClassName =
+        "com.sun.media.imageio.plugins.tiff.BaselineTIFFTagSet" ;
+
+    public static final String THISJAI_BaselineTIFFTagSetClassName =
+        "com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet";
+
     public static final String nativeMetadataFormatName =
         "com_sun_media_imageio_plugins_tiff_image_1.0";
 
@@ -1500,6 +1506,10 @@ public class TIFFImageMetadata extends IIOMetadata {
             StringTokenizer st = new StringTokenizer(tagSetNames, ",");
             while (st.hasMoreTokens()) {
                 String className = st.nextToken();
+
+                if(className != null) {
+                    className = className.replace(SUN_BaselineTIFFTagSetClassName, THISJAI_BaselineTIFFTagSetClassName);
+                }
                 
                 Object o = null;
                 try {
