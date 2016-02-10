@@ -197,7 +197,7 @@ public class TIFFT6Compressor extends TIFFFaxCompressor {
         }
          
         // See comment in TIFFT4Compressor
-        int maxBits = 9*((width + 1)/2) + 2;
+        int maxBits = 12*((width + 1)/2) + 2;
         int bufSize = (maxBits + 7)/8;
         bufSize = height*(bufSize + 2) + 12;
 
