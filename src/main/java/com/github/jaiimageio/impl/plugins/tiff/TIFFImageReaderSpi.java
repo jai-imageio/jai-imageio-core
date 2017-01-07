@@ -52,9 +52,12 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 
+import com.github.jaiimageio.impl.common.ClassLoaderUtils;
 import com.github.jaiimageio.impl.common.PackageUtil;
 
 public class TIFFImageReaderSpi extends ImageReaderSpi {
+
+    private final ClassLoaderUtils classLoaderUtils = ClassLoaderUtils.getInstance();
 
     private static final String[] names = { "tif", "TIF", "tiff", "TIFF" };
 
@@ -98,6 +101,10 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
     }
 
     public boolean canDecodeInput(Object input) throws IOException {
+        if (!classLoaderUtils.wasLoadedByCurrentClassLoaderAncestor(this)) {
+            return false;
+        }
+
         if (!(input instanceof ImageInputStream)) {
             return false;
         }

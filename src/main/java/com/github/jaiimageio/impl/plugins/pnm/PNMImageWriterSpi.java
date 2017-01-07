@@ -53,9 +53,13 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 
+import com.github.jaiimageio.impl.common.ClassLoaderUtils;
 import com.github.jaiimageio.impl.common.PackageUtil;
 
 public class PNMImageWriterSpi extends ImageWriterSpi {
+
+    private final ClassLoaderUtils classLoaderUtils = ClassLoaderUtils.getInstance();
+
     private static String [] readerSpiNames =
         {"com.github.jaiimageio.impl.plugins.pnm.PNMImageReaderSpi"};
     private static String[] formatNames = {"pnm", "PNM"};
@@ -98,6 +102,9 @@ public class PNMImageWriterSpi extends ImageWriterSpi {
     }
 
     public boolean canEncodeImage(ImageTypeSpecifier type) {
+        if (!classLoaderUtils.wasLoadedByCurrentClassLoaderAncestor(this)) {
+            return false;
+        }
         int dataType = type.getSampleModel().getDataType();
         if ((dataType < DataBuffer.TYPE_BYTE) ||
             (dataType > DataBuffer.TYPE_INT))

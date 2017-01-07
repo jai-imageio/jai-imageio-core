@@ -54,11 +54,14 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 
+import com.github.jaiimageio.impl.common.ClassLoaderUtils;
 import com.github.jaiimageio.impl.common.ImageUtil;
 import com.github.jaiimageio.impl.common.PackageUtil;
 import com.github.jaiimageio.impl.common.PaletteBuilder;
 
 public class GIFImageWriterSpi extends ImageWriterSpi {
+
+    private final ClassLoaderUtils classLoaderUtils = ClassLoaderUtils.getInstance();
 
     private static final String vendorName = "Sun Microsystems, Inc.";
 
@@ -100,6 +103,9 @@ public class GIFImageWriterSpi extends ImageWriterSpi {
     }
 
     public boolean canEncodeImage(ImageTypeSpecifier type) {
+        if (!classLoaderUtils.wasLoadedByCurrentClassLoaderAncestor(this)) {
+            return false;
+        }
         if (type == null) {
             throw new IllegalArgumentException("type == null!");
         }

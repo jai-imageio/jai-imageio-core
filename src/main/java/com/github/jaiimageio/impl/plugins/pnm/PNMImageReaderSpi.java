@@ -53,9 +53,12 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 
+import com.github.jaiimageio.impl.common.ClassLoaderUtils;
 import com.github.jaiimageio.impl.common.PackageUtil;
 
 public class PNMImageReaderSpi extends ImageReaderSpi {
+
+    private final ClassLoaderUtils classLoaderUtils = ClassLoaderUtils.getInstance();
 
     private static String [] writerSpiNames =
         {"com.github.jaiimageio.impl.plugins.pnm.PNMImageWriterSpi"};
@@ -98,6 +101,9 @@ public class PNMImageReaderSpi extends ImageReaderSpi {
     }
 
     public boolean canDecodeInput(Object source) throws IOException {
+        if (!classLoaderUtils.wasLoadedByCurrentClassLoaderAncestor(this)) {
+            return false;
+        }
         if (!(source instanceof ImageInputStream)) {
             return false;
         }

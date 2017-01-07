@@ -52,9 +52,13 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 
+import com.github.jaiimageio.impl.common.ClassLoaderUtils;
 import com.github.jaiimageio.impl.common.PackageUtil;
 
 public class RawImageWriterSpi extends ImageWriterSpi {
+
+    private final ClassLoaderUtils classLoaderUtils = ClassLoaderUtils.getInstance();
+
     private static String [] readerSpiNames =
         {"com.github.jaiimageio.impl.plugins.raw.RawImageReaderSpi"};
     private static String[] formatNames = {"raw", "RAW"};
@@ -94,6 +98,9 @@ public class RawImageWriterSpi extends ImageWriterSpi {
     }
 
     public boolean canEncodeImage(ImageTypeSpecifier type) {
+        if (!classLoaderUtils.wasLoadedByCurrentClassLoaderAncestor(this)) {
+            return false;
+        }
         return true;
     }
 
