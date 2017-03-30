@@ -340,6 +340,13 @@
         <role>developer</role>
       </roles>
     </contributor>
+    <contributor>
+      <name>Butch Howard</name>
+      <url>https://github.com/butchhoward</url>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </contributor>    
   </contributors>
 
   <issueManagement>
