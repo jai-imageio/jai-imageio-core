@@ -64,6 +64,7 @@ Current committers and contributors:
 * [Mark Carroll](https://github.com/mtbc)
 * [Robin Stevens](https://github.com/PissedCapslock)
 * [Yannick De Turck](https://github.com/yannickdeturck)
+* [Butch Howard](https://github.com/butchhoward)
 
 
 
