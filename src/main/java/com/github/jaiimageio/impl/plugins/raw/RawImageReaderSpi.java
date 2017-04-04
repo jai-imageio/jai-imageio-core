@@ -60,8 +60,8 @@ public class RawImageReaderSpi extends ImageReaderSpi {
     private static String [] writerSpiNames =
         {"com.github.jaiimageio.impl.plugins.raw.RawImageWriterSpi"};
     private static String[] formatNames = {"raw", "RAW"};
-    private static String[] entensions = {""};
-    private static String[] mimeType = {""};
+    private static String[] entensions = {"raw"};
+    private static String[] mimeType = {"image/x-raw"};
 
     private boolean registered = false;
 
