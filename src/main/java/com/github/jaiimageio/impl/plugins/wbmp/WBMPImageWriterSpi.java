@@ -54,10 +54,14 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 
+import com.github.jaiimageio.impl.common.ClassLoaderUtils;
 import com.github.jaiimageio.impl.common.ImageUtil;
 import com.github.jaiimageio.impl.common.PackageUtil;
 
 public class WBMPImageWriterSpi extends ImageWriterSpi {
+
+	private final ClassLoaderUtils classLoaderUtils = ClassLoaderUtils.getInstance();
+
     private static String [] readerSpiNames =
         {"com.github.jaiimageio.impl.plugins.wbmp.WBMPImageReaderSpi"};
     private static String[] formatNames = {"wbmp", "WBMP"};
@@ -105,6 +109,10 @@ public class WBMPImageWriterSpi extends ImageWriterSpi {
     }
 
     public boolean canEncodeImage(ImageTypeSpecifier type) {
+		if (!classLoaderUtils.wasLoadedByCurrentClassLoaderAncestor(this)) {
+			return false;
+		}
+
         SampleModel sm = type.getSampleModel();
         if (!(sm instanceof MultiPixelPackedSampleModel))
             return false;

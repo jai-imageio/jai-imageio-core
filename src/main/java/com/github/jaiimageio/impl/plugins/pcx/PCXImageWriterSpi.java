@@ -55,9 +55,13 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 
+import com.github.jaiimageio.impl.common.ClassLoaderUtils;
 import com.github.jaiimageio.impl.common.PackageUtil;
 
 public class PCXImageWriterSpi extends ImageWriterSpi {
+
+    private final ClassLoaderUtils classLoaderUtils = ClassLoaderUtils.getInstance();
+
     private static String [] readerSpiNames =
         {"com.github.jaiimageio.impl.plugins.pcx.PCXImageReaderSpi"};
     private static String[] formatNames = {"pcx", "PCX"};
@@ -99,6 +103,9 @@ public class PCXImageWriterSpi extends ImageWriterSpi {
     }
 
     public boolean canEncodeImage(ImageTypeSpecifier type) {
+        if (!classLoaderUtils.wasLoadedByCurrentClassLoaderAncestor(this)) {
+            return false;
+        }
         int dataType= type.getSampleModel().getDataType();
         if (dataType < DataBuffer.TYPE_BYTE || dataType > DataBuffer.TYPE_INT)
             return false;
