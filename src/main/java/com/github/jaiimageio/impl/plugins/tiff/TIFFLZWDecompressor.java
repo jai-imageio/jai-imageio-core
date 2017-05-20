@@ -45,15 +45,18 @@
 package com.github.jaiimageio.impl.plugins.tiff;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 
 import javax.imageio.IIOException;
 
 import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
 import com.github.jaiimageio.plugins.tiff.TIFFDecompressor;
+import com.github.jaiimageio.plugins.tiff.TIFFField;
 
 public class TIFFLZWDecompressor extends TIFFDecompressor {
 
     private static final boolean DEBUG = false;
+    private static final boolean TRACE = false;
 
     private static final int andTable[] = {
 	511, 
@@ -75,6 +78,8 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
 
     int nextData = 0;
     int nextBits = 0;
+    
+    boolean isLSB = false;
 
     public TIFFLZWDecompressor(int predictor) throws IIOException {
         super();
@@ -142,72 +147,89 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
             }
         }
     }
-
+    
     public int decode(byte[] sdata, int srcOffset,
-                      byte[] ddata, int dstOffset)
-        throws IOException {
-        if (sdata[0] == (byte)0x00 && sdata[1] == (byte)0x01) {
-            throw new IIOException
-                ("TIFF 5.0-style LZW compression is not supported!");
-        }
+    		byte[] ddata, int dstOffset)
+    				throws IOException {
+    	if (sdata[0] == (byte)0x00 && sdata[1] == (byte)0x01) {
+    		throw new IIOException
+    		("TIFF 5.0-style LZW compression is not supported!");
+    	}
 
-        this.srcData = sdata;
-        this.dstData = ddata;
+    	this.srcData = sdata;
+    	this.dstData = ddata;
 
-        this.srcIndex = srcOffset;
-        this.dstIndex = dstOffset;
+    	this.srcIndex = srcOffset;
+    	this.dstIndex = dstOffset;
 
-	this.nextData = 0;
-	this.nextBits = 0;
+    	this.nextData = 0;
+    	this.nextBits = 0;
 
-        initializeStringTable();
+    	isLSB = false ;
+    	if(null != reader ) {
+    		if( reader instanceof TIFFImageReader) {
+    			isLSB = ((TIFFImageReader)reader).isLsb();
+    		}
+    	}
+    	initializeStringTable();
 
-	int code, oldCode = 0;
-	byte[] string;
+    	int code, oldCode = 0;
+    	byte[] string;
+    	if(TRACE) {
+    		System.out.println("start: ");
+    	}
+    	while ((code = getNextCode()) != 257) {
+    		if(TRACE) {
+    			System.out.println("Code: "+code);
+    		}
+    		if (code == 256) {
+    			if(TRACE) {
+    				System.out.println("reset");
+    			}
+    			initializeStringTable();
+    			code = getNextCode();
+    			if(TRACE) {
+    				System.out.println("Code2: "+code);
+    			}
+    			if (code == 257) {
+    				break;
+    			}
 
-	while ((code = getNextCode()) != 257) {
-	    if (code == 256) {
-		initializeStringTable();
-		code = getNextCode();
-		if (code == 257) {
-		    break;
-		}
+    			writeString(stringTable[code]);
+    			oldCode = code;
+    		} else {
+    			if (code < tableIndex) {
+    				string = stringTable[code];
 
-		writeString(stringTable[code]);
-		oldCode = code;
-	    } else {
-		if (code < tableIndex) {
-		    string = stringTable[code];
+    				writeString(string);
+    				addStringToTable(stringTable[oldCode], string[0]); 
+    				oldCode = code;
+    			} else {
+    				string = stringTable[oldCode];
+    				string = composeString(string, string[0]);
+    				writeString(string);
+    				addStringToTable(string);
+    				oldCode = code;
+    			}
+    		}
+    	}
 
-		    writeString(string);
-		    addStringToTable(stringTable[oldCode], string[0]); 
-		    oldCode = code;
-		} else {
-		    string = stringTable[oldCode];
-		    string = composeString(string, string[0]);
-		    writeString(string);
-		    addStringToTable(string);
-		    oldCode = code;
-		}
-	    }
-	}
+    	if (predictor ==
+    			BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
 
-	if (predictor ==
-            BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
+    		for (int j = 0; j < srcHeight; j++) {
 
-	    for (int j = 0; j < srcHeight; j++) {
-		
-		int count = dstOffset + samplesPerPixel * (j * srcWidth + 1);
-		
-		for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
-		    
-		    dstData[count] += dstData[count - samplesPerPixel];
-		    count++;
-		}
-	    }
-	}
+    			int count = dstOffset + samplesPerPixel * (j * srcWidth + 1);
 
-        return dstIndex - dstOffset;
+    			for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
+
+    				dstData[count] += dstData[count - samplesPerPixel];
+    				count++;
+    			}
+    		}
+    	}
+
+    	return dstIndex - dstOffset;
     }
 
     /**
@@ -223,6 +245,7 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
 	
 	tableIndex = 258;
 	bitsToGet = 9;
+	
     }
 
     /**
@@ -287,6 +310,22 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
 
 	return string;
     }
+    
+    private int reverseBits(int inp)
+    {
+		int iz = 0 ;
+		int po2 = 1;
+		int rev = 0x80;
+		for( int i = 0 ; i < 8 ; i++) {
+			if( (inp & po2 ) != 0 ) {
+				iz += rev;
+			}
+			po2 <<= 1 ;
+			rev >>= 1;
+			
+		}
+		return iz;
+	}
 
     // Returns the next 9, 10, 11 or 12 bits
     public int getNextCode() {
@@ -296,23 +335,44 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
         // in practice.
 
         try {
-            nextData = (nextData << 8) | (srcData[srcIndex++] & 0xff);
-            nextBits += 8;
-
-            if (nextBits < bitsToGet) {
-                nextData = (nextData << 8) | (srcData[srcIndex++] & 0xff);
-                nextBits += 8;
-            }
-
-            int code =
-                (nextData >> (nextBits - bitsToGet)) & andTable[bitsToGet - 9];
-            nextBits -= bitsToGet;
-
-            return code;
+        	if(!isLSB) {
+	        	int iz = srcData[srcIndex++] &0x00FF;
+	            nextData = (nextData << 8) | (iz& 0xff);
+	            nextBits += 8;
+	
+	            if (nextBits < bitsToGet) {
+	            	iz = srcData[srcIndex++] &0x00FF;
+	                nextData = (nextData << 8) | (iz & 0xff);
+	                nextBits += 8;
+	            }
+	
+	            int code =
+	                (nextData >> (nextBits - bitsToGet)) & andTable[bitsToGet - 9];
+	            nextBits -= bitsToGet;
+	
+	            return code;        		
+        	} else {
+	        	int iz = reverseBits( srcData[srcIndex++] &0x00FF);
+	            nextData = (nextData << 8) | (iz& 0xff);
+	            nextBits += 8;
+	
+	            if (nextBits < bitsToGet) {
+	            	iz = reverseBits( srcData[srcIndex++] &0x00FF);
+	                nextData = (nextData << 8) | (iz & 0xff);
+	                nextBits += 8;
+	            }
+	
+	            int code =
+	                (nextData >> (nextBits - bitsToGet)) & andTable[bitsToGet - 9];
+	            nextBits -= bitsToGet;
+	
+	            return code;
+        	}
         } catch (ArrayIndexOutOfBoundsException e) {
             // Strip not terminated as expected: return EndOfInformation code.
             return 257;
         }
     }
+    
 }
 

@@ -1528,5 +1528,20 @@ public class TIFFImageReader extends ImageReader {
         }
         
         return imageType.createBufferedImage(destWidth, destHeight);
-    }    
+    }
+
+    protected boolean isLsb()
+    {
+    	boolean isLsb = false;
+    	if( null != imageMetadata ) {
+    		// Get the fillOrder field.
+    		TIFFField fillOrderField =
+    				imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_FILL_ORDER);
+
+    		if(fillOrderField != null && fillOrderField.getAsInt(0) == 2) {
+    			isLsb = true ;
+    		}
+    	}
+    	return isLsb ;
+    }
 }
