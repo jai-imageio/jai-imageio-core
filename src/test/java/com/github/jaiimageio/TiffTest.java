@@ -15,7 +15,9 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 
 import com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriter;
+import com.github.jaiimageio.impl.plugins.tiff.TIFFLZWDecompressor;
 import com.github.jaiimageio.impl.plugins.tiff.TIFFT6Compressor;
+import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
 import com.github.jaiimageio.plugins.tiff.TIFFImageWriteParam;
 
 import org.junit.Test;
@@ -35,6 +37,37 @@ public class TiffTest {
 		//--
 		URL file = getClass().getResource("/lsbtifflzw/export_gimp.tiff");
 		BufferedImage bufferedImage = ImageIO.read(file);
+		File fx = File.createTempFile("imageio-test", "." + "tiff");
+		bufferedImage = ImageIO.read(file);
+		ImageIO.write(bufferedImage, "tiff", fx);
+		System.out.println(fx);
+
+	}
+	
+    private int reverseBits(int inp)
+    {
+		int iz = 0 ;
+		int po2 = 1;
+		int rev = 0x80;
+		for( int i = 0 ; i < 8 ; i++) {
+			if( (inp & po2 ) != 0 ) {
+				iz += rev;
+			}
+			po2 <<= 1 ;
+			rev >>= 1;
+			
+		}
+		return iz;
+	}
+
+	@Test
+	public void testFillOrderReverseTable() throws Exception {
+		TIFFLZWDecompressor compressor = new TIFFLZWDecompressor(BaselineTIFFTagSet.PREDICTOR_NONE);
+		for( int i = 0 ; i < 256 ; i ++ ) {
+			int reversed = reverseBits(i);
+			int calculated = compressor.reverseBits(i);
+			assertEquals("Index:"+i, reversed, calculated);
+		}
 	}
 
 	private void checkAndCompare(final String fileName) throws Exception {

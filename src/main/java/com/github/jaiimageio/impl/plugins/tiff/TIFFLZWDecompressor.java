@@ -311,20 +311,32 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
 	return string;
     }
     
-    private int reverseBits(int inp)
+    public int reverseBits(int inp)
     {
-		int iz = 0 ;
-		int po2 = 1;
-		int rev = 0x80;
-		for( int i = 0 ; i < 8 ; i++) {
-			if( (inp & po2 ) != 0 ) {
-				iz += rev;
+    	return TIFFFillOrder.reverseTable[inp] ; 
+    }
+
+    // This code to build the fillOrder table
+    public static void generateBitsreverseBits()
+    {
+    	for( int iOuter = 0 ; iOuter < 256 ; iOuter ++ ) {
+			int iz = 0 ;
+			int po2 = 1;
+			int rev = 0x80;
+			for( int i = 0 ; i < 8 ; i++) {
+				if( (iOuter & po2 ) != 0 ) {
+					iz += rev;
+				}
+				po2 <<= 1 ;
+				rev >>= 1;
 			}
-			po2 <<= 1 ;
-			rev >>= 1;
-			
-		}
-		return iz;
+			byte b = (byte)iz ;
+			String value = String.format("0x%02X,", b & 0x00FF);
+			System.out.println(value+" //"+ iOuter+" "
+					+String.format("%8s", Integer.toBinaryString(iOuter)).replace(" ", "0")
+					+" -> "
+					+String.format("%8s", Integer.toBinaryString(iz)).replace(" ", "0"));
+    	}
 	}
 
     // Returns the next 9, 10, 11 or 12 bits
