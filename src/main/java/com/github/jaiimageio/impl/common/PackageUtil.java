@@ -95,6 +95,10 @@ public class PackageUtil {
             }
         } catch(ClassNotFoundException e) {
         }
+
+      // For some reason, we failed to get this information.
+      if (vendor == null) vendor = "Unknown";
+      if (version == null) version = "Unknown";
     }
 
     /**
