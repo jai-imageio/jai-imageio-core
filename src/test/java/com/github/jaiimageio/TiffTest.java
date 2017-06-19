@@ -35,34 +35,41 @@ public class TiffTest {
 	@Test
 	public void testWriteG4Tiff() throws Exception
 	{
-		BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_BYTE_BINARY);
-		
-		final int black = 0;
-		final int white = 0xFFFFFF;
-		
-		for( int row = 0 ; row < 256 ; row ++ ) {
-			for( int col= 0 ; col< 256 ; col++ ) {
-				image.setRGB(col, row, (((row+col)&1)==0) ?white:black);
-			}
-		}
-		Iterator<ImageWriter> writers = ImageIO.getImageWritersBySuffix("tiff");
-        assertTrue(writers.hasNext());
-        TIFFImageWriter tiffImageWriter = (TIFFImageWriter)writers.next();
-        //----
-		TIFFImageWriteParam writeParams = (TIFFImageWriteParam)tiffImageWriter.getDefaultWriteParam();
-        TIFFT6Compressor compressor = new TIFFT6Compressor();
-        writeParams.setCompressionMode(TIFFImageWriteParam.MODE_EXPLICIT);
-        writeParams.setCompressionType(compressor.getCompressionType());
-        writeParams.setTIFFCompressor(compressor);
-        //--
-        File f = File.createTempFile("imageio-test", ".tiff");
-        ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(new FileOutputStream(f));
-        tiffImageWriter.setOutput(imageOutputStream);
-        //--
-        tiffImageWriter.write(null, new IIOImage(image, null, null), writeParams);
-        tiffImageWriter.dispose();
-        imageOutputStream.close();
-        ImageIO.read(f);
+                BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_BYTE_BINARY);
+
+                final int black = 0;
+                final int white = 0xFFFFFF;
+
+                for( int row = 0 ; row < 256 ; row ++ ) {
+                        for( int col= 0 ; col< 256 ; col++ ) {
+                                image.setRGB(col, row, (((row+col)&1)==0) ?white:black);
+                        }
+                }
+                Iterator<ImageWriter> writers = ImageIO.getImageWritersBySuffix("tiff");
+                assertTrue(writers.hasNext());
+                Object genericImageWriter = writers.next();
+                String writerClass = genericImageWriter.getClass().getName();
+                // With Java9, TIFFImageWriter is also provided by the JRE, and so
+                // we will not get our TIFFImageWriter.  In this case, skip the
+                // tests.
+                if (!"com.sun.imageio.plugins.tiff.TIFFImageWriter".equals(writerClass)) {
+                        TIFFImageWriter tiffImageWriter = (TIFFImageWriter)genericImageWriter;
+                        //----
+                        TIFFImageWriteParam writeParams = (TIFFImageWriteParam)tiffImageWriter.getDefaultWriteParam();
+                        TIFFT6Compressor compressor = new TIFFT6Compressor();
+                        writeParams.setCompressionMode(TIFFImageWriteParam.MODE_EXPLICIT);
+                        writeParams.setCompressionType(compressor.getCompressionType());
+                        writeParams.setTIFFCompressor(compressor);
+                        //--
+                        File f = File.createTempFile("imageio-test", ".tiff");
+                        ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(new FileOutputStream(f));
+                        tiffImageWriter.setOutput(imageOutputStream);
+                        //--
+                        tiffImageWriter.write(null, new IIOImage(image, null, null), writeParams);
+                        tiffImageWriter.dispose();
+                        imageOutputStream.close();
+                        ImageIO.read(f);
+                }
 	}
 
 	@Test
