@@ -177,10 +177,13 @@ public class TIFFImageMetadata extends IIOMetadata {
             if (tag == null) {
                 node = f.getAsNativeNode();
             } else if (tag.isIFDPointer()) {
-                TIFFIFD subIFD = (TIFFIFD)f.getData();
+                Object data = f.getData();
+                if (data instanceof TIFFIFD) {
+                    TIFFIFD subIFD = (TIFFIFD) f.getData();
 
-                // Recurse
-                node = getIFDAsTree(subIFD, tag.getName(), tag.getNumber());
+                    // Recurse
+                    node = getIFDAsTree(subIFD, tag.getName(), tag.getNumber());
+                }
             } else {
                 node = f.getAsNativeNode();
             }
