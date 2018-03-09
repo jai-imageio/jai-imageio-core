@@ -1385,23 +1385,12 @@ public class ImageUtil {
 
 	// Check which JVM we are running on
 	String jvmVendor = System.getProperty("java.vendor");
-	String jvmVersionString = 
-	    System.getProperty("java.specification.version");
-	int verIndex = jvmVersionString.indexOf("1.");
-	// Skip the "1." part to get to the part of the version number that
-	// actually changes from version to version
-	// The assumption here is that "java.specification.version" is 
-	// always of the format "x.y" and not "x.y.z" since that is what has
-	// been practically observed in all JDKs to-date, an examination of
-	// the code returning this property bears this out. However this does
-	// not guarantee that the format won't change in the future, 
-	// though that seems unlikely.
-	jvmVersionString = jvmVersionString.substring(verIndex+2);
-	
-	int jvmVersion = Integer.parseInt(jvmVersionString);
-	
+    String jvmSpecificationVersion =
+                System.getProperty("java.specification.version");
+    int jvmVersion = getJvmVersion(jvmSpecificationVersion);
+
 	if (jvmVendor.equals("Sun Microsystems Inc.")) {
-	    
+
 	    List list;
 	    if (spi instanceof ImageReaderSpi)
 		list = getJDKImageReaderWriterSPI(registry, formatName, true);
@@ -1428,7 +1417,24 @@ public class ImageUtil {
 	    }
 	}
     }
-    
+
+
+    static int getJvmVersion(String jvmSpecificationVersion) {
+        if (jvmSpecificationVersion.startsWith("1.")) {
+            // Skip the "1." part to get to the part of the version number that
+            // actually changes from version to version
+            // The assumption here is that "java.specification.version"
+            // up to Java 1.8 is of the format "x.y"
+            jvmSpecificationVersion = jvmSpecificationVersion.substring(2);
+
+            return Integer.parseInt(jvmSpecificationVersion);
+        } else {
+            // http://www.oracle.com/technetwork/java/javase/9-relnote-issues-3704069.html#JDK-8085822
+            return Integer.parseInt(jvmSpecificationVersion);
+        }
+    }
+
+
     public static int readMultiByteInteger(ImageInputStream iis) throws IOException {
         int value = iis.readByte();
         int result = value & 0x7f;
