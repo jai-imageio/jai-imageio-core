@@ -70,6 +70,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.ServiceLoader;
 //import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.spi.ImageReaderWriterSpi;
@@ -1343,8 +1344,7 @@ public class ImageUtil {
 	    descPart = " image writer";
 	}
 
-	Iterator iter = iioRegistry.getServiceProviders(spiClass, 
-							true); // useOrdering
+	Iterator iter = ServiceLoader.load(spiClass).iterator(); // useOrdering
 
 	String formatNames[];
 	ImageReaderWriterSpi provider;
