@@ -50,11 +50,20 @@ en matière de contrôle des exportations et la liste de ressortissants
 spécifiquement désignés, sont rigoureusement interdites.
 
 
-Copyright © 2010-2015 Stian Soiland-Reyes
+Copyright © 2010-2018 Stian Soiland-Reyes
 Copyright © 2015 Peter Hull
-Copyright © 2010-2015 University of Manchester
+Copyright © 2010-2018 University of Manchester
 Copyright © 2015 Yannick De Turck
 Copyright © 2015 Robin Stevens
 Copyright © 2015 Mark Carroll
+Copyright © 2015 Butch Howard
+Copyright © 2015-2016 Luca Bellonda
+Copyright © 2017 Ghislain Bonamy
+Copyright © 2017 Curtis Rueden
+Copyright © 2017 Roger Leigh
+Copyright © 2017 Mykola Pavluchynskyi
+Copyright © 2017 Sebastien Besson
+Copyright © 2018 Peter Jodeleit
+
 
 
