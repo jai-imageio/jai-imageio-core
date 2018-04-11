@@ -5,7 +5,7 @@ jai-imageio-core (standalone)
 
 NOTE: This is a fork of the
 [original jai-imageio-core](https://java.net/projects/jai-imageio-core/)
-(which is no longer maintained).
+(which is no longer maintained upstream).
 
 
 This project adds read/write support for the following file types to 
@@ -56,7 +56,7 @@ You can also raise an
 [issue](https://github.com/jai-imageio/jai-imageio-core/issues) - your stacktrace
 might still be of use to someone else.
 
-Current committers and contributors:
+jai-imageio GitHub committers and contributors include (in no particular order):
 
 * [Stian Soiland-Reyes](http://orcid.org/0000-0001-9842-9718)
 * [John Hewson](http://jahewson.com/)
@@ -65,15 +65,27 @@ Current committers and contributors:
 * [Robin Stevens](https://github.com/PissedCapslock)
 * [Yannick De Turck](https://github.com/yannickdeturck)
 * [Butch Howard](https://github.com/butchhoward)
+* [Roger Leigh](https://github.com/rleigh-codelibre)
+* [Mykola Pavluchynskyi](https://github.com/mykolap)
+* [Glen](https://github.com/glenhein) 
+* [Peter Jodeleit](https://github.com/pejobo)
+* [Luca Bellonda](https://github.com/lbellonda)
+* [Nicolai Parlog](https://github.com/nicolaiparlog)
+* [Réda Housni Alaoui](https://github.com/reda-alaoui)
+* [Sébastien Besson](https://github.com/sbesson)
+* [Curtis Rueden](https://github.com/ctrueden)
+* [Ghislain Bonamy](https://www.linkedin.com/in/gbonamy/)
+* [Jean-Marie Burel](https://github.com/jburel)
+
 
 
 
 Usage
 -----
 
-This project requires Java 5 or newer.  To build this project, use [Apache
+This project requires Java 6 or newer.  To build this project, use [Apache
 Maven](https://maven.apache.org/download.cgi) 
-2.2.1 or newer and run:
+3.0.5 or newer and run:
 
     mvn clean install
 
@@ -85,7 +97,7 @@ To use jai-imageio-core from a Maven project, add:
         <version>1.3.1</version>
     </dependency>
 
-To find the latest `<version>` above, see 
+To find the latest released `<version>` above, see 
 [jai-imageio-core at BinTray](https://bintray.com/jai-imageio/maven/jai-imageio-core-standalone)
 
 jai-imageio-core is [mirrored to Maven Central](https://repo1.maven.org/maven2/com/github/jai-imageio/jai-imageio-core/). 
@@ -129,11 +141,7 @@ Copyright and licenses
 
 * Copyright © 2005 Sun Microsystems
 * Copyright © 2010-2014 University of Manchester
-* Copyright © 2010-2015 Stian Soiland-Reyes
-* Copyright © 2015 Peter Hull
-* Copyright © 2015 Yannick De Turck
-* Copyright © 2015 Robin Stevens
-* Copyright © 2015 Mark Carroll
+* Copyright © 2015-2018 jai-imageio contributors
 
 The source code for the jai-imageio-core project is copyrighted code that
 is licensed to individuals or companies who download or otherwise
@@ -150,6 +158,7 @@ additional nuclear disclaimer, see
 Changelog
 ---------
 
+* 1.4.0 - Java 9 support (issue #
 * 1.3.1 - Available as OSGi bundle (issue #13). 
       Fixed memory leak in TIFFImageWriter (issue #14).
 * 1.3.0 - Java package changed to com.github.jaiimageio (issue #10).
