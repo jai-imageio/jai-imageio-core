@@ -40,7 +40,7 @@ public class TiffTest {
 		File fx = File.createTempFile("imageio-test", "." + "tiff");
 		bufferedImage = ImageIO.read(file);
 		ImageIO.write(bufferedImage, "tiff", fx);
-		System.out.println(fx);
+		//System.out.println(fx);
 
 	}
 	
@@ -80,14 +80,14 @@ public class TiffTest {
 		URL msbFile = getClass().getResource(fileMsb);
 		BufferedImage bufferedImageMsb = ImageIO.read(msbFile);
 		
-		File lsbImageFile = witeImage(bufferedImageLsb) ;
-		File msbImageFile = witeImage(bufferedImageMsb) ;
+		File lsbImageFile = writeImage(bufferedImageLsb) ;
+		File msbImageFile = writeImage(bufferedImageMsb) ;
 		
 		compareFiles(lsbImageFile, msbImageFile);
 	}
 	
 	private void compareFiles(File f1, File f2) throws Exception {
-		assertEquals("File lenght differs:"+f1.getName()+" / "+f2.getName(), f1.length(), f2.length());
+		assertEquals("File length differs:"+f1.getName()+" / "+f2.getName(), f1.length(), f2.length());
 		InputStream is1 = null ;
 		InputStream is2 = null ;
 		try {
@@ -115,10 +115,8 @@ public class TiffTest {
 		}
 	}
 
-	private File witeImage(BufferedImage image) throws Exception {
-		Iterator<ImageWriter> writers = ImageIO.getImageWritersBySuffix("tiff");
-        assertTrue(writers.hasNext());
-        TIFFImageWriter tiffImageWriter = (TIFFImageWriter)writers.next();
+	private File writeImage(BufferedImage image) throws Exception {
+		TIFFImageWriter tiffImageWriter = getImageWriter();
         //----
 		TIFFImageWriteParam writeParams = (TIFFImageWriteParam)tiffImageWriter.getDefaultWriteParam();
         /*TIFFNullCompressor compressor = new TIFFNullCompressor();
@@ -135,12 +133,28 @@ public class TiffTest {
         imageOutputStream.close();
         return f;
 	}
+
+	private TIFFImageWriter getImageWriter() {
+		Iterator<ImageWriter> writers = ImageIO.getImageWritersBySuffix("tiff");
+        while (writers.hasNext()) {
+			ImageWriter writer = writers.next();
+        	if (writer instanceof TIFFImageWriter) {
+        		// Don't return java.desktop/com.sun.imageio.plugins.tiff.TIFFImageWriter
+        		// on Java 9
+        		return (TIFFImageWriter) writer;
+        	}
+        }
+        fail("Can't find TIFFImageWriter instance");
+        return null; // won't happen
+	}
 	
 	@Test
 	public void testReadTiff() throws Exception {
 
 		URL g4File = getClass().getResource("/checkerg4.tiff");
 		BufferedImage bufferedImage = ImageIO.read(g4File);
+		assertEquals(640, bufferedImage.getWidth());
+		assertEquals(400, bufferedImage.getHeight());
 	}
 
 	@Test
@@ -156,31 +170,27 @@ public class TiffTest {
                                 image.setRGB(col, row, (((row+col)&1)==0) ?white:black);
                         }
                 }
-                Iterator<ImageWriter> writers = ImageIO.getImageWritersBySuffix("tiff");
-                assertTrue(writers.hasNext());
-                Object genericImageWriter = writers.next();
-                String writerClass = genericImageWriter.getClass().getName();
-                // With Java9, TIFFImageWriter is also provided by the JRE, and so
-                // we will not get our TIFFImageWriter.  In this case, skip the
-                // tests.
-                if (!"com.sun.imageio.plugins.tiff.TIFFImageWriter".equals(writerClass)) {
-                        TIFFImageWriter tiffImageWriter = (TIFFImageWriter)genericImageWriter;
-                        //----
-                        TIFFImageWriteParam writeParams = (TIFFImageWriteParam)tiffImageWriter.getDefaultWriteParam();
-                        TIFFT6Compressor compressor = new TIFFT6Compressor();
-                        writeParams.setCompressionMode(TIFFImageWriteParam.MODE_EXPLICIT);
-                        writeParams.setCompressionType(compressor.getCompressionType());
-                        writeParams.setTIFFCompressor(compressor);
-                        //--
-                        File f = File.createTempFile("imageio-test", ".tiff");
-                        ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(new FileOutputStream(f));
-                        tiffImageWriter.setOutput(imageOutputStream);
-                        //--
-                        tiffImageWriter.write(null, new IIOImage(image, null, null), writeParams);
-                        tiffImageWriter.dispose();
-                        imageOutputStream.close();
-                        ImageIO.read(f);
-                }
+                // With Java9, TIFFImageWriter is also provided by the JRE, but
+                // it only makes sense for us to test our own implementation
+                TIFFImageWriter tiffImageWriter = getImageWriter();
+//                if (tiffImageWriter == null) {
+//                	return;
+//                }
+                //----
+                TIFFImageWriteParam writeParams = (TIFFImageWriteParam)tiffImageWriter.getDefaultWriteParam();
+                TIFFT6Compressor compressor = new TIFFT6Compressor();
+                writeParams.setCompressionMode(TIFFImageWriteParam.MODE_EXPLICIT);
+                writeParams.setCompressionType(compressor.getCompressionType());
+                writeParams.setTIFFCompressor(compressor);
+                //--
+                File f = File.createTempFile("imageio-test", ".tiff");
+                ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(new FileOutputStream(f));
+                tiffImageWriter.setOutput(imageOutputStream);
+                //--
+                tiffImageWriter.write(null, new IIOImage(image, null, null), writeParams);
+                tiffImageWriter.dispose();
+                imageOutputStream.close();
+                ImageIO.read(f);
 	}
 
 	@Test
