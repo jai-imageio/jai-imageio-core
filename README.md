@@ -3,13 +3,12 @@ jai-imageio-core (standalone)
 
 [![Build Status](https://travis-ci.org/jai-imageio/jai-imageio-core.svg)](https://travis-ci.org/jai-imageio/jai-imageio-core)
 
-NOTE: This is a fork of the
-[original jai-imageio-core](https://java.net/projects/jai-imageio-core/)
-(which is no longer maintained upstream).
+NOTE: This is a community fork of the original `java.net` project
+jai-imageio-core (which is no longer available upstream).
 
 
 This project adds read/write support for the following file types to 
-Java's [ImageIO](http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html):
+Java's [ImageIO](https://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html):
  
 * wbmp
 * bmp
@@ -19,14 +18,20 @@ Java's [ImageIO](http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.
 * tiff
 * gif (write)
 
+
+_Note that most of these formats are now [supported by Java 9](https://docs.oracle.com/javase/9/docs/api/javax/imageio/package-summary.html)._
+
 The classes of this projects are not generally used directly, but through
 the SPI plugin mechanism of ImageIO. See the 
-[ImageIO guide](http://docs.oracle.com/javase/8/docs/technotes/guides/imageio/spec/imageio_guideTOC.fm.html)
-for details.
+[ImageIO guide](https://docs.oracle.com/javase/8/docs/technotes/guides/imageio/spec/imageio_guideTOC.fm.html)
+for details. 
 
-This project is called 'standalone' as unlike the [original
-jai-imageio-core](https://java.net/projects/jai-imageio-core/) 
-it has removed dependencies to jai-core packages (`javax.media.jai`) and JPEG
+The implementations provided by this project use the package name
+`com.github.jaiimageio`, note that other implementations might be provided by
+your Java installation or other dependencies.
+
+This project is called 'standalone' as unlike the original
+jai-imageio-core it has removed dependencies to jai-core packages (`javax.media.jai`) and JPEG
 2000 (`jj2000`).  This version also does not include the C
 implementations from libJIIO, meaning that this version is platform independent
 and fully redistributable under the 3-clause BSD license in
@@ -38,7 +43,7 @@ as it has a different (non-GPL compatible) license.
 
 
 If you are not concerned about GPL compatibility or source code
-availability, you might instead want to use
+availability, you may want to check out
 https://github.com/geosolutions-it/imageio-ext/ which is actively
 maintained and extends the original imageio with many useful features,
 but depends on the [binary distribution of jai\_core](
@@ -58,7 +63,7 @@ might still be of use to someone else.
 
 jai-imageio GitHub committers and contributors include (in no particular order):
 
-* [Stian Soiland-Reyes](http://orcid.org/0000-0001-9842-9718)
+* [Stian Soiland-Reyes](https://orcid.org/0000-0001-9842-9718)
 * [John Hewson](http://jahewson.com/)
 * [Peter Hull](https://github.com/peterhull90)
 * [Mark Carroll](https://github.com/mtbc)
@@ -131,7 +136,7 @@ or the [GitHub releases](https://github.com/jai-imageio/jai-imageio-core/release
 Javadoc
 -------
 
-Standalone [Javadoc for jai-imageio-core](http://jai-imageio.github.io/jai-imageio-core/javadoc/) is also
+Standalone [Javadoc for jai-imageio-core](https://jai-imageio.github.io/jai-imageio-core/javadoc/) is also
 provided.
 
 
@@ -186,10 +191,13 @@ More info
 ---------
 
 * https://github.com/jai-imageio/jai-imageio-core
-* http://jai-imageio.github.io/jai-imageio-core/javadoc/
+* https://jai-imageio.github.io/jai-imageio-core/javadoc/
+* http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-java-client-419417.html
+* https://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html
+* https://docs.oracle.com/javase/8/docs/technotes/guides/imageio/index.html 
+* https://docs.oracle.com/javase/8/docs/technotes/guides/imageio/spec/imageio_guideTOC.fm.html
+
+These links are no longer available as `java.net` has shut down:
+
 * https://java.net/projects/jai-imageio-core/
-* http://www.oracle.com/technetwork/java/current-142188.html
 * http://download.java.net/media/jai/builds/release/1_1_3/
-* http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html
-* http://docs.oracle.com/javase/8/docs/technotes/guides/imageio/index.html 
-* http://docs.oracle.com/javase/8/docs/technotes/guides/imageio/spec/imageio_guideTOC.fm.html
