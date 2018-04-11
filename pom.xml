@@ -6,7 +6,7 @@
   </prerequisites>
   <groupId>com.github.jai-imageio</groupId>
   <artifactId>jai-imageio-core</artifactId>
-  <version>1.3.2-SNAPSHOT</version>
+  <version>1.4.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
   <name>Java Advanced Imaging Image I/O Tools API core (standalone)</name>
   <description>
