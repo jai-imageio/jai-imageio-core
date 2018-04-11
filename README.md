@@ -156,14 +156,23 @@ The complete copyright notice for this project is in
 [COPYRIGHT.txt](COPYRIGHT.txt)
 
 The source code license for this project is **BSD 3-clause** with an
-additional nuclear disclaimer, see
-[LICENSE.txt](LICENSE.txt)
+_additional nuclear disclaimer_, see
+[LICENSE.txt](LICENSE.txt). 
 
 
 Changelog
 ---------
 
-* 1.4.0 - Java 9 support (issue #
+* 1.4.0 - Community bug fix release
+  * Build requires Maven 3, Java 6
+  * Java 9 fixes (issues #24, #26)
+  * Avoid empty string from ImageIO.getReaderMIMETypes (issue #27)
+  * Maven version range bug (issues #23, #25)
+  * TIFFImageMetadata.java support legacy `com.sun` attributes (issues #19, #20)
+  * TIFF parsing gave ClassCastException in isIFDPointer (issue #43)
+  * LSB-encoded TIFF images (issues #37, #39)
+  * PackageUtil: Fix NPE (issue #34)
+  * Fix for a buffer overflow problem in TIFF CCITT T.6 compressor (issue #22)  
 * 1.3.1 - Available as OSGi bundle (issue #13). 
       Fixed memory leak in TIFFImageWriter (issue #14).
 * 1.3.0 - Java package changed to com.github.jaiimageio (issue #10).
