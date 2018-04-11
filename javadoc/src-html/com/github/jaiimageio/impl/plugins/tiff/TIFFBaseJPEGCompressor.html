@@ -108,13 +108,13 @@
 <span class="sourceLineNo">100</span><a name="line.100"></a>
 <span class="sourceLineNo">101</span>    /**<a name="line.101"></a>
 <span class="sourceLineNo">102</span>     * ImageWriteParam for JPEG writer.<a name="line.102"></a>
-<span class="sourceLineNo">103</span>     * May be initialized by {@link #initJPEGWriter()}.<a name="line.103"></a>
+<span class="sourceLineNo">103</span>     * May be initialized by {@link #initJPEGWriter(boolean, boolean)}.<a name="line.103"></a>
 <span class="sourceLineNo">104</span>     */<a name="line.104"></a>
 <span class="sourceLineNo">105</span>    protected JPEGImageWriteParam JPEGParam = null;<a name="line.105"></a>
 <span class="sourceLineNo">106</span><a name="line.106"></a>
 <span class="sourceLineNo">107</span>    /**<a name="line.107"></a>
 <span class="sourceLineNo">108</span>     * The JPEG writer.<a name="line.108"></a>
-<span class="sourceLineNo">109</span>     * May be initialized by {@link #initJPEGWriter()}.<a name="line.109"></a>
+<span class="sourceLineNo">109</span>     * May be initialized by {@link #initJPEGWriter(boolean, boolean)}.<a name="line.109"></a>
 <span class="sourceLineNo">110</span>     */<a name="line.110"></a>
 <span class="sourceLineNo">111</span>    protected ImageWriter JPEGWriter = null;<a name="line.111"></a>
 <span class="sourceLineNo">112</span><a name="line.112"></a>
@@ -129,7 +129,7 @@
 <span class="sourceLineNo">121</span>     * Stream metadata equivalent to a tables-only stream such as in<a name="line.121"></a>
 <span class="sourceLineNo">122</span>     * the &lt;code&gt;JPEGTables&lt;/code&gt;. Default value is &lt;code&gt;null&lt;/code&gt;.<a name="line.122"></a>
 <span class="sourceLineNo">123</span>     * This should be set by any subclass which sets<a name="line.123"></a>
-<span class="sourceLineNo">124</span>     * {@link writeAbbreviatedStream} to &lt;code&gt;true&lt;/code&gt;.<a name="line.124"></a>
+<span class="sourceLineNo">124</span>     * {@link #writeAbbreviatedStream} to &lt;code&gt;true&lt;/code&gt;.<a name="line.124"></a>
 <span class="sourceLineNo">125</span>     */<a name="line.125"></a>
 <span class="sourceLineNo">126</span>    protected IIOMetadata JPEGStreamMetadata = null;<a name="line.126"></a>
 <span class="sourceLineNo">127</span><a name="line.127"></a>

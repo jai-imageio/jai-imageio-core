@@ -286,8 +286,26 @@
 <span class="sourceLineNo">278</span>                               int width, int height,<a name="line.278"></a>
 <span class="sourceLineNo">279</span>                               int[] bitsPerSample,<a name="line.279"></a>
 <span class="sourceLineNo">280</span>                               int scanlineStride) throws IOException;<a name="line.280"></a>
-<span class="sourceLineNo">281</span><a name="line.281"></a>
-<span class="sourceLineNo">282</span>}<a name="line.282"></a>
+<span class="sourceLineNo">281</span>                               <a name="line.281"></a>
+<span class="sourceLineNo">282</span>   /**<a name="line.282"></a>
+<span class="sourceLineNo">283</span>     * Allows any resources held by this object to be released.  The<a name="line.283"></a>
+<span class="sourceLineNo">284</span>     * result of calling any other method (other than<a name="line.284"></a>
+<span class="sourceLineNo">285</span>     * &lt;code&gt;finalize&lt;/code&gt;) subsequent to a call to this method<a name="line.285"></a>
+<span class="sourceLineNo">286</span>     * is undefined.<a name="line.286"></a>
+<span class="sourceLineNo">287</span>     *<a name="line.287"></a>
+<span class="sourceLineNo">288</span>     * &lt;p&gt;It is important for applications to call this method when they<a name="line.288"></a>
+<span class="sourceLineNo">289</span>     * know they will no longer be using this &lt;code&gt;TIFFCompressor&lt;/code&gt;.<a name="line.289"></a>
+<span class="sourceLineNo">290</span>     * Otherwise, the writer may continue to hold on to resources<a name="line.290"></a>
+<span class="sourceLineNo">291</span>     * indefinitely.<a name="line.291"></a>
+<span class="sourceLineNo">292</span>     *<a name="line.292"></a>
+<span class="sourceLineNo">293</span>     * &lt;p&gt;The default implementation of this method in the superclass does<a name="line.293"></a>
+<span class="sourceLineNo">294</span>     * nothing.  Subclass implementations should ensure that all resources,<a name="line.294"></a>
+<span class="sourceLineNo">295</span>     * especially native resources, are released.<a name="line.295"></a>
+<span class="sourceLineNo">296</span>     */<a name="line.296"></a>
+<span class="sourceLineNo">297</span>    public void dispose() {<a name="line.297"></a>
+<span class="sourceLineNo">298</span>    }<a name="line.298"></a>
+<span class="sourceLineNo">299</span><a name="line.299"></a>
+<span class="sourceLineNo">300</span>}<a name="line.300"></a>
 
 
 

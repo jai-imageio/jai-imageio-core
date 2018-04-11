@@ -1,0 +1,336 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package com.github.jaiimageio.impl.plugins.tiff;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>public class TIFFFillOrder {<a name="line.3"></a>
+<span class="sourceLineNo">004</span><a name="line.4"></a>
+<span class="sourceLineNo">005</span>    public static final int reverseTable[] = {<a name="line.5"></a>
+<span class="sourceLineNo">006</span>                0x00, //0 00000000 -&gt; 00000000<a name="line.6"></a>
+<span class="sourceLineNo">007</span>                0x80, //1 00000001 -&gt; 10000000<a name="line.7"></a>
+<span class="sourceLineNo">008</span>                0x40, //2 00000010 -&gt; 01000000<a name="line.8"></a>
+<span class="sourceLineNo">009</span>                0xC0, //3 00000011 -&gt; 11000000<a name="line.9"></a>
+<span class="sourceLineNo">010</span>                0x20, //4 00000100 -&gt; 00100000<a name="line.10"></a>
+<span class="sourceLineNo">011</span>                0xA0, //5 00000101 -&gt; 10100000<a name="line.11"></a>
+<span class="sourceLineNo">012</span>                0x60, //6 00000110 -&gt; 01100000<a name="line.12"></a>
+<span class="sourceLineNo">013</span>                0xE0, //7 00000111 -&gt; 11100000<a name="line.13"></a>
+<span class="sourceLineNo">014</span>                0x10, //8 00001000 -&gt; 00010000<a name="line.14"></a>
+<span class="sourceLineNo">015</span>                0x90, //9 00001001 -&gt; 10010000<a name="line.15"></a>
+<span class="sourceLineNo">016</span>                0x50, //10 00001010 -&gt; 01010000<a name="line.16"></a>
+<span class="sourceLineNo">017</span>                0xD0, //11 00001011 -&gt; 11010000<a name="line.17"></a>
+<span class="sourceLineNo">018</span>                0x30, //12 00001100 -&gt; 00110000<a name="line.18"></a>
+<span class="sourceLineNo">019</span>                0xB0, //13 00001101 -&gt; 10110000<a name="line.19"></a>
+<span class="sourceLineNo">020</span>                0x70, //14 00001110 -&gt; 01110000<a name="line.20"></a>
+<span class="sourceLineNo">021</span>                0xF0, //15 00001111 -&gt; 11110000<a name="line.21"></a>
+<span class="sourceLineNo">022</span>                0x08, //16 00010000 -&gt; 00001000<a name="line.22"></a>
+<span class="sourceLineNo">023</span>                0x88, //17 00010001 -&gt; 10001000<a name="line.23"></a>
+<span class="sourceLineNo">024</span>                0x48, //18 00010010 -&gt; 01001000<a name="line.24"></a>
+<span class="sourceLineNo">025</span>                0xC8, //19 00010011 -&gt; 11001000<a name="line.25"></a>
+<span class="sourceLineNo">026</span>                0x28, //20 00010100 -&gt; 00101000<a name="line.26"></a>
+<span class="sourceLineNo">027</span>                0xA8, //21 00010101 -&gt; 10101000<a name="line.27"></a>
+<span class="sourceLineNo">028</span>                0x68, //22 00010110 -&gt; 01101000<a name="line.28"></a>
+<span class="sourceLineNo">029</span>                0xE8, //23 00010111 -&gt; 11101000<a name="line.29"></a>
+<span class="sourceLineNo">030</span>                0x18, //24 00011000 -&gt; 00011000<a name="line.30"></a>
+<span class="sourceLineNo">031</span>                0x98, //25 00011001 -&gt; 10011000<a name="line.31"></a>
+<span class="sourceLineNo">032</span>                0x58, //26 00011010 -&gt; 01011000<a name="line.32"></a>
+<span class="sourceLineNo">033</span>                0xD8, //27 00011011 -&gt; 11011000<a name="line.33"></a>
+<span class="sourceLineNo">034</span>                0x38, //28 00011100 -&gt; 00111000<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                0xB8, //29 00011101 -&gt; 10111000<a name="line.35"></a>
+<span class="sourceLineNo">036</span>                0x78, //30 00011110 -&gt; 01111000<a name="line.36"></a>
+<span class="sourceLineNo">037</span>                0xF8, //31 00011111 -&gt; 11111000<a name="line.37"></a>
+<span class="sourceLineNo">038</span>                0x04, //32 00100000 -&gt; 00000100<a name="line.38"></a>
+<span class="sourceLineNo">039</span>                0x84, //33 00100001 -&gt; 10000100<a name="line.39"></a>
+<span class="sourceLineNo">040</span>                0x44, //34 00100010 -&gt; 01000100<a name="line.40"></a>
+<span class="sourceLineNo">041</span>                0xC4, //35 00100011 -&gt; 11000100<a name="line.41"></a>
+<span class="sourceLineNo">042</span>                0x24, //36 00100100 -&gt; 00100100<a name="line.42"></a>
+<span class="sourceLineNo">043</span>                0xA4, //37 00100101 -&gt; 10100100<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                0x64, //38 00100110 -&gt; 01100100<a name="line.44"></a>
+<span class="sourceLineNo">045</span>                0xE4, //39 00100111 -&gt; 11100100<a name="line.45"></a>
+<span class="sourceLineNo">046</span>                0x14, //40 00101000 -&gt; 00010100<a name="line.46"></a>
+<span class="sourceLineNo">047</span>                0x94, //41 00101001 -&gt; 10010100<a name="line.47"></a>
+<span class="sourceLineNo">048</span>                0x54, //42 00101010 -&gt; 01010100<a name="line.48"></a>
+<span class="sourceLineNo">049</span>                0xD4, //43 00101011 -&gt; 11010100<a name="line.49"></a>
+<span class="sourceLineNo">050</span>                0x34, //44 00101100 -&gt; 00110100<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                0xB4, //45 00101101 -&gt; 10110100<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                0x74, //46 00101110 -&gt; 01110100<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                0xF4, //47 00101111 -&gt; 11110100<a name="line.53"></a>
+<span class="sourceLineNo">054</span>                0x0C, //48 00110000 -&gt; 00001100<a name="line.54"></a>
+<span class="sourceLineNo">055</span>                0x8C, //49 00110001 -&gt; 10001100<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                0x4C, //50 00110010 -&gt; 01001100<a name="line.56"></a>
+<span class="sourceLineNo">057</span>                0xCC, //51 00110011 -&gt; 11001100<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                0x2C, //52 00110100 -&gt; 00101100<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                0xAC, //53 00110101 -&gt; 10101100<a name="line.59"></a>
+<span class="sourceLineNo">060</span>                0x6C, //54 00110110 -&gt; 01101100<a name="line.60"></a>
+<span class="sourceLineNo">061</span>                0xEC, //55 00110111 -&gt; 11101100<a name="line.61"></a>
+<span class="sourceLineNo">062</span>                0x1C, //56 00111000 -&gt; 00011100<a name="line.62"></a>
+<span class="sourceLineNo">063</span>                0x9C, //57 00111001 -&gt; 10011100<a name="line.63"></a>
+<span class="sourceLineNo">064</span>                0x5C, //58 00111010 -&gt; 01011100<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                0xDC, //59 00111011 -&gt; 11011100<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                0x3C, //60 00111100 -&gt; 00111100<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                0xBC, //61 00111101 -&gt; 10111100<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                0x7C, //62 00111110 -&gt; 01111100<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                0xFC, //63 00111111 -&gt; 11111100<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                0x02, //64 01000000 -&gt; 00000010<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                0x82, //65 01000001 -&gt; 10000010<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                0x42, //66 01000010 -&gt; 01000010<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                0xC2, //67 01000011 -&gt; 11000010<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                0x22, //68 01000100 -&gt; 00100010<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                0xA2, //69 01000101 -&gt; 10100010<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                0x62, //70 01000110 -&gt; 01100010<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                0xE2, //71 01000111 -&gt; 11100010<a name="line.77"></a>
+<span class="sourceLineNo">078</span>                0x12, //72 01001000 -&gt; 00010010<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                0x92, //73 01001001 -&gt; 10010010<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                0x52, //74 01001010 -&gt; 01010010<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                0xD2, //75 01001011 -&gt; 11010010<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                0x32, //76 01001100 -&gt; 00110010<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                0xB2, //77 01001101 -&gt; 10110010<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                0x72, //78 01001110 -&gt; 01110010<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                0xF2, //79 01001111 -&gt; 11110010<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                0x0A, //80 01010000 -&gt; 00001010<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                0x8A, //81 01010001 -&gt; 10001010<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                0x4A, //82 01010010 -&gt; 01001010<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                0xCA, //83 01010011 -&gt; 11001010<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                0x2A, //84 01010100 -&gt; 00101010<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                0xAA, //85 01010101 -&gt; 10101010<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                0x6A, //86 01010110 -&gt; 01101010<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                0xEA, //87 01010111 -&gt; 11101010<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                0x1A, //88 01011000 -&gt; 00011010<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                0x9A, //89 01011001 -&gt; 10011010<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                0x5A, //90 01011010 -&gt; 01011010<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                0xDA, //91 01011011 -&gt; 11011010<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                0x3A, //92 01011100 -&gt; 00111010<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                0xBA, //93 01011101 -&gt; 10111010<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                0x7A, //94 01011110 -&gt; 01111010<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                0xFA, //95 01011111 -&gt; 11111010<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                0x06, //96 01100000 -&gt; 00000110<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                0x86, //97 01100001 -&gt; 10000110<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                0x46, //98 01100010 -&gt; 01000110<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                0xC6, //99 01100011 -&gt; 11000110<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                0x26, //100 01100100 -&gt; 00100110<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                0xA6, //101 01100101 -&gt; 10100110<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                0x66, //102 01100110 -&gt; 01100110<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                0xE6, //103 01100111 -&gt; 11100110<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                0x16, //104 01101000 -&gt; 00010110<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                0x96, //105 01101001 -&gt; 10010110<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                0x56, //106 01101010 -&gt; 01010110<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                0xD6, //107 01101011 -&gt; 11010110<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                0x36, //108 01101100 -&gt; 00110110<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                0xB6, //109 01101101 -&gt; 10110110<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                0x76, //110 01101110 -&gt; 01110110<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                0xF6, //111 01101111 -&gt; 11110110<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                0x0E, //112 01110000 -&gt; 00001110<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                0x8E, //113 01110001 -&gt; 10001110<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                0x4E, //114 01110010 -&gt; 01001110<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                0xCE, //115 01110011 -&gt; 11001110<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                0x2E, //116 01110100 -&gt; 00101110<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                0xAE, //117 01110101 -&gt; 10101110<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                0x6E, //118 01110110 -&gt; 01101110<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                0xEE, //119 01110111 -&gt; 11101110<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                0x1E, //120 01111000 -&gt; 00011110<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                0x9E, //121 01111001 -&gt; 10011110<a name="line.127"></a>
+<span class="sourceLineNo">128</span>                0x5E, //122 01111010 -&gt; 01011110<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                0xDE, //123 01111011 -&gt; 11011110<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                0x3E, //124 01111100 -&gt; 00111110<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                0xBE, //125 01111101 -&gt; 10111110<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                0x7E, //126 01111110 -&gt; 01111110<a name="line.132"></a>
+<span class="sourceLineNo">133</span>                0xFE, //127 01111111 -&gt; 11111110<a name="line.133"></a>
+<span class="sourceLineNo">134</span>                0x01, //128 10000000 -&gt; 00000001<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                0x81, //129 10000001 -&gt; 10000001<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                0x41, //130 10000010 -&gt; 01000001<a name="line.136"></a>
+<span class="sourceLineNo">137</span>                0xC1, //131 10000011 -&gt; 11000001<a name="line.137"></a>
+<span class="sourceLineNo">138</span>                0x21, //132 10000100 -&gt; 00100001<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                0xA1, //133 10000101 -&gt; 10100001<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                0x61, //134 10000110 -&gt; 01100001<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                0xE1, //135 10000111 -&gt; 11100001<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                0x11, //136 10001000 -&gt; 00010001<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                0x91, //137 10001001 -&gt; 10010001<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                0x51, //138 10001010 -&gt; 01010001<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                0xD1, //139 10001011 -&gt; 11010001<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                0x31, //140 10001100 -&gt; 00110001<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                0xB1, //141 10001101 -&gt; 10110001<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                0x71, //142 10001110 -&gt; 01110001<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                0xF1, //143 10001111 -&gt; 11110001<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                0x09, //144 10010000 -&gt; 00001001<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                0x89, //145 10010001 -&gt; 10001001<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                0x49, //146 10010010 -&gt; 01001001<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                0xC9, //147 10010011 -&gt; 11001001<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                0x29, //148 10010100 -&gt; 00101001<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                0xA9, //149 10010101 -&gt; 10101001<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                0x69, //150 10010110 -&gt; 01101001<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                0xE9, //151 10010111 -&gt; 11101001<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                0x19, //152 10011000 -&gt; 00011001<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                0x99, //153 10011001 -&gt; 10011001<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                0x59, //154 10011010 -&gt; 01011001<a name="line.160"></a>
+<span class="sourceLineNo">161</span>                0xD9, //155 10011011 -&gt; 11011001<a name="line.161"></a>
+<span class="sourceLineNo">162</span>                0x39, //156 10011100 -&gt; 00111001<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                0xB9, //157 10011101 -&gt; 10111001<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                0x79, //158 10011110 -&gt; 01111001<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                0xF9, //159 10011111 -&gt; 11111001<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                0x05, //160 10100000 -&gt; 00000101<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                0x85, //161 10100001 -&gt; 10000101<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                0x45, //162 10100010 -&gt; 01000101<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                0xC5, //163 10100011 -&gt; 11000101<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                0x25, //164 10100100 -&gt; 00100101<a name="line.170"></a>
+<span class="sourceLineNo">171</span>                0xA5, //165 10100101 -&gt; 10100101<a name="line.171"></a>
+<span class="sourceLineNo">172</span>                0x65, //166 10100110 -&gt; 01100101<a name="line.172"></a>
+<span class="sourceLineNo">173</span>                0xE5, //167 10100111 -&gt; 11100101<a name="line.173"></a>
+<span class="sourceLineNo">174</span>                0x15, //168 10101000 -&gt; 00010101<a name="line.174"></a>
+<span class="sourceLineNo">175</span>                0x95, //169 10101001 -&gt; 10010101<a name="line.175"></a>
+<span class="sourceLineNo">176</span>                0x55, //170 10101010 -&gt; 01010101<a name="line.176"></a>
+<span class="sourceLineNo">177</span>                0xD5, //171 10101011 -&gt; 11010101<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                0x35, //172 10101100 -&gt; 00110101<a name="line.178"></a>
+<span class="sourceLineNo">179</span>                0xB5, //173 10101101 -&gt; 10110101<a name="line.179"></a>
+<span class="sourceLineNo">180</span>                0x75, //174 10101110 -&gt; 01110101<a name="line.180"></a>
+<span class="sourceLineNo">181</span>                0xF5, //175 10101111 -&gt; 11110101<a name="line.181"></a>
+<span class="sourceLineNo">182</span>                0x0D, //176 10110000 -&gt; 00001101<a name="line.182"></a>
+<span class="sourceLineNo">183</span>                0x8D, //177 10110001 -&gt; 10001101<a name="line.183"></a>
+<span class="sourceLineNo">184</span>                0x4D, //178 10110010 -&gt; 01001101<a name="line.184"></a>
+<span class="sourceLineNo">185</span>                0xCD, //179 10110011 -&gt; 11001101<a name="line.185"></a>
+<span class="sourceLineNo">186</span>                0x2D, //180 10110100 -&gt; 00101101<a name="line.186"></a>
+<span class="sourceLineNo">187</span>                0xAD, //181 10110101 -&gt; 10101101<a name="line.187"></a>
+<span class="sourceLineNo">188</span>                0x6D, //182 10110110 -&gt; 01101101<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                0xED, //183 10110111 -&gt; 11101101<a name="line.189"></a>
+<span class="sourceLineNo">190</span>                0x1D, //184 10111000 -&gt; 00011101<a name="line.190"></a>
+<span class="sourceLineNo">191</span>                0x9D, //185 10111001 -&gt; 10011101<a name="line.191"></a>
+<span class="sourceLineNo">192</span>                0x5D, //186 10111010 -&gt; 01011101<a name="line.192"></a>
+<span class="sourceLineNo">193</span>                0xDD, //187 10111011 -&gt; 11011101<a name="line.193"></a>
+<span class="sourceLineNo">194</span>                0x3D, //188 10111100 -&gt; 00111101<a name="line.194"></a>
+<span class="sourceLineNo">195</span>                0xBD, //189 10111101 -&gt; 10111101<a name="line.195"></a>
+<span class="sourceLineNo">196</span>                0x7D, //190 10111110 -&gt; 01111101<a name="line.196"></a>
+<span class="sourceLineNo">197</span>                0xFD, //191 10111111 -&gt; 11111101<a name="line.197"></a>
+<span class="sourceLineNo">198</span>                0x03, //192 11000000 -&gt; 00000011<a name="line.198"></a>
+<span class="sourceLineNo">199</span>                0x83, //193 11000001 -&gt; 10000011<a name="line.199"></a>
+<span class="sourceLineNo">200</span>                0x43, //194 11000010 -&gt; 01000011<a name="line.200"></a>
+<span class="sourceLineNo">201</span>                0xC3, //195 11000011 -&gt; 11000011<a name="line.201"></a>
+<span class="sourceLineNo">202</span>                0x23, //196 11000100 -&gt; 00100011<a name="line.202"></a>
+<span class="sourceLineNo">203</span>                0xA3, //197 11000101 -&gt; 10100011<a name="line.203"></a>
+<span class="sourceLineNo">204</span>                0x63, //198 11000110 -&gt; 01100011<a name="line.204"></a>
+<span class="sourceLineNo">205</span>                0xE3, //199 11000111 -&gt; 11100011<a name="line.205"></a>
+<span class="sourceLineNo">206</span>                0x13, //200 11001000 -&gt; 00010011<a name="line.206"></a>
+<span class="sourceLineNo">207</span>                0x93, //201 11001001 -&gt; 10010011<a name="line.207"></a>
+<span class="sourceLineNo">208</span>                0x53, //202 11001010 -&gt; 01010011<a name="line.208"></a>
+<span class="sourceLineNo">209</span>                0xD3, //203 11001011 -&gt; 11010011<a name="line.209"></a>
+<span class="sourceLineNo">210</span>                0x33, //204 11001100 -&gt; 00110011<a name="line.210"></a>
+<span class="sourceLineNo">211</span>                0xB3, //205 11001101 -&gt; 10110011<a name="line.211"></a>
+<span class="sourceLineNo">212</span>                0x73, //206 11001110 -&gt; 01110011<a name="line.212"></a>
+<span class="sourceLineNo">213</span>                0xF3, //207 11001111 -&gt; 11110011<a name="line.213"></a>
+<span class="sourceLineNo">214</span>                0x0B, //208 11010000 -&gt; 00001011<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                0x8B, //209 11010001 -&gt; 10001011<a name="line.215"></a>
+<span class="sourceLineNo">216</span>                0x4B, //210 11010010 -&gt; 01001011<a name="line.216"></a>
+<span class="sourceLineNo">217</span>                0xCB, //211 11010011 -&gt; 11001011<a name="line.217"></a>
+<span class="sourceLineNo">218</span>                0x2B, //212 11010100 -&gt; 00101011<a name="line.218"></a>
+<span class="sourceLineNo">219</span>                0xAB, //213 11010101 -&gt; 10101011<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                0x6B, //214 11010110 -&gt; 01101011<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                0xEB, //215 11010111 -&gt; 11101011<a name="line.221"></a>
+<span class="sourceLineNo">222</span>                0x1B, //216 11011000 -&gt; 00011011<a name="line.222"></a>
+<span class="sourceLineNo">223</span>                0x9B, //217 11011001 -&gt; 10011011<a name="line.223"></a>
+<span class="sourceLineNo">224</span>                0x5B, //218 11011010 -&gt; 01011011<a name="line.224"></a>
+<span class="sourceLineNo">225</span>                0xDB, //219 11011011 -&gt; 11011011<a name="line.225"></a>
+<span class="sourceLineNo">226</span>                0x3B, //220 11011100 -&gt; 00111011<a name="line.226"></a>
+<span class="sourceLineNo">227</span>                0xBB, //221 11011101 -&gt; 10111011<a name="line.227"></a>
+<span class="sourceLineNo">228</span>                0x7B, //222 11011110 -&gt; 01111011<a name="line.228"></a>
+<span class="sourceLineNo">229</span>                0xFB, //223 11011111 -&gt; 11111011<a name="line.229"></a>
+<span class="sourceLineNo">230</span>                0x07, //224 11100000 -&gt; 00000111<a name="line.230"></a>
+<span class="sourceLineNo">231</span>                0x87, //225 11100001 -&gt; 10000111<a name="line.231"></a>
+<span class="sourceLineNo">232</span>                0x47, //226 11100010 -&gt; 01000111<a name="line.232"></a>
+<span class="sourceLineNo">233</span>                0xC7, //227 11100011 -&gt; 11000111<a name="line.233"></a>
+<span class="sourceLineNo">234</span>                0x27, //228 11100100 -&gt; 00100111<a name="line.234"></a>
+<span class="sourceLineNo">235</span>                0xA7, //229 11100101 -&gt; 10100111<a name="line.235"></a>
+<span class="sourceLineNo">236</span>                0x67, //230 11100110 -&gt; 01100111<a name="line.236"></a>
+<span class="sourceLineNo">237</span>                0xE7, //231 11100111 -&gt; 11100111<a name="line.237"></a>
+<span class="sourceLineNo">238</span>                0x17, //232 11101000 -&gt; 00010111<a name="line.238"></a>
+<span class="sourceLineNo">239</span>                0x97, //233 11101001 -&gt; 10010111<a name="line.239"></a>
+<span class="sourceLineNo">240</span>                0x57, //234 11101010 -&gt; 01010111<a name="line.240"></a>
+<span class="sourceLineNo">241</span>                0xD7, //235 11101011 -&gt; 11010111<a name="line.241"></a>
+<span class="sourceLineNo">242</span>                0x37, //236 11101100 -&gt; 00110111<a name="line.242"></a>
+<span class="sourceLineNo">243</span>                0xB7, //237 11101101 -&gt; 10110111<a name="line.243"></a>
+<span class="sourceLineNo">244</span>                0x77, //238 11101110 -&gt; 01110111<a name="line.244"></a>
+<span class="sourceLineNo">245</span>                0xF7, //239 11101111 -&gt; 11110111<a name="line.245"></a>
+<span class="sourceLineNo">246</span>                0x0F, //240 11110000 -&gt; 00001111<a name="line.246"></a>
+<span class="sourceLineNo">247</span>                0x8F, //241 11110001 -&gt; 10001111<a name="line.247"></a>
+<span class="sourceLineNo">248</span>                0x4F, //242 11110010 -&gt; 01001111<a name="line.248"></a>
+<span class="sourceLineNo">249</span>                0xCF, //243 11110011 -&gt; 11001111<a name="line.249"></a>
+<span class="sourceLineNo">250</span>                0x2F, //244 11110100 -&gt; 00101111<a name="line.250"></a>
+<span class="sourceLineNo">251</span>                0xAF, //245 11110101 -&gt; 10101111<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                0x6F, //246 11110110 -&gt; 01101111<a name="line.252"></a>
+<span class="sourceLineNo">253</span>                0xEF, //247 11110111 -&gt; 11101111<a name="line.253"></a>
+<span class="sourceLineNo">254</span>                0x1F, //248 11111000 -&gt; 00011111<a name="line.254"></a>
+<span class="sourceLineNo">255</span>                0x9F, //249 11111001 -&gt; 10011111<a name="line.255"></a>
+<span class="sourceLineNo">256</span>                0x5F, //250 11111010 -&gt; 01011111<a name="line.256"></a>
+<span class="sourceLineNo">257</span>                0xDF, //251 11111011 -&gt; 11011111<a name="line.257"></a>
+<span class="sourceLineNo">258</span>                0x3F, //252 11111100 -&gt; 00111111<a name="line.258"></a>
+<span class="sourceLineNo">259</span>                0xBF, //253 11111101 -&gt; 10111111<a name="line.259"></a>
+<span class="sourceLineNo">260</span>                0x7F, //254 11111110 -&gt; 01111111<a name="line.260"></a>
+<span class="sourceLineNo">261</span>                0xFF, //255 11111111 -&gt; 11111111<a name="line.261"></a>
+<span class="sourceLineNo">262</span>    };<a name="line.262"></a>
+<span class="sourceLineNo">263</span><a name="line.263"></a>
+<span class="sourceLineNo">264</span>}<a name="line.264"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

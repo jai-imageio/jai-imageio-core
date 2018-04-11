@@ -258,33 +258,36 @@
 <span class="sourceLineNo">250</span><a name="line.250"></a>
 <span class="sourceLineNo">251</span>        // This initial buffer size is based on an alternating 1-0<a name="line.251"></a>
 <span class="sourceLineNo">252</span>        // pattern generating the most bits when converted to code<a name="line.252"></a>
-<span class="sourceLineNo">253</span>        // words: 9 bits out for each pair of bits in. So the number<a name="line.253"></a>
-<span class="sourceLineNo">254</span>        // of bit pairs is determined, multiplied by 9, converted to<a name="line.254"></a>
+<span class="sourceLineNo">253</span>        // words: 12 bits out for each pair of bits in. So the number<a name="line.253"></a>
+<span class="sourceLineNo">254</span>        // of bit pairs is determined, multiplied by 12, converted to<a name="line.254"></a>
 <span class="sourceLineNo">255</span>        // bytes, and a ceil() is taken to account for fill bits at the<a name="line.255"></a>
 <span class="sourceLineNo">256</span>        // end of each line.  The "2" addend accounts for the case<a name="line.256"></a>
 <span class="sourceLineNo">257</span>        // of the pattern beginning with black.  The buffer is intended<a name="line.257"></a>
 <span class="sourceLineNo">258</span>        // to hold only a single row.<a name="line.258"></a>
-<span class="sourceLineNo">259</span><a name="line.259"></a>
-<span class="sourceLineNo">260</span>        int maxBits = 9*((width + 1)/2) + 2;<a name="line.260"></a>
-<span class="sourceLineNo">261</span>        int bufSize = (maxBits + 7)/8;<a name="line.261"></a>
+<span class="sourceLineNo">259</span>        <a name="line.259"></a>
+<span class="sourceLineNo">260</span>        // Note: the max pattern len is 12: Horizontal mode 001 + M(a0a1) + M(a1a2)<a name="line.260"></a>
+<span class="sourceLineNo">261</span>        // where for 2 bits M(a0a1) and M(a1a2) can be 9<a name="line.261"></a>
 <span class="sourceLineNo">262</span><a name="line.262"></a>
-<span class="sourceLineNo">263</span>        // Calculate the maximum row as the G3-1D size plus the EOL,<a name="line.263"></a>
-<span class="sourceLineNo">264</span>        // multiply this by the number of rows in the tile, and add<a name="line.264"></a>
-<span class="sourceLineNo">265</span>        // 6 EOLs for the RTC (return to control).<a name="line.265"></a>
-<span class="sourceLineNo">266</span>        bufSize = height*(bufSize + 2) + 12;<a name="line.266"></a>
-<span class="sourceLineNo">267</span><a name="line.267"></a>
-<span class="sourceLineNo">268</span>        byte[] compData = new byte[bufSize];<a name="line.268"></a>
-<span class="sourceLineNo">269</span><a name="line.269"></a>
-<span class="sourceLineNo">270</span>        int bytes = encodeT4(is1DMode,<a name="line.270"></a>
-<span class="sourceLineNo">271</span>                             isEOLAligned,<a name="line.271"></a>
-<span class="sourceLineNo">272</span>                             b, scanlineStride, 8*off,<a name="line.272"></a>
-<span class="sourceLineNo">273</span>                             width, height,<a name="line.273"></a>
-<span class="sourceLineNo">274</span>                             compData);<a name="line.274"></a>
-<span class="sourceLineNo">275</span><a name="line.275"></a>
-<span class="sourceLineNo">276</span>        stream.write(compData, 0, bytes);<a name="line.276"></a>
-<span class="sourceLineNo">277</span>        return bytes;<a name="line.277"></a>
-<span class="sourceLineNo">278</span>    }<a name="line.278"></a>
-<span class="sourceLineNo">279</span>}<a name="line.279"></a>
+<span class="sourceLineNo">263</span>        int maxBits = 12*((width + 1)/2) + 2;<a name="line.263"></a>
+<span class="sourceLineNo">264</span>        int bufSize = (maxBits + 7)/8;<a name="line.264"></a>
+<span class="sourceLineNo">265</span><a name="line.265"></a>
+<span class="sourceLineNo">266</span>        // Calculate the maximum row as the G3-1D size plus the EOL,<a name="line.266"></a>
+<span class="sourceLineNo">267</span>        // multiply this by the number of rows in the tile, and add<a name="line.267"></a>
+<span class="sourceLineNo">268</span>        // 6 EOLs for the RTC (return to control).<a name="line.268"></a>
+<span class="sourceLineNo">269</span>        bufSize = height*(bufSize + 2) + 12;<a name="line.269"></a>
+<span class="sourceLineNo">270</span><a name="line.270"></a>
+<span class="sourceLineNo">271</span>        byte[] compData = new byte[bufSize];<a name="line.271"></a>
+<span class="sourceLineNo">272</span><a name="line.272"></a>
+<span class="sourceLineNo">273</span>        int bytes = encodeT4(is1DMode,<a name="line.273"></a>
+<span class="sourceLineNo">274</span>                             isEOLAligned,<a name="line.274"></a>
+<span class="sourceLineNo">275</span>                             b, scanlineStride, 8*off,<a name="line.275"></a>
+<span class="sourceLineNo">276</span>                             width, height,<a name="line.276"></a>
+<span class="sourceLineNo">277</span>                             compData);<a name="line.277"></a>
+<span class="sourceLineNo">278</span><a name="line.278"></a>
+<span class="sourceLineNo">279</span>        stream.write(compData, 0, bytes);<a name="line.279"></a>
+<span class="sourceLineNo">280</span>        return bytes;<a name="line.280"></a>
+<span class="sourceLineNo">281</span>    }<a name="line.281"></a>
+<span class="sourceLineNo">282</span>}<a name="line.282"></a>
 
 
 
