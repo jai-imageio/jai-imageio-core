@@ -260,7 +260,7 @@ public class TIFFIFD extends TIFFDirectory {
                                 if (inString) {
                                 // end of string
                                     String s = new String(bvalues, prevIndex,
-                                                          index - prevIndex);
+                                                          index - prevIndex, "UTF-8");
                                     v.add(s);
                                     inString = false;
                                 }
