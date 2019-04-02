@@ -1462,7 +1462,7 @@ public class TIFFImageReader extends ImageReader {
     }
     
     protected static BufferedImage getDestination(ImageReadParam param,
-                                                  Iterator imageTypes,
+                                                  Iterator<ImageTypeSpecifier> imageTypes,
                                                   int width, int height)
             throws IIOException {
         if (imageTypes == null || !imageTypes.hasNext()) {
