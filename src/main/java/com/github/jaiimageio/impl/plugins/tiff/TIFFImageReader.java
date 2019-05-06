@@ -767,22 +767,33 @@ public class TIFFImageReader extends ImageReader {
 
                 // Replace the ColorModel with the ICC ColorModel if the
                 // numbers of samples and color components are amenable.
-                if(numBands == numComponents ||
-                   numBands == numComponents + 1) {
+                if(numBands == numComponents + extraSamples.length ||
+                        numBands == numComponents + 1 + extraSamples.length) {
                     // Set alpha flags.
-                    boolean hasAlpha = numComponents != numBands;
+                    boolean hasAlpha = numComponents + extraSamples.length != numBands;
                     boolean isAlphaPre =
                         hasAlpha && cmRaw.isAlphaPremultiplied();
 
                     // Create a ColorModel of the same class and with
                     // the same transfer type.
-                    ColorModel iccColorModel =
-                        new ComponentColorModel(iccColorSpace,
-                                                cmRaw.getComponentSize(),
-                                                hasAlpha,
-                                                isAlphaPre,
-                                                cmRaw.getTransparency(),
-                                                cmRaw.getTransferType());
+                    ColorModel iccColorModel = null;
+                    if (extraSamples.length == 0) {
+                        iccColorModel =
+                                new ComponentColorModel(iccColorSpace,
+                                        cmRaw.getComponentSize(),
+                                        hasAlpha,
+                                        isAlphaPre,
+                                        cmRaw.getTransparency(),
+                                        cmRaw.getTransferType());
+                    } else {
+                        iccColorModel = new TIFFExtraSamplesColorModel(iccColorSpace,
+                                cmRaw.getComponentSize(),
+                                hasAlpha,
+                                isAlphaPre,
+                                cmRaw.getTransparency(),
+                                cmRaw.getTransferType(),
+                                extraSamples.length);
+                    }
 
                     // Prepend the ICC profile-based ITS to the List. The
                     // ColorModel and SampleModel are guaranteed to be
