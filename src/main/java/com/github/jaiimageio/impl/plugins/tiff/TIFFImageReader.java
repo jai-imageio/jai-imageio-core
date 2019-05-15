@@ -765,19 +765,25 @@ public class TIFFImageReader extends ImageReader {
                 int numBands = smRaw.getNumBands();
                 int numComponents = iccColorSpace.getNumComponents();
 
+                int extraSamplesLength = 0;
+
+                if (extraSamples != null) {
+                    extraSamplesLength = extraSamples.length;
+                }
+
                 // Replace the ColorModel with the ICC ColorModel if the
                 // numbers of samples and color components are amenable.
-                if(numBands == numComponents + extraSamples.length ||
-                        numBands == numComponents + 1 + extraSamples.length) {
+                if(numBands == numComponents + extraSamplesLength ||
+                        numBands == numComponents + 1 + extraSamplesLength) {
                     // Set alpha flags.
-                    boolean hasAlpha = numComponents + extraSamples.length != numBands;
+                    boolean hasAlpha = numComponents + extraSamplesLength != numBands;
                     boolean isAlphaPre =
                         hasAlpha && cmRaw.isAlphaPremultiplied();
 
                     // Create a ColorModel of the same class and with
                     // the same transfer type.
                     ColorModel iccColorModel = null;
-                    if (extraSamples.length == 0) {
+                    if (extraSamplesLength == 0) {
                         iccColorModel =
                                 new ComponentColorModel(iccColorSpace,
                                         cmRaw.getComponentSize(),
@@ -792,7 +798,7 @@ public class TIFFImageReader extends ImageReader {
                                 isAlphaPre,
                                 cmRaw.getTransparency(),
                                 cmRaw.getTransferType(),
-                                extraSamples.length);
+                                extraSamplesLength);
                     }
 
                     // Prepend the ICC profile-based ITS to the List. The
