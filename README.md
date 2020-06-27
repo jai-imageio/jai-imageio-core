@@ -99,7 +99,7 @@ To use jai-imageio-core from a Maven project, add:
     <dependency>
         <groupId>com.github.jai-imageio</groupId>
         <artifactId>jai-imageio-core</artifactId>
-        <version>1.3.1</version>
+        <version>1.4.0</version>
     </dependency>
 
 To find the latest released `<version>` above, see 
