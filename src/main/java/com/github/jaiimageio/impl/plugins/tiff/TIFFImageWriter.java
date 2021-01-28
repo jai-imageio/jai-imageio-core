@@ -240,7 +240,7 @@ public class TIFFImageWriter extends ImageWriter {
      * relative to a given tile grid layout specified by its X offset
      * and tile width.
      *
-     * <p> If <code>tileWidth < 0</code>, the results of this method
+     * <p> If <code>tileWidth &lt; 0</code>, the results of this method
      * are undefined.  If <code>tileWidth == 0</code>, an
      * <code>ArithmeticException</code> will be thrown.
      *
@@ -259,7 +259,7 @@ public class TIFFImageWriter extends ImageWriter {
      * relative to a given tile grid layout specified by its Y offset
      * and tile height.
      *
-     * <p> If <code>tileHeight < 0</code>, the results of this method
+     * <p> If <code>tileHeight &lt; 0</code>, the results of this method
      * are undefined.  If <code>tileHeight == 0</code>, an
      * <code>ArithmeticException</code> will be thrown.
      *

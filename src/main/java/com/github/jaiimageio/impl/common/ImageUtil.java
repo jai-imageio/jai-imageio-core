@@ -154,7 +154,7 @@ public class ImageUtil {
      *
      * <p>An instance of <code>IndexColorModel</code> will be created for
      * instances of <code>MultiPixelPackedSampleModel</code>. The colormap
-     * will be a grayscale ramp with <code>1&nbsp;<<&nbsp;numberOfBits</code>
+     * will be a grayscale ramp with <code>1&nbsp;&lt;&lt;&nbsp;numberOfBits</code>
      * entries ranging from zero to at most 255.</p>
      *
      * @return An instance of <code>ColorModel</code> that is suitable for
@@ -1057,8 +1057,8 @@ public class ImageUtil {
     /**
      * Tests whether the color indices represent a gray-scale image with
      * the indicated number of bits over the color component range [0,255].
-     * The grayscale mapping may be inverted, i.e., 0 -> 255 and
-     * mapSize -> 0.
+     * The grayscale mapping may be inverted, i.e., 0 -&gt; 255 and
+     * mapSize -&gt; 0.
      *
      * @param icm The gray-to-color mapping.
      * @return Whether the <code>IndexColorModel</code> maps index
