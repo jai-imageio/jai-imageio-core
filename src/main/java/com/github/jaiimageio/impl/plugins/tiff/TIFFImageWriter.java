@@ -1780,13 +1780,10 @@ public class TIFFImageWriter extends ImageWriter {
                 return compressor.encode(buf, 0,
                                          width, height, sampleSize,
                                          (tileRect.width + 7)/8);
-            } else if(bitDepth == 8 &&
-                      sm.getDataType() == DataBuffer.TYPE_BYTE) {
+            } else if(bitDepth == DataBuffer.getDataTypeSize(sm.getDataType())) {
+
                 ComponentSampleModel csm =
                     (ComponentSampleModel)raster.getSampleModel();
-
-                byte[] buf =
-                    ((DataBufferByte)raster.getDataBuffer()).getData();
 
                 int off =
                     csm.getOffset(minX -
@@ -1798,7 +1795,7 @@ public class TIFFImageWriter extends ImageWriter {
                     System.out.println("Optimized component case");
                 }
 
-                return compressor.encode(buf, off,
+                return compressor.encode(raster.getDataBuffer(), off,
                                          width, height, sampleSize,
                                          csm.getScanlineStride());
             }
