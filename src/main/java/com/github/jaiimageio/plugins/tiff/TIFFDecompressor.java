@@ -376,7 +376,7 @@ public abstract class TIFFDecompressor {
      * <p> The pixels in the source region to be copied are
      * those with X coordinates of the form <code>activeSrcMinX +
      * k*subsampleX</code>, where <code>k</code> is an integer such
-     * that <code>0 <= k < dstWidth</code>.
+     * that <code>0 &lt;= k &lt; dstWidth</code>.
      */
     protected int activeSrcMinX;
 
@@ -388,7 +388,7 @@ public abstract class TIFFDecompressor {
      * <p> The pixels in the source region to be copied are
      * those with Y coordinates of the form <code>activeSrcMinY +
      * k*subsampleY</code>, where <code>k</code> is an integer such
-     * that <code>0 <= k < dstHeight</code>.
+     * that <code>0 &lt;= k &lt; dstHeight</code>.
      */
     protected int activeSrcMinY;
 

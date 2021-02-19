@@ -49,6 +49,11 @@ import java.io.IOException;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
+import java.awt.image.*;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 
 import com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriter;
 
@@ -278,7 +283,83 @@ public abstract class TIFFCompressor {
                                int width, int height,
                                int[] bitsPerSample,
                                int scanlineStride) throws IOException;
-                               
+
+    /**
+     * Encodes the supplied image data, writing to the currently set
+     * <code>ImageOutputStream</code>.
+     *
+     * @param dataBuffer an DataBuffer with pixels
+     * @param off the starting offset of the data to be written in the
+     * array <code>b</code>.
+     * @param width the width of the rectangle of pixels to be written.
+     * @param height the height of the rectangle of pixels to be written.
+     * @param bitsPerSample an array of <code>int</code>s indicting
+     * the number of bits used to represent each image sample within
+     * a pixel.
+     * @param scanlineStride the number of bytes separating each
+     * row of the input data.
+     *
+     * @return the number of bytes written.
+     *
+     * @throws IOException if the supplied data cannot be encoded by
+     * this <code>TIFFCompressor</code>, or if any I/O error occurs
+     * during writing.
+     */
+    private byte[] currentTile = null;
+    public int encode(DataBuffer dataBuffer, int off,
+                      int width, int height,
+                      int[] bitsPerSample,
+                      int scanlineStride) throws IOException {
+        final int dataType = dataBuffer.getDataType();
+        if (dataType == DataBuffer.TYPE_BYTE) {
+            return encode(((DataBufferByte) dataBuffer).getData(), off, width, height, bitsPerSample, scanlineStride);
+        }
+        final int dataTypeSize = DataBuffer.getDataTypeSize(dataType) / Byte.SIZE;
+        int tileSize = width * height * dataTypeSize;
+        if (currentTile == null || currentTile.length < tileSize)
+            currentTile = new byte[tileSize];
+        final ByteBuffer buffer = ByteBuffer.wrap(currentTile).order(stream.getByteOrder());
+        switch (dataType) {
+            case DataBuffer.TYPE_USHORT: {
+                ShortBuffer sb = buffer.asShortBuffer();
+                short[] shorts = ((DataBufferUShort) dataBuffer).getData();
+                for (int i = 0; i < height; i++) {
+                    sb.put(shorts, off, width);
+                    off += scanlineStride;
+                }
+                break;
+            }
+            case DataBuffer.TYPE_SHORT: {
+                ShortBuffer sb = buffer.asShortBuffer();
+                short[] shorts = ((DataBufferShort) dataBuffer).getData();
+                for (int i = 0; i < height; i++) {
+                    sb.put(shorts, off, width);
+                    off += scanlineStride;
+                }
+                break;
+            }
+            case DataBuffer.TYPE_INT: {
+                IntBuffer ib = buffer.asIntBuffer();
+                int[] ints = ((DataBufferInt) dataBuffer).getData();
+                for (int i = 0; i < height; i++) {
+                    ib.put(ints, off, width);
+                    off += scanlineStride;
+                }
+                break;
+            }
+            case DataBuffer.TYPE_FLOAT: {
+                FloatBuffer fb = buffer.asFloatBuffer();
+                float[] floats = ((DataBufferFloat) dataBuffer).getData();
+                for (int i = 0; i < height; i++) {
+                    fb.put(floats, off, width);
+                    off += scanlineStride;
+                }
+                break;
+            }
+        }
+        return encode(currentTile, 0, width, height, bitsPerSample, width * dataTypeSize);
+    }
+
    /**
      * Allows any resources held by this object to be released.  The
      * result of calling any other method (other than

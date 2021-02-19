@@ -240,7 +240,7 @@ public class TIFFImageWriter extends ImageWriter {
      * relative to a given tile grid layout specified by its X offset
      * and tile width.
      *
-     * <p> If <code>tileWidth < 0</code>, the results of this method
+     * <p> If <code>tileWidth &lt; 0</code>, the results of this method
      * are undefined.  If <code>tileWidth == 0</code>, an
      * <code>ArithmeticException</code> will be thrown.
      *
@@ -259,7 +259,7 @@ public class TIFFImageWriter extends ImageWriter {
      * relative to a given tile grid layout specified by its Y offset
      * and tile height.
      *
-     * <p> If <code>tileHeight < 0</code>, the results of this method
+     * <p> If <code>tileHeight &lt; 0</code>, the results of this method
      * are undefined.  If <code>tileHeight == 0</code>, an
      * <code>ArithmeticException</code> will be thrown.
      *
@@ -1717,7 +1717,8 @@ public class TIFFImageWriter extends ImageWriter {
             SampleModel sm = image.getSampleModel();
 
             // Read only data from the active rectangle.
-            Raster raster = image.getData(activeRect);
+            Raster raster = image instanceof BufferedImage ? ((BufferedImage) image).getRaster()
+                          : image.getData(activeRect);
 
             // If padding is required, create a larger Raster and fill
             // it from the active rectangle.
@@ -1780,13 +1781,10 @@ public class TIFFImageWriter extends ImageWriter {
                 return compressor.encode(buf, 0,
                                          width, height, sampleSize,
                                          (tileRect.width + 7)/8);
-            } else if(bitDepth == 8 &&
-                      sm.getDataType() == DataBuffer.TYPE_BYTE) {
+            } else if(bitDepth == DataBuffer.getDataTypeSize(sm.getDataType())) {
+
                 ComponentSampleModel csm =
                     (ComponentSampleModel)raster.getSampleModel();
-
-                byte[] buf =
-                    ((DataBufferByte)raster.getDataBuffer()).getData();
 
                 int off =
                     csm.getOffset(minX -
@@ -1798,7 +1796,7 @@ public class TIFFImageWriter extends ImageWriter {
                     System.out.println("Optimized component case");
                 }
 
-                return compressor.encode(buf, off,
+                return compressor.encode(raster.getDataBuffer(), off,
                                          width, height, sampleSize,
                                          csm.getScanlineStride());
             }

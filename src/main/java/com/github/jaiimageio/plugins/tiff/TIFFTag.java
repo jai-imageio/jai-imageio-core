@@ -292,7 +292,7 @@ public class TIFFTag {
      * would return a value of:
      *
      * <pre>
-     * (1 << TIFFTag.TIFF_SHORT) | (1 << TIFFTag.TIFF_LONG)
+     * (1 &lt;&lt; TIFFTag.TIFF_SHORT) | (1 &lt;&lt; TIFFTag.TIFF_LONG)
      * </pre>
      *
      * @return an <code>int</code> containing a bitmask encoding the

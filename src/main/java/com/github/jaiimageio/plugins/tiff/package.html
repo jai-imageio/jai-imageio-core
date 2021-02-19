@@ -289,9 +289,9 @@ in the following table.
 <tr>
 <td>/Chroma/ColorSpaceType@name</td>
 <td>PhotometricInterpretation: WhiteIsZero, BlackIsZero, TransparencyMask =
-"GRAY"; RGB, PaletteColor => "RGB"; CMYK => "CMYK";
-YCbCr => "YCbCr";
-CIELab, ICCLab => "Lab".</td>
+"GRAY"; RGB, PaletteColor =&gt; "RGB"; CMYK =&gt; "CMYK";
+YCbCr =&gt; "YCbCr";
+CIELab, ICCLab =&gt; "Lab".</td>
 </tr>
 <tr>
 <td>/Chroma/NumChannels@value</td>
@@ -299,7 +299,7 @@ CIELab, ICCLab => "Lab".</td>
 </tr>
 <tr>
 <td>/Chroma/BlackIsZero@value</td>
-<td>"TRUE" <=> PhotometricInterpretation => WhiteIsZero</td>
+<td>"TRUE" &lt;=&gt; PhotometricInterpretation =&gt; WhiteIsZero</td>
 </tr>
 <tr>
 <td>/Chroma/Palette</td>
@@ -307,28 +307,28 @@ CIELab, ICCLab => "Lab".</td>
 </tr>
 <tr>
 <td>/Compression/CompressionTypeName@value</td>
-<td>Compression: Uncompressed => "none"; CCITT 1D => "CCITT
+<td>Compression: Uncompressed =&gt; "none"; CCITT 1D =&gt; "CCITT
 RLE";
-Group 3 Fax => "CCITT T.4"; Group 4 Fax => "CCITT T.6";
-LZW => "LZW";
-JPEG => "Old JPEG"; New JPEG => "JPEG"; Zlib =>> "ZLib"; PackBits =>
+Group 3 Fax =&gt; "CCITT T.4"; Group 4 Fax =&gt; "CCITT T.6";
+LZW =&gt; "LZW";
+JPEG =&gt; "Old JPEG"; New JPEG =&gt; "JPEG"; Zlib =&gt;&gt; "ZLib"; PackBits =&gt;
 "PackBits";
-Deflate => "Deflate"; EXIF JPEG => "JPEG".</td>
+Deflate =&gt; "Deflate"; EXIF JPEG =&gt; "JPEG".</td>
 </tr>
 <tr>
 <td>/Compression/Lossless@value</td>
-<td>Compression: JPEG or New JPEG => "FALSE"; otherwise "TRUE".</td>
+<td>Compression: JPEG or New JPEG =&gt; "FALSE"; otherwise "TRUE".</td>
 </tr>
 <tr>
 <td>/Data/PlanarConfiguration@value</td>
-<td>Chunky => "PixelInterleaved"; Planar => "PlaneInterleaved".</td>
+<td>Chunky =&gt; "PixelInterleaved"; Planar =&gt; "PlaneInterleaved".</td>
 </tr>
 <tr>
 <td>/Data/SampleFormat@value</td>
-<td>PhotometricInterpretation PaletteColor => "Index";
-SampleFormat unsigned integer data => "UnsignedIntegral";
-SampleFormat two's complement signed integer data => "SignedIntegral";
-SampleFormat IEEE floating point data => "Real";
+<td>PhotometricInterpretation PaletteColor =&gt; "Index";
+SampleFormat unsigned integer data =&gt; "UnsignedIntegral";
+SampleFormat two's complement signed integer data =&gt; "SignedIntegral";
+SampleFormat IEEE floating point data =&gt; "Real";
 otherwise element not emitted.
 </td>
 </tr>
@@ -338,8 +338,8 @@ otherwise element not emitted.
 </tr>
 <tr>
 <td>/Data/SampleMSB@value</td>
-<td>FillOrder: left-to-right => space-separated list of BitsPerSample-1;
-right-to-left => space-separated list of 0s.</td>
+<td>FillOrder: left-to-right =&gt; space-separated list of BitsPerSample-1;
+right-to-left =&gt; space-separated list of 0s.</td>
 </tr>
 <tr>
 <td>/Dimension/PixelAspectRatio@value</td>
@@ -371,9 +371,9 @@ right-to-left => space-separated list of 0s.</td>
 </tr>
 <tr>
 <td>/Document/SubimageInterpretation@value</td>
-<td>NewSubFileType: transparency => "TransparencyMask";
-reduced-resolution => "ReducedResolution";
-single page => "SinglePage".</td>
+<td>NewSubFileType: transparency =&gt; "TransparencyMask";
+reduced-resolution =&gt; "ReducedResolution";
+single page =&gt; "SinglePage".</td>
 </tr>
 <tr>
 <td>/Document/ImageCreationTime@value</td>
@@ -385,14 +385,14 @@ single page => "SinglePage".</td>
 Artist, HostComputer, InkNames, Copyright:
 /Text/TextEntry@keyword = field name,
 /Text/TextEntry@value = field value.<br>
-Example: TIFF Software field => /Text/TextEntry@keyword = "Software",
+Example: TIFF Software field =&gt; /Text/TextEntry@keyword = "Software",
 /Text/TextEntry@value = Name and version number of the software package(s)
 used to create the image.</td>
 </tr>
 <tr>
 <td>/Transparency/Alpha@value</td>
-<td>ExtraSamples: associated alpha => "premultiplied";
-unassociated alpha => "nonpremultiplied".</td>
+<td>ExtraSamples: associated alpha =&gt; "premultiplied";
+unassociated alpha =&gt; "nonpremultiplied".</td>
 </tr>
 </table>
 </p>
@@ -426,7 +426,7 @@ IIOMetadata primaryIFD = tiffReader.getImageMetadata(0);
 // Read thumbnail and IFD if present.
 BufferedImage thumbnail = null;
 IIOMetadata thumbnailIFD = null;
-if(tiffReader.getNumImages(true) > 1) {
+if(tiffReader.getNumImages(true) &gt; 1) {
     thumbnail = tiffReader.read(1, readParam);
     thumbnailIFD = tiffReader.getImageMetadata(1);
 }
@@ -477,7 +477,7 @@ IIOMetadata primaryIFD = tiffReader.getImageMetadata(0);
 // Read thumbnail and IFD if present.
 BufferedImage thumbnail = null;
 IIOMetadata thumbnailIFD = null;
-if(tiffReader.getNumImages(true) > 1) {
+if(tiffReader.getNumImages(true) &gt; 1) {
     thumbnail = tiffReader.read(1, readParam);
     thumbnailIFD = tiffReader.getImageMetadata(1);
 }
@@ -676,10 +676,10 @@ given in the following table.
 PhotometricInterpretation
 </td>
 <td>/Chroma/ColorSpaceType@name: "GRAY" and /Chroma/BlackIsZero@value = "FALSE"
-=> WhiteIsZero; "GRAY" and /Document/SubimageInterpretation@value =
-"TransparencyMask" => TransparencyMask; "RGB" and /Chroma/Palette present =>
-PaletteColor; "GRAY" => BlackIsZero; "RGB" => RGB; "YCbCr" => YCbCr;
-"CMYK" => CMYK; "Lab" => CIELab.</td>
+=&gt; WhiteIsZero; "GRAY" and /Document/SubimageInterpretation@value =
+"TransparencyMask" =&gt; TransparencyMask; "RGB" and /Chroma/Palette present =&gt;
+PaletteColor; "GRAY" =&gt; BlackIsZero; "RGB" =&gt; RGB; "YCbCr" =&gt; YCbCr;
+"CMYK" =&gt; CMYK; "Lab" =&gt; CIELab.</td>
 </tr>
 <tr>
 <td>SamplesPerPixel</td>
@@ -691,21 +691,21 @@ PaletteColor; "GRAY" => BlackIsZero; "RGB" => RGB; "YCbCr" => YCbCr;
 </tr>
 <tr>
 <td>Compression</td>
-<td>/Compression/CompressionTypeName@value: "none" => Uncompressed;
-"CCITT RLE" => CCITT 1D; "CCITT T.4" => Group 3 Fax; "CCITT T.6" => Group 4
-Fax; "LZW" => LZW; "Old JPEG" => JPEG; "JPEG" => New JPEG; "ZLib" => ZLib;
-"PackBits" => PackBits; "Deflate" => Deflate.</td>
+<td>/Compression/CompressionTypeName@value: "none" =&gt; Uncompressed;
+"CCITT RLE" =&gt; CCITT 1D; "CCITT T.4" =&gt; Group 3 Fax; "CCITT T.6" =&gt; Group 4
+Fax; "LZW" =&gt; LZW; "Old JPEG" =&gt; JPEG; "JPEG" =&gt; New JPEG; "ZLib" =&gt; ZLib;
+"PackBits" =&gt; PackBits; "Deflate" =&gt; Deflate.</td>
 </tr>
 <tr>
 <td>PlanarConfiguration</td>
-<td>/Data/PlanarConfiguration@value: "PixelInterleaved" => Chunky;
-"PlaneInterleaved" => Planar.</td>
+<td>/Data/PlanarConfiguration@value: "PixelInterleaved" =&gt; Chunky;
+"PlaneInterleaved" =&gt; Planar.</td>
 </tr>
 <tr>
 <td>SampleFormat</td>
-<td>/Data/SampleFormat@value: "SignedIntegral" => two's complement signed
-integer data; "UnsignedIntegral" => unsigned integer data; "Real" =>
-IEEE floating point data; "Index" => unsigned integer data.
+<td>/Data/SampleFormat@value: "SignedIntegral" =&gt; two's complement signed
+integer data; "UnsignedIntegral" =&gt; unsigned integer data; "Real" =&gt;
+IEEE floating point data; "Index" =&gt; unsigned integer data.
 </td>
 </tr>
 <tr>
@@ -714,8 +714,8 @@ IEEE floating point data; "Index" => unsigned integer data.
 </tr>
 <tr>
 <td>FillOrder</td>
-<td>/Data/SampleMSB@value: if all values in space-separated list are 0s =>
-right-to-left; otherwise => left-to-right.
+<td>/Data/SampleMSB@value: if all values in space-separated list are 0s =&gt;
+right-to-left; otherwise =&gt; left-to-right.
 </td>
 </tr>
 <tr>
@@ -748,9 +748,9 @@ right-to-left; otherwise => left-to-right.
 </tr>
 <tr>
 <td>NewSubFileType</td>
-<td>/Document/SubimageInterpretation@value: "TransparencyMask" =>
-transparency mask; "ReducedResolution" => reduced-resolution;
-"SinglePage" => single page.</td>
+<td>/Document/SubimageInterpretation@value: "TransparencyMask" =&gt;
+transparency mask; "ReducedResolution" =&gt; reduced-resolution;
+"SinglePage" =&gt; single page.</td>
 </tr>
 <tr>
 <td>DateTime</td>
@@ -765,8 +765,8 @@ TIFF Fields, e.g., "Software", then the field is added with content
 </tr>
 <tr>
 <td>ExtraSamples</td>
-<td>/Transparency/Alpha@value: "premultiplied" => associated alpha, count 1;
-"nonpremultiplied" => unassociated alpha, count 1.</td>
+<td>/Transparency/Alpha@value: "premultiplied" =&gt; associated alpha, count 1;
+"nonpremultiplied" =&gt; unassociated alpha, count 1.</td>
 </tr>
 <tr>
 <td></td>
@@ -948,7 +948,7 @@ The DTD for the stream metadata format is as follows:
 <pre>
 &lt;!DOCTYPE "com_sun_media_imageio_plugins_tiff_stream_1.0" [
 
-  &lt;!ELEMENT "com_sun_media_imageio_plugins_tiff_stream_1.0" (ByteOrder)>
+  &lt;!ELEMENT "com_sun_media_imageio_plugins_tiff_stream_1.0" (ByteOrder)&gt;
 
     &lt;!ELEMENT "ByteOrder" EMPTY&gt;
       &lt;!-- The stream byte order --&gt; 

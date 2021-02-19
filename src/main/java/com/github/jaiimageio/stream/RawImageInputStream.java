@@ -255,7 +255,7 @@ public class RawImageInputStream implements ImageInputStream {
      *
      * <p>An instance of <code>IndexColorModel</code> will be created for
      * instances of <code>MultiPixelPackedSampleModel</code>. The colormap
-     * will be a grayscale ramp with <code>1&nbsp;<<&nbsp;numberOfBits</code>
+     * will be a grayscale ramp with <code>1&nbsp;&lt;&lt;&nbsp;numberOfBits</code>
      * entries ranging from zero to at most 255.</p>
      *
      *  @param source The <code>ImageInputStream</code> containing all the raw

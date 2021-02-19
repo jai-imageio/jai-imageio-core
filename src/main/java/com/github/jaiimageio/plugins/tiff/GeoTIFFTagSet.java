@@ -76,7 +76,7 @@ public class GeoTIFFTagSet extends TIFFTagSet {
      */
     public static final int TAG_MODEL_TRANSFORMATION = 34264;
 
-    /** A tag used to store raster->model tiepoint pairs. */
+    /** A tag used to store raster-&gt;model tiepoint pairs. */
     public static final int TAG_MODEL_TIE_POINT = 33922;
 
     /** A tag used to store the <i>GeoKey</i> directory. */
