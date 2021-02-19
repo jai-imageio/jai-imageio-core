@@ -1717,7 +1717,8 @@ public class TIFFImageWriter extends ImageWriter {
             SampleModel sm = image.getSampleModel();
 
             // Read only data from the active rectangle.
-            Raster raster = image.getData(activeRect);
+            Raster raster = image instanceof BufferedImage ? ((BufferedImage) image).getRaster()
+                          : image.getData(activeRect);
 
             // If padding is required, create a larger Raster and fill
             // it from the active rectangle.
