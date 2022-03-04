@@ -73,7 +73,13 @@ import com.github.jaiimageio.plugins.tiff.TIFFTagSet;
 public class TIFFImageMetadata extends IIOMetadata {
 
     // package scope
-
+    
+    public static final String SUN_FaxTIFFTagSetClassName =
+                    "com.sun.media.imageio.plugins.tiff.FaxTIFFTagSet" ;
+    
+    public static final String THISJAI_FaxTIFFTagSetClassName =
+                    "com.github.jaiimageio.plugins.tiff.FaxTIFFTagSet";
+    
     public static final String SUN_BaselineTIFFTagSetClassName =
         "com.sun.media.imageio.plugins.tiff.BaselineTIFFTagSet" ;
 
@@ -1512,6 +1518,7 @@ public class TIFFImageMetadata extends IIOMetadata {
 
                 if(className != null) {
                     className = className.replace(SUN_BaselineTIFFTagSetClassName, THISJAI_BaselineTIFFTagSetClassName);
+                    className = className.replace(SUN_FaxTIFFTagSetClassName, THISJAI_FaxTIFFTagSetClassName);
                 }
                 
                 Object o = null;
