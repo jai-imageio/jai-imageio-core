@@ -160,7 +160,7 @@ public abstract class CLibImageReader extends ImageReader {
 
         SoloIterator(Object o) {
             if(o == null) {
-                new IllegalArgumentException
+                throw new IllegalArgumentException
                     (I18N.getString("CLibImageReader0"));
             }
             theObject = o;
