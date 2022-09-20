@@ -74,6 +74,18 @@ public class TIFFImageMetadata extends IIOMetadata {
 
     // package scope
 
+    public static final String SUN_EXIFParentTIFFTagSetClassName =
+            "com.sun.media.imageio.plugins.tiff.EXIFParentTIFFTagSet" ;
+
+    public static final String THISJAI_EXIFParentTIFFTagSetClassName =
+            "com.github.jaiimageio.plugins.tiff.EXIFParentTIFFTagSet";
+
+    public static final String SUN_FaxTIFFTagSetClassName =
+                    "com.sun.media.imageio.plugins.tiff.FaxTIFFTagSet" ;
+    
+    public static final String THISJAI_FaxTIFFTagSetClassName =
+                    "com.github.jaiimageio.plugins.tiff.FaxTIFFTagSet";
+    
     public static final String SUN_BaselineTIFFTagSetClassName =
         "com.sun.media.imageio.plugins.tiff.BaselineTIFFTagSet" ;
 
@@ -1512,6 +1524,8 @@ public class TIFFImageMetadata extends IIOMetadata {
 
                 if(className != null) {
                     className = className.replace(SUN_BaselineTIFFTagSetClassName, THISJAI_BaselineTIFFTagSetClassName);
+                    className = className.replace(SUN_FaxTIFFTagSetClassName, THISJAI_FaxTIFFTagSetClassName);
+                    className = className.replace(SUN_EXIFParentTIFFTagSetClassName, THISJAI_EXIFParentTIFFTagSetClassName);
                 }
                 
                 Object o = null;
