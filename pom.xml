@@ -138,7 +138,7 @@
           <instructions>
             <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
             <Import-Package>*</Import-Package>
-            <Export-Package>{local-packages}</Export-Package>
+            <Export-Package>{local-packages}, com.github.jaiimageio.impl.common</Export-Package>
           </instructions>
           <supportedProjectTypes>
             <supportedProjectType>jar</supportedProjectType>
